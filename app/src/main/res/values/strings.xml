@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Reddit Dose</string>
+
+
+
+    //Main activity problems
+    <string name="no_connection">No internet connection</string>
+    <string name="no_connection_sub_text">Please fix your internet connection</string>
+    <string name="server_problem">Server not responding</string>
+    <string name="server_problem_sub_text">We will fix it as soon as possible</string>
+    <string name="no_favorite">List of favorite movies is empty </string>
+    <string name="no_favorite_sub_text">Please add your favorite movies to the list</string>
+    <string name="menu_login">Login</string>
+
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#d32f2f</color>
+    <color name="colorPrimaryLight">#f44336</color>
+    <color name="colorPrimaryDark">#b71c1c</color>
+    <color name="colorAccent">#2979ff</color>
+    <color name="background">#e0e0e0</color>
+    <color name="itemSelector">#e3f2fd</color>
+    <color name="transparentActivity">#AA000000</color>
+    <color name="transparentActivityToolbar">#212121</color>
+    <color name="backgroundExoPlayer">#000000</color>
+
+    <color name="backgroundActionComments">#c8e6c9</color>
+
+
+    //POST ROW
+    <color name="textTitle">#304ffe</color>
+    <color name="backgroundLinkFlair">#cfd8dc</color>
+    <color name="arrowColor">#757575</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+</resources>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.qartf.doseforreddit">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.CommentsActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MainActivity"/>
+        <activity
+            android:name=".activity.LinkActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/Theme.AppCompat.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="www.example.com"
+                    android:path="/unused/redirect/uri"
+                    android:scheme="http"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.VideoActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"/>
+        <activity
+            android:name=".activity.ImageActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"/>
+        <activity
+            android:name=".activity.SelfActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"/>
+    </application>
+
+</manifest>
