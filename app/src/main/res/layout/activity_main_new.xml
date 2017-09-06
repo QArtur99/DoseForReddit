@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#ffffff"
-        app:headerLayout="@layout/header"
+
         app:itemIconTint="@drawable/drawer_selector"
         app:itemTextColor="@drawable/drawer_selector"
         app:menu="@menu/drawer">

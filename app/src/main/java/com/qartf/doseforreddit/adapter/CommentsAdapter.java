@@ -6,35 +6,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.CommentsActivity;
 import com.qartf.doseforreddit.model.Comment;
+import com.qartf.doseforreddit.utility.Utility;
 
-import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyViewHolder> {
 
-    public static final String DOT = "\u2022";
-    public static final String KILO = "K";
-    final private ListItemClickListener mOnClickListener;
-    private DecimalFormat decimalFormat = new DecimalFormat("##.#");
+    private static final String DOT = "\u2022";
+    final private OnListItemClickListener mOnClickListener;
 
     private List<Comment> data;
-    private LinearLayout previousView;
-    private boolean isOpen = false;
     private Context context;
 
-
-    public CommentsAdapter(Context context, List<Comment> myDataset, ListItemClickListener listener) {
+    public CommentsAdapter(Context context, List<Comment> myDataset, OnListItemClickListener listener) {
         this.context = context;
         data = myDataset;
         mOnClickListener = listener;
@@ -77,8 +70,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         return data;
     }
 
-    public interface ListItemClickListener {
-        void onListItemClick(int clickedItemIndex, View view);
+    public interface OnListItemClickListener {
+        void onCommentListItemClick(int clickedItemIndex, View view);
         void onCommentSelected(int clickedItemIndex, View expandableView, View parent);
     }
 
@@ -91,11 +84,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         @BindView(R.id.childrenCommentFrame) LinearLayout childrenCommentFrame;
         @BindView(R.id.expandArea) LinearLayout expandArea;
         @BindView(R.id.commentItemFrame) LinearLayout commentFrame;
+        @BindView(R.id.commentVoteUp) ImageView commentVoteUp;
+        @BindView(R.id.commentVoteDown) ImageView commentVoteDown;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             commentFrame.setOnClickListener(this);
+            commentVoteUp.setOnClickListener(this);
+            commentVoteDown.setOnClickListener(this);
         }
 
         public void bind(int position) {
@@ -106,8 +103,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         private void loadData(Comment post) {
             String authorString = post.author + DOT;
             author.setText(authorString);
-            upsFormat(post);
-            timeFormat(post);
+            Utility.upsFormatPoints(score, Integer.valueOf(post.ups));
+            Utility.timeFormat(post.createdUtc, time);
             body.setText(post.body);
             if(post.commentList != null){
                 childrenCommentFrame.setVisibility(View.VISIBLE);
@@ -115,62 +112,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
                 layoutManager.setAutoMeasureEnabled(true);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setHasFixedSize(true);
-                CommentsAdapter postsAdapter = new CommentsAdapter(context, post.commentList, (CommentsActivity) context);
-                recyclerView.setAdapter(postsAdapter);
-            }
-
-
-
-        }
-
-
-        private void upsFormat(Comment post) {
-            int upsInteger = Integer.valueOf(post.score);
-            if (upsInteger >= 10000) {
-                double upsDouble = upsInteger / 1000d;
-                String upsString = decimalFormat.format(upsDouble) + KILO + " points";
-                score.setText(upsString);
-            } else {
-                String points = String.valueOf(upsInteger) + " points";
-                score.setText(points);
-            }
-        }
-
-        private void timeFormat(Comment post) {
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            long currentTime = calendar.getTimeInMillis() / 1000L;
-            double timeDouble = Double.valueOf(post.createdUtc);
-            long trueTime = currentTime - ((long) timeDouble);
-            if (trueTime >= 31536000) {
-                int date = (int) trueTime / 31536000;
-                String dateString = DOT + String.valueOf(date);
-                dateString += (date == 1) ? "yr" : "yrs";
-                time.setText(dateString);
-            } else if (trueTime >= 2592000) {
-                int date = (int) trueTime / 2592000;
-                String dateString = DOT + String.valueOf(date) + "m";
-                time.setText(dateString);
-            } else if (trueTime >= 604800) {
-                int date = (int) trueTime / 604800;
-                String dateString = DOT + String.valueOf(date) + "wk";
-                time.setText(dateString);
-            } else if (trueTime >= 86400) {
-                int date = (int) trueTime / 86400;
-                String dateString = DOT + String.valueOf(date);
-                dateString += (date == 1) ? "day" : "days";
-                time.setText(dateString);
-            } else if (trueTime >= 3600) {
-                int date = (int) trueTime / 3600;
-                String dateString = DOT + String.valueOf(date);
-                dateString += (date == 1) ? "hr" : "hrs";
-                time.setText(dateString);
-            } else if (trueTime >= 60) {
-                int date = (int) trueTime / 60;
-                String dateString = DOT + String.valueOf(date) + "min";
-                time.setText(dateString);
-            } else {
-                String dateString = DOT + String.valueOf(trueTime) + "sec";
-                time.setText(dateString);
+                CommentsAdapter commentsAdapter;
+                if(Utility.isTablet(context)) {
+                    commentsAdapter = new CommentsAdapter(context, post.commentList, mOnClickListener);
+                }else{
+                    commentsAdapter = new CommentsAdapter(context, post.commentList, mOnClickListener);
+                }
+                recyclerView.setAdapter(commentsAdapter);
             }
         }
 
@@ -178,18 +126,20 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
             switch (v.getId()) {
-                case R.id.upContainer:
+                case R.id.commentVoteUp:
+                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
                     break;
-                case R.id.downContainer:
+                case R.id.commentVoteDown:
+                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
                     break;
                 case R.id.commentItemFrame:
                     mOnClickListener.onCommentSelected(clickedPosition, expandArea, commentFrame);
                     break;
                 case R.id.imageContainer:
-                    mOnClickListener.onListItemClick(clickedPosition, v);
+                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
                     break;
                 case R.id.commentsAction:
-                    mOnClickListener.onListItemClick(clickedPosition, v);
+                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
                     break;
             }
         }

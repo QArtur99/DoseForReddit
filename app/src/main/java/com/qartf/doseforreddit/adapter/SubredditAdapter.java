@@ -1,28 +1,21 @@
 package com.qartf.doseforreddit.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.LinkActivity;
 import com.qartf.doseforreddit.model.Subreddit;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.text.DecimalFormat;
 import java.util.List;
 
-import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -49,21 +42,7 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.row_subreddit_item, parent, false);
-//        setThumbnailSize(view);
         return new MyViewHolder(view);
-    }
-
-    private void setThumbnailSize(View view) {
-        ImageView imageView = view.findViewById(R.id.thumbnail);
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getRealSize(size);
-        int width = size.x / 5;
-
-        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-        layoutParams.height = width;
-        imageView.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -98,7 +77,7 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
         void onListItemClick(int clickedItemIndex, View view);
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.isSubscribe) TextView isSubscribe;
         @BindView(R.id.isAdult) TextView isAdult;
@@ -107,7 +86,7 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
         @BindView(R.id.subsribersNo) TextView subsribersNo;
         @BindView(R.id.createdTime) TextView createdTime;
         @BindView(R.id.subredditTitleFrame) RelativeLayout subredditTitleFrame;
-        @BindColor(R.color.subredditButtonBackgroundPrivate) int color;
+
 
 
         public MyViewHolder(View itemView) {
@@ -177,16 +156,6 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
             }
         }
 
-        @Override
-        public boolean onLongClick(View view) {
-            int clickedPosition = getAdapterPosition();
-            Subreddit post = (Subreddit) getDataAtPosition(clickedPosition);
-            Intent intent = new Intent(context, LinkActivity.class);
-            intent.putExtra("link", post.url);
-            context.startActivity(intent);
-            return true;
-        }
     }
-
 
 }

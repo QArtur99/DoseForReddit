@@ -24,64 +24,15 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <FrameLayout
+        android:id="@+id/detailsViewFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:clipToPadding="true"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:srl_direction="both">
+        android:scaleType="centerInside"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/fragmentFrame"
-                android:descendantFocusability="blocksDescendants"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingTop="20dp">
-
-                <include
-                    layout="@layout/row_post_details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"/>
-
-                <TextView
-                    android:id="@+id/selftext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:autoLink="all"
-                    android:background="@drawable/shape_self_text"
-                    android:padding="10dp"
-                    android:textColor="@color/arrowColor"
-                    android:visibility="gone"/>
-
-                <include layout="@layout/row_post_opiton_comment_view"/>
-
-                <ProgressBar
-                    android:id="@+id/loading_indicator"
-                    style="@style/Widget.AppCompat.ProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="?actionBarSize"
-                    android:background="@drawable/shape_progress_bar"
-                    android:elevation="8dp"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"/>
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
-    </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

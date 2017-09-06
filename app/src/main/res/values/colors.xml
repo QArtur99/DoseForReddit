@@ -6,6 +6,10 @@
     <color name="colorAccent">#2979ff</color>
     <color name="background">#e0e0e0</color>
 
+    //Drawer
+    <color name="drawerText">#212121</color>
+    <color name="drawerTextSelected">#f44336</color>
+
     //Header
     <color name="username">#212121</color>
 

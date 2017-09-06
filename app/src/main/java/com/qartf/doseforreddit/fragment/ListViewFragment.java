@@ -1,8 +1,6 @@
 package com.qartf.doseforreddit.fragment;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,18 +14,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.CommentsActivity;
-import com.qartf.doseforreddit.activity.ImageActivity;
-import com.qartf.doseforreddit.activity.LinkActivity;
 import com.qartf.doseforreddit.activity.MainActivity;
-import com.qartf.doseforreddit.activity.SelfActivity;
-import com.qartf.doseforreddit.activity.VideoActivity;
 import com.qartf.doseforreddit.adapter.PostsAdapter;
 import com.qartf.doseforreddit.model.PostObject;
 import com.qartf.doseforreddit.model.PostObjectParent;
+import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +34,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
     @BindView(R.id.emptyView) RelativeLayout emptyView;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
     @BindView(R.id.swipeRefreshLayout) SwipyRefreshLayout swipyRefreshLayout;
-    @BindView(R.id.loading_indicator) ProgressBar loadingIndicator;
+    @BindView(R.id.loading_indicator) public ProgressBar loadingIndicator;
     @BindView(R.id.empty_title_text) TextView emptyTitleText;
     @BindView(R.id.empty_subtitle_text) TextView emptySubtitleText;
 
@@ -115,59 +108,13 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
 
     @Override
     public void onListItemClick(int clickedItemIndex, View view) {
-        Intent intent = null;
-        String link = "";
         PostObject post = (PostObject) postsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
-            case R.id.commentsAction:
-                mCallback.onImageSelected(post, view);
-                break;
             case R.id.imageContainer:
-                String postHint = post.postHint;
-                if (!post.previewGif.isEmpty()) {
-                    String to_remove = "amp;";
-                    link = post.previewGif.replace(to_remove, "");
-                    intent = new Intent(getActivity(), VideoActivity.class);
-                } else if (postHint.equals("link")) {
-                    String to_remove = "amp;";
-                    link = post.previewUrl.replace(to_remove, "");
-                    intent = new Intent(getActivity(), ImageActivity.class);
-                } else if (postHint.equals("rich:video")) {
-                    if (post.domain.contains("youtube.com")) {
-                        Uri uri = Uri.parse(post.url);
-                        String v = uri.getQueryParameter("v");
-                        link = "https://www.youtube.com/embed/" + v;
-                        intent = new Intent(getActivity(), LinkActivity.class);
-                    } else if (post.domain.contains("youtu.be")) {
-                        Uri uri = Uri.parse(post.url);
-                        link = "https://www.youtube.com/embed/" + uri.getLastPathSegment();
-                        intent = new Intent(getActivity(), LinkActivity.class);
-                    } else if (post.domain.contains("gfycat.com")) {
-                        String to_remove = "//";
-                        link = post.url.replace(to_remove, "//fat.") + ".webm";
-                        intent = new Intent(getActivity(), VideoActivity.class);
-                    } else {
-                        String to_remove = "amp;";
-                        link = post.previewUrl.replace(to_remove, "");
-                        intent = new Intent(getActivity(), ImageActivity.class);
-                    }
-                } else if (postHint.equals("image")) {
-                    String to_remove = "amp;";
-                    link = post.previewUrl.replace(to_remove, "");
-                    intent = new Intent(getActivity(), ImageActivity.class);
-                } else if (postHint.equals("self") || post.domain.contains("self") && !post.selftext.isEmpty()) {
-                    link = post.selftext;
-                    intent = new Intent(getActivity(), SelfActivity.class);
-                } else if (postHint.isEmpty()) {
-                    link = new Gson().toJson(post);
-                    intent = new Intent(getActivity(), CommentsActivity.class);
-                }
-
-                if (intent != null) {
-                    intent.putExtra("link", link);
-                    startActivity(intent);
-                }
+                Utility.startIntentPreview(getActivity(), post);
                 break;
+            default:
+                mCallback.onImageSelected(post, view);
         }
 
     }

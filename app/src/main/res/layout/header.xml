@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/navigation_header_container"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@drawable/header_background"
@@ -43,14 +44,13 @@
 
     <RelativeLayout
         android:layout_marginStart="25dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
             <TextView
-                android:id="@+id/spinnerSortBy"
+                android:id="@+id/username"
                 android:layout_width="wrap_content"
-                android:text="Qart_f"
                 android:textColor="@color/username"
                 android:layout_height="wrap_content"/>
 
@@ -58,8 +58,8 @@
                 android:id="@+id/spinnerArrow"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
-                android:layout_alignBottom="@+id/spinnerSortBy"
-                android:layout_toEndOf="@+id/spinnerSortBy"
+                android:layout_alignBottom="@+id/username"
+                android:layout_toEndOf="@+id/username"
                 android:scaleType="fitCenter"
                 android:tint="@color/username"
                 android:src="@drawable/ic_signal_cellular_4_bar"/>
@@ -70,9 +70,20 @@
             android:layout_marginBottom="10dp"
             android:layout_height="1dp"
             android:layout_alignEnd="@+id/spinnerArrow"
-            android:layout_alignStart="@+id/spinnerSortBy"
-            android:layout_below="@+id/spinnerSortBy"
+            android:layout_alignStart="@+id/username"
+            android:layout_below="@+id/username"
             android:background="@color/username"/>
+
+        <ImageView
+            android:layout_marginEnd="20dp"
+            android:layout_alignBottom="@+id/username"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add"/>
+
+
+
 
     </RelativeLayout>
 

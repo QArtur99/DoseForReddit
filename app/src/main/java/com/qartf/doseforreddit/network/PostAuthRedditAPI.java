@@ -80,6 +80,15 @@ public class PostAuthRedditAPI {
         return jsonString;
     }
 
+    public static String postVote(String token, String dir, String fullname) throws JSONException, IOException {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("dir", dir);
+        args.put("id", fullname);
+        String url = Auth.BASE_URL_OAUTH + "/api/vote";
+        String jsonString = postQueryJSONObject(url, bearerToken(token), args);
+        return jsonString;
+    }
+
     @NonNull
     private static String postQueryJSONObject(String urlString, String token, HashMap<String, String> args) throws IOException, JSONException {
 

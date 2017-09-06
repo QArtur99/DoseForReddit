@@ -29,7 +29,7 @@
             app:tabBackground="@drawable/selector_tab"
             app:tabGravity="fill"
             app:tabIndicatorHeight="4dp"
-            app:tabMode="scrollable"
+            app:tabMode="fixed"
             app:tabSelectedTextColor="@color/colorWhite"
             app:tabTextColor="@color/colorWhite"/>
 

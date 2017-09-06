@@ -7,6 +7,16 @@
             android:checked="false"
             android:icon="@drawable/ic_home"
             android:title="@string/drawerFrontPage" />
+        <item
+            android:id="@+id/searchPosts"
+            android:checked="false"
+            android:icon="@drawable/ic_search"
+            android:title="@string/search_posts" />
+        <item
+            android:id="@+id/searchSubreddits"
+            android:checked="false"
+            android:icon="@drawable/ic_search"
+            android:title="@string/search_subreddits" />
         <!--<item-->
             <!--android:id="@+id/day"-->
             <!--android:checked="false"-->

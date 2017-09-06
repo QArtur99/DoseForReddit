@@ -13,9 +13,10 @@ import com.qartf.doseforreddit.model.PostObjectParent;
 import com.qartf.doseforreddit.model.SubredditParent;
 import com.qartf.doseforreddit.utility.Constants.Comments;
 import com.qartf.doseforreddit.utility.Constants.Id;
+import com.qartf.doseforreddit.utility.Constants.Post;
 import com.qartf.doseforreddit.utility.Constants.Search;
 import com.qartf.doseforreddit.utility.Constants.Subscribe;
-import com.qartf.doseforreddit.utility.Constants.Post;
+import com.qartf.doseforreddit.utility.Constants.Vote;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,6 +83,9 @@ public class DataLoader extends AsyncTaskLoader<Object> {
                 case Id.SUBREDDIT_SUBSCRIBE:
                     object = postSubscribe(accessTokenString, args);
                     break;
+                case Id.VOTE:
+                    object = postVote(accessTokenString, args);
+                    break;
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -134,6 +138,13 @@ public class DataLoader extends AsyncTaskLoader<Object> {
         return postObjectParent;
     }
 
+    private String postVote(String accessTokenString, Bundle args) throws IOException, JSONException {
+        String dir = args.getString(Vote.DIR);
+        String fullname = args.getString(Vote.FULLNAME);
+        String jsonString = PostAuthRedditAPI.postVote(accessTokenString, dir, fullname);
+        return jsonString;
+    }
+
     private String postSubscribe(String accessTokenString, Bundle args) throws IOException, JSONException {
         String subscribe = args.getString(Subscribe.SUBSCRIBE);
         String fullname = args.getString(Subscribe.FULLNAME);
@@ -145,7 +156,6 @@ public class DataLoader extends AsyncTaskLoader<Object> {
         String jsonString = GetAuthRedditAPI.getMe(accessTokenString);
         AboutMe aboutMe = new Gson().fromJson(jsonString, AboutMe.class);
         return aboutMe.name;
-
     }
 
     private List<Comment> getComments(String accessTokenString, Bundle args) throws IOException, JSONException {

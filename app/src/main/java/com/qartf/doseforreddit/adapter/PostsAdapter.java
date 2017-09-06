@@ -2,26 +2,21 @@ package com.qartf.doseforreddit.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.LinkActivity;
 import com.qartf.doseforreddit.model.PostObject;
 import com.qartf.doseforreddit.utility.Utility;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import butterknife.BindView;
@@ -34,9 +29,7 @@ import butterknife.ButterKnife;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder> {
 
     public static final String DOT = "\u2022";
-    public static final String KILO = "K";
     final private ListItemClickListener mOnClickListener;
-    private DecimalFormat decimalFormat = new DecimalFormat("##.#");
 
     private List<PostObject> data;
     private LinearLayout previousView;
@@ -54,22 +47,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.row_post_item, parent, false);
-        setThumbnailSize(view);
+        Utility.setThumbnailSize(context, view);
         return new MyViewHolder(view);
     }
 
-    private void setThumbnailSize(View view) {
-        ImageView imageView =  view.findViewById(R.id.thumbnail);
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getRealSize(size);
-        int width = size.x / 5;
-
-        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-        layoutParams.height = width;
-        imageView.setLayoutParams(layoutParams);
-    }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
@@ -120,6 +101,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         @BindView(R.id.imageContainer) RelativeLayout imageContainer;
 
         @BindView(R.id.commentsAction) ImageView commentsAction;
+        @BindView(R.id.shareAction) ImageView shareAction;
 
 
         public MyViewHolder(View itemView) {
@@ -131,6 +113,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             imageContainer.setOnClickListener(this);
             imageContainer.setOnLongClickListener(this);
             commentsAction.setOnClickListener(this);
+            shareAction.setOnClickListener(this);
         }
 
         public void bind(int position) {
@@ -139,90 +122,25 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         }
 
         private void loadData(PostObject post) {
-            upsFormat(post);
+            Utility.upsFormat(ups, Integer.valueOf(post.ups));
             title.setText(post.title);
-            loadLinkFlairText(post);
+            Utility.loadLinkFlairText(linkFlairText, post.linkFlairText);
             domain.setText("(" + post.domain + ")");
             subreddit.setText(post.subreddit);
             comments.setText(DOT + post.numComents + " comments");
             Utility.timeFormat(post.createdUTC, time);
-            loadThumbnail(post);
-        }
-
-        private void loadLinkFlairText(PostObject post) {
-            if (!post.linkFlairText.isEmpty()) {
-                linkFlairText.setVisibility(View.VISIBLE);
-                linkFlairText.setText(post.linkFlairText);
-            } else {
-                linkFlairText.setVisibility(View.GONE);
-            }
-        }
-
-        private void loadThumbnail(PostObject post) {
-            if(!post.previewUrl.isEmpty() && checkThumbnail(post.thumbnail)){
-                String to_remove = "amp;";
-                String new_string = post.previewUrl.replace(to_remove, "");
-                Glide.with(context)
-                        .load(new_string)
-                        .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
-                        .into(thumbnail);
-            } else if (!post.thumbnail.isEmpty() && !checkThumbnail(post.thumbnail)) {
-                String to_remove = "amp;";
-                String new_string = post.thumbnail.replace(to_remove, "");
-                Glide.with(context)
-                        .load(new_string)
-                        .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
-                        .into(thumbnail);
-            } else {
-                thumbnail.setImageResource(R.drawable.ic_ondemand_video);
-            }
-        }
-
-        public Boolean checkThumbnail(String thumbnail) {
-            if (thumbnail.equals("self")) {
-                return true;
-            }
-            else
-                if (thumbnail.equals("default")) {
-                return true;
-            }
-            else if (thumbnail.equals("image")) {
-                return true;
-            }
-            else if (thumbnail.isEmpty()) {
-                return true;
-            }
-            return false;
-        }
-
-        private void upsFormat(PostObject post) {
-            int upsInteger = Integer.valueOf(post.ups);
-            if (upsInteger >= 10000) {
-                double upsDouble = upsInteger / 1000d;
-                String upsString = decimalFormat.format(upsDouble) + KILO;
-                ups.setText(upsString);
-            } else {
-                ups.setText(String.valueOf(upsInteger));
-            }
+            Utility.loadThumbnail(context, post, thumbnail);
         }
 
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
             switch (v.getId()) {
-                case R.id.upContainer:
-                    break;
-                case R.id.downContainer:
-                    break;
                 case R.id.detailContainer:
                     actionDetail();
                     break;
-                case R.id.imageContainer:
+                default:
                     mOnClickListener.onListItemClick(clickedPosition, v);
-                    break;
-                case R.id.commentsAction:
-                    mOnClickListener.onListItemClick(clickedPosition, v);
-                    break;
             }
         }
 

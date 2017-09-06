@@ -37,6 +37,7 @@ public class Constants {
         public static final int SEARCH_POSTS = 12;
         public static final int SEARCH_SUBREDDITS = 13;
         public static final int SUBREDDIT_SUBSCRIBE = 14;
+        public static final int VOTE = 15;
 
     }
 
@@ -49,6 +50,11 @@ public class Constants {
         public static final String SUBREDDIT = "subreddit";
         public static final String ID = "id";
         public static final String SORT = "sort";
+    }
+
+    public class Vote {
+        public static final String DIR = "dir";
+        public static final String FULLNAME = "fullname";
     }
 
     public class Search {
