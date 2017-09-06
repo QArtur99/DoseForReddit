@@ -2,27 +2,27 @@ package com.qartf.doseforreddit.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.CommentsActivity;
 import com.qartf.doseforreddit.activity.LinkActivity;
 import com.qartf.doseforreddit.model.PostObject;
-import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
+import com.qartf.doseforreddit.utility.Utility;
 
 import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,15 +53,27 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.row_post, parent, false);
+        View view = inflater.inflate(R.layout.row_post_item, parent, false);
+        setThumbnailSize(view);
         return new MyViewHolder(view);
+    }
+
+    private void setThumbnailSize(View view) {
+        ImageView imageView =  view.findViewById(R.id.thumbnail);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+        int width = size.x / 5;
+
+        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+        layoutParams.height = width;
+        imageView.setLayoutParams(layoutParams);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.bind(position);
-
-
     }
 
     public Object getDataAtPosition(int position) {
@@ -133,12 +145,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             domain.setText("(" + post.domain + ")");
             subreddit.setText(post.subreddit);
             comments.setText(DOT + post.numComents + " comments");
-            timeFormat(post);
+            Utility.timeFormat(post.createdUTC, time);
             loadThumbnail(post);
         }
 
         private void loadLinkFlairText(PostObject post) {
-            if (!post.linkFlairText.equals("null")) {
+            if (!post.linkFlairText.isEmpty()) {
                 linkFlairText.setVisibility(View.VISIBLE);
                 linkFlairText.setText(post.linkFlairText);
             } else {
@@ -147,49 +159,40 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         }
 
         private void loadThumbnail(PostObject post) {
-//            if (checkThumbnail(post.thumbnail)) {
-//                Glide.with(context)
-//                        .load(post.thumbnail)
-//                        .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
-//                        .into(thumbnail);
-//            } else {
-//                thumbnail.setImageResource(R.drawable.ic_ondemand_video);
-//            }
-
-            if (!post.thumbnail.isEmpty()) {
-                String to_remove = "amp;";
-                String new_string = post.thumbnail.replace(to_remove, "");
-                Glide.with(context)
-                        .load(new_string)
-                        .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
-                        .into(thumbnail);
-            } else if (!post.previewUrl.isEmpty()) {
+            if(!post.previewUrl.isEmpty() && checkThumbnail(post.thumbnail)){
                 String to_remove = "amp;";
                 String new_string = post.previewUrl.replace(to_remove, "");
                 Glide.with(context)
                         .load(new_string)
                         .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
                         .into(thumbnail);
-
+            } else if (!post.thumbnail.isEmpty() && !checkThumbnail(post.thumbnail)) {
+                String to_remove = "amp;";
+                String new_string = post.thumbnail.replace(to_remove, "");
+                Glide.with(context)
+                        .load(new_string)
+                        .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
+                        .into(thumbnail);
             } else {
                 thumbnail.setImageResource(R.drawable.ic_ondemand_video);
             }
         }
 
-        public Boolean checkThumbnail(String thumnail) {
-            if (thumnail.equals("self")) {
-                return false;
+        public Boolean checkThumbnail(String thumbnail) {
+            if (thumbnail.equals("self")) {
+                return true;
             }
-//            else if (thumnail.equals("default")) {
-//                return false;
-//            }
-//            else if (thumnail.equals("image")) {
-//                return false;
-//            }
-            else if (thumnail.isEmpty()) {
-                return false;
+            else
+                if (thumbnail.equals("default")) {
+                return true;
             }
-            return true;
+            else if (thumbnail.equals("image")) {
+                return true;
+            }
+            else if (thumbnail.isEmpty()) {
+                return true;
+            }
+            return false;
         }
 
         private void upsFormat(PostObject post) {
@@ -200,44 +203,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 ups.setText(upsString);
             } else {
                 ups.setText(String.valueOf(upsInteger));
-            }
-        }
-
-        private void timeFormat(PostObject post) {
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            long currentTime = calendar.getTimeInMillis() / 1000L;
-            double timeDouble = Double.valueOf(post.createdUTC);
-            long trueTime = currentTime - ((long) timeDouble);
-            if (trueTime >= 31536000) {
-                int date = (int) trueTime / 31536000;
-                String dateString = DOT + String.valueOf(date);
-                dateString += (date == 1) ? "yr" : "yrs";
-                time.setText(dateString);
-            } else if (trueTime >= 2592000) {
-                int date = (int) trueTime / 2592000;
-                String dateString = DOT + String.valueOf(date) + "m";
-                time.setText(dateString);
-            } else if (trueTime >= 604800) {
-                int date = (int) trueTime / 604800;
-                String dateString = DOT + String.valueOf(date) + "wk";
-                time.setText(dateString);
-            } else if (trueTime >= 86400) {
-                int date = (int) trueTime / 86400;
-                String dateString = DOT + String.valueOf(date);
-                dateString += (date == 1) ? "day" : "days";
-                time.setText(dateString);
-            } else if (trueTime >= 3600) {
-                int date = (int) trueTime / 3600;
-                String dateString = DOT + String.valueOf(date);
-                dateString += (date == 1) ? "hr" : "hrs";
-                time.setText(dateString);
-            } else if (trueTime >= 60) {
-                int date = (int) trueTime / 60;
-                String dateString = DOT + String.valueOf(date) + "min";
-                time.setText(dateString);
-            } else {
-                String dateString = DOT + String.valueOf(trueTime) + "sec";
-                time.setText(dateString);
             }
         }
 
@@ -256,10 +221,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                     mOnClickListener.onListItemClick(clickedPosition, v);
                     break;
                 case R.id.commentsAction:
-                    String jsonString = new Gson().toJson(getDataAtPosition(clickedPosition));
-                    Intent intent = new Intent(context, CommentsActivity.class);
-                    intent.putExtra("link", jsonString);
-                    context.startActivity(intent);
+                    mOnClickListener.onListItemClick(clickedPosition, v);
                     break;
             }
         }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/frontPage"
+            android:checked="false"
+            android:icon="@drawable/ic_home"
+            android:title="@string/drawerFrontPage" />
+        <!--<item-->
+            <!--android:id="@+id/day"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_view_day_black_24dp"-->
+            <!--android:title="@string/day" />-->
+        <!--<item-->
+            <!--android:id="@+id/threeDays"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_view_column_black_24dp"-->
+            <!--android:title="@string/threeDays" />-->
+        <!--<item-->
+            <!--android:id="@+id/week"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_filter_7_black_24dp"-->
+            <!--android:title="@string/week" />-->
+
+        <!--<item-->
+            <!--android:id="@+id/calendar"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_date_range_black_24dp"-->
+            <!--android:title="@string/calendar" />-->
+        <!--<item-->
+            <!--android:id="@+id/createEvent"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_create_black_24dp"-->
+            <!--android:title="@string/createEvent" />-->
+        <!--<item-->
+            <!--android:id="@+id/createNote"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_insert_drive_file_black_24dp"-->
+            <!--android:title="@string/note" />-->
+
+        <!--&lt;!&ndash;<item&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/synchronize"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:checked="false"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:icon="@drawable/ic_autorenew_black_24dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:title="@string/synchronize" />&ndash;&gt;-->
+
+        <!--<item-->
+            <!--android:id="@+id/settings"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_settings_black_24dp"-->
+            <!--android:title="@string/settings" />-->
+        <!--<item-->
+            <!--android:id="@+id/help"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_help_black_24dp"-->
+            <!--android:title="@string/help" />-->
+    </group>
+
+</menu>

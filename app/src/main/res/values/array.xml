@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="sortComments">
+        <item>best</item>
+        <item>top</item>
+        <item>new</item>
+        <item>old</item>
+        <item>controversial</item>
+        <item>q&amp;a</item>
+        <item>live</item>
+    </array>
+
+    <array name="sortValueComment">
+        <item>confidence</item>
+        <item>top</item>
+        <item>new</item>
+        <item>old</item>
+        <item>controversial</item>
+        <item>qa</item>
+        <item>live</item>
+    </array>
+
+    <array name="sortValuePost">
+        <item>hot</item>
+        <item>new</item>
+        <item>rising</item>
+        <item>controversial</item>
+        <item>top</item>
+    </array>
+
+</resources>

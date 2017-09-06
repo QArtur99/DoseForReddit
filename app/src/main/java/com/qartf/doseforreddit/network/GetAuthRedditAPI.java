@@ -2,7 +2,7 @@ package com.qartf.doseforreddit.network;
 
 import android.support.annotation.NonNull;
 
-import com.qartf.doseforreddit.utility.Constants;
+import com.qartf.doseforreddit.utility.Constants.Auth;
 
 import org.json.JSONException;
 
@@ -10,33 +10,61 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Set;
 
-/**
- * Created by ART_F on 2017-09-01.
- */
 
 public class GetAuthRedditAPI {
 
 
-    public static String getPopular(String token) throws JSONException, IOException {
-        String url = Constants.BASE_URL_OAUTH + "/r/popular/hot";
-        String jsonString = postQueryJSONObject(url, token, null);
+    public static String getPopular(String token, String subreddit, String sortBy) throws JSONException, IOException {
+        String url = Auth.BASE_URL_OAUTH + "/r/" + subreddit + "/" + sortBy;
+        String jsonString = getQueryJSONObject(url, token, null);
         return jsonString;
     }
 
     public static String getMe(String token) throws JSONException, IOException {
-        String url = Constants.BASE_URL_OAUTH + "/api/v1/me";
-        String jsonString = postQueryJSONObject(url, token, null);
+        String url = Auth.BASE_URL_OAUTH + "/api/v1/me";
+        String jsonString = getQueryJSONObject(url, token, null);
         return jsonString;
     }
 
+    public static String getComments(String token, String subreddit, String id, String sortBy) throws JSONException, IOException {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("depth", "5");
+        args.put("limit", "30");
+        args.put("showedits", "false");
+        args.put("showmore", "false");
+        args.put("sort", sortBy);
+
+        String url = Auth.BASE_URL_OAUTH + "/r/" + subreddit + "/comments/" + id;
+        String jsonString = getQueryJSONObject(url, token, args);
+        return jsonString;
+    }
+
+    public static String getSubreddits(String token, String queryString) throws JSONException, IOException {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("limit", "30");
+        args.put("q", queryString);
+        String url = Auth.BASE_URL_OAUTH + "/subreddits/search";
+        String jsonString = getQueryJSONObject(url, token, args);
+        return jsonString;
+    }
+
+    public static String getQueryPosts(String token, String subreddit, String queryString) throws JSONException, IOException {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("limit", "30");
+        args.put("q", queryString);
+        String url = Auth.BASE_URL_OAUTH + "/r/" + subreddit + "/search";
+        String jsonString = getQueryJSONObject(url, token, args);
+        return jsonString;
+    }
+
+
     @NonNull
-    private static String postQueryJSONObject(String urlString, String token, HashMap<String, String> args) throws IOException, JSONException {
+    private static String getQueryJSONObject(String urlString, String token, HashMap<String, String> args) throws IOException, JSONException {
 
         if(args != null){
             urlString += "?" + getUri(args);
@@ -86,7 +114,4 @@ public class GetAuthRedditAPI {
         return postData;
     }
 
-    private String toHex(byte[] b) {
-        return String.format("%040x", new BigInteger(1, b));
-    }
 }

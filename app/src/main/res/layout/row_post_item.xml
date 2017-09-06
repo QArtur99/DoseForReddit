@@ -8,10 +8,10 @@
               android:orientation="vertical"
               android:padding="2dp">
 
-    <include layout="@layout/row_details"/>
+    <include layout="@layout/row_post_details"/>
     <include
         android:visibility="gone"
-        layout="@layout/row_actions"/>
+        layout="@layout/row_post_optiont"/>
 
 
 </LinearLayout>

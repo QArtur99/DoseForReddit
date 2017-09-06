@@ -59,7 +59,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_weight="13">
+        android:layout_weight="13.5">
 
         <TextView
             android:id="@+id/title"
@@ -124,16 +124,15 @@
     <RelativeLayout
         android:id="@+id/imageContainer"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="4.5"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
         android:padding="2dp">
 
         <ImageView
             android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:scaleType="centerInside"/>
+            android:scaleType="centerCrop"/>
     </RelativeLayout>
 </LinearLayout>

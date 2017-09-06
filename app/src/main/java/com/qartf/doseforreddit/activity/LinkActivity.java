@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.utility.Constants;
+import com.qartf.doseforreddit.utility.Constants.Auth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,18 +55,18 @@ public class LinkActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                if (url.contains(Constants.REDIRECT_URI)) {
+                if (url.contains(Auth.REDIRECT_URI)) {
                     Uri uri = Uri.parse(url);
                     if (uri.getQueryParameter("error") != null) {
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(LinkActivity.this);
-                        sharedPreferences.edit().putString(Constants.LOGIN_TAG, "accessDeclined").apply();
+                        sharedPreferences.edit().putString(getResources().getString(R.string.pref_access_code), Constants.ACCESS_DECLINED).apply();
                         LinkActivity.this.onBackPressed();
                     } else {
                         String state = uri.getQueryParameter("state");
-                        if (state.equals(Constants.STATE)) {
+                        if (state.equals(Auth.STATE)) {
                             String code = uri.getQueryParameter("code");
                             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(LinkActivity.this);
-                            sharedPreferences.edit().putString(Constants.LOGIN_TAG, code).apply();
+                            sharedPreferences.edit().putString(getResources().getString(R.string.pref_access_code), code).apply();
                             LinkActivity.this.onBackPressed();
                         }
                     }
@@ -75,7 +76,6 @@ public class LinkActivity extends AppCompatActivity {
             }
         });
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

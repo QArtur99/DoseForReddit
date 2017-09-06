@@ -1,33 +1,55 @@
 package com.qartf.doseforreddit.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.transition.TransitionManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.model.PostObject;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.qartf.doseforreddit.R;
+import com.qartf.doseforreddit.adapter.CommentsAdapter;
+import com.qartf.doseforreddit.model.AccessToken;
+import com.qartf.doseforreddit.model.Comment;
+import com.qartf.doseforreddit.model.PostObject;
+import com.qartf.doseforreddit.network.DataLoader;
+import com.qartf.doseforreddit.utility.Constants.Comments;
+import com.qartf.doseforreddit.utility.Constants.Id;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
-public class CommentsActivity extends AppCompatActivity implements View.OnClickListener {
+public class CommentsActivity extends AppCompatActivity implements View.OnClickListener,
+        LoaderManager.LoaderCallbacks, CommentsAdapter.ListItemClickListener {
 
     public static final String DOT = "\u2022";
     public static final String KILO = "K";
@@ -45,25 +67,95 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.downContainer) RelativeLayout downContainer;
     @BindView(R.id.detailContainer) RelativeLayout detailContainer;
     @BindView(R.id.imageContainer) RelativeLayout imageContainer;
+    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.selftext) TextView selftext;
+    @BindView(R.id.commentsNo) TextView commentsNo;
+    @BindView(R.id.loading_indicator) ProgressBar progressBar;
+    @BindView(R.id.fragmentFrame) LinearLayout fragmentFrame;
+    @BindView(R.id.nestedScrollView) NestedScrollView nestedScrollView;
+    @BindView(R.id.swipeRefreshLayout) SwipyRefreshLayout swipyRefreshLayout;
+    @BindView(R.id.spinnerSortBy) Spinner spinnerSortBy;
+
+
     private DecimalFormat decimalFormat = new DecimalFormat("##.#");
     private PostObject post;
+    private AccessToken accessToken;
+    private LinearLayoutManager layoutManager;
+    private CommentsAdapter postsAdapter;
+    private LinearLayout previousViewSelected;
+    private LinearLayout previousViewExpanded;
+    private HashMap<String, String> spinnerMap;
+    private boolean isOpen = false;
+    private boolean isSortByChanged = false;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
         ButterKnife.bind(this);
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setToolbar();
 
-        expandArea.setSelected(true);
-
-        post = new Gson().fromJson(getIntent().getStringExtra("link"), new TypeToken<PostObject>() {
-        }.getType());
+        Intent intent = getIntent();
+        post = new Gson().fromJson(intent.getStringExtra("link"), new TypeToken<PostObject>() {}.getType());
+        accessToken = new Gson().fromJson(intent.getStringExtra("token"), AccessToken.class);
 
         setListeners();
-        loadData();
+        loadPostData();
+        setAdapter(new ArrayList<Comment>());
 
+        setSpinner();
+
+
+    }
+
+    private void setSpinner() {
+        spinnerMap = new HashMap<>();
+        String[] spinnerArray = getResources().getStringArray(R.array.sortComments);
+        String[] spinnerArrayValue = getResources().getStringArray(R.array.sortValueComment);
+        for (int i = 0; i < spinnerArray.length; i++) {
+            spinnerMap.put(spinnerArray[i], spinnerArrayValue[i]);
+        }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, spinnerArray);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSortBy.setAdapter(arrayAdapter);
+        int lastSelected = sharedPreferences.getInt(getResources().getString(R.string.pref_comment_sort_by), 0);
+        spinnerSortBy.setSelection(lastSelected);
+        spinnerSortBy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                sharedPreferences.edit().putInt(getResources().getString(R.string.pref_comment_sort_by), i).apply();
+                String sortBy = (String) adapterView.getAdapter().getItem(i);
+                String sortKey = spinnerMap.get(sortBy);
+                isSortByChanged = true;
+                getComments(sortKey);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+
+        });
+    }
+
+    public void setAdapter(List<Comment> movieList) {
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        layoutManager.setAutoMeasureEnabled(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        postsAdapter = new CommentsAdapter(this, movieList, this);
+        recyclerView.setAdapter(postsAdapter);
+    }
+
+    private void getComments(String sortBy) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Comments.SUBREDDIT, post.subreddit);
+        bundle.putString(Comments.ID, post.id);
+        bundle.putString(Comments.SORT, sortBy);
+        getSupportLoaderManager().restartLoader(Id.COMMENTS, bundle, this).forceLoad();
     }
 
     private void setToolbar() {
@@ -80,7 +172,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         imageContainer.setOnClickListener(this);
     }
 
-    private void loadData() {
+    private void loadPostData() {
         upsFormat();
         title.setText(post.title);
         loadLinkFlairtext();
@@ -89,6 +181,14 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         comments.setText(DOT + post.numComents + " comments");
         timeFormat();
         loadThumnail();
+
+        if (post.selftext != null && !post.selftext.isEmpty()) {
+            selftext.setVisibility(View.VISIBLE);
+            selftext.setText(post.selftext);
+        }
+
+        String commentsNoString = post.numComents + " comments";
+        commentsNo.setText(commentsNoString);
     }
 
     private void loadLinkFlairtext() {
@@ -173,7 +273,6 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -245,7 +344,7 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
             intent = new Intent(this, CommentsActivity.class);
         }
 
-        if(intent != null) {
+        if (intent != null) {
             intent.putExtra("link", link);
             startActivity(intent);
         }
@@ -264,4 +363,93 @@ public class CommentsActivity extends AppCompatActivity implements View.OnClickL
         }
         return true;
     }
+
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case Id.COMMENTS:
+                return new DataLoader(this, accessToken.getAccessToken(), args, Id.COMMENTS);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+        switch (loader.getId()) {
+            case Id.COMMENTS:
+                progressBar.setVisibility(View.GONE);
+                setComments(loader, (List<Comment>) data);
+                break;
+        }
+    }
+
+    private void setComments(Loader loader, List<Comment> data) {
+        if (data != null && !data.isEmpty()) {
+//            emptyView.setVisibility(View.GONE);
+
+            if(isSortByChanged){
+                postsAdapter.clearMovies();
+                isSortByChanged = false;
+            }
+
+            postsAdapter.setMovies(data);
+
+        } else {
+//            emptyView.setVisibility(View.VISIBLE);
+//            if (sortBy.equals(getString(R.string.no_favorite))) {
+//                emptyTitleText.setText(getString(R.string.no_favorite));
+//                emptySubtitleText.setText(getString(R.string.no_favorite_sub_text));
+//            } else {
+//                emptyTitleText.setText(getString(R.string.server_problem));
+//                emptySubtitleText.setText(getString(R.string.server_problem_sub_text));
+//            }
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex, View view) {
+
+    }
+
+    @Override
+    public void onCommentSelected(int clickedItemIndex, View expandableView, View parent) {
+        if (previousViewSelected != null) {
+            previousViewSelected.setActivated(false);
+        }
+        previousViewSelected = (LinearLayout) parent;
+        parent.setActivated(true);
+        actionDetail((LinearLayout) expandableView);
+
+    }
+
+    private void actionDetail(final LinearLayout expandArea) {
+        if (previousViewExpanded != null) {
+            previousViewExpanded.setVisibility(View.GONE);
+            previousViewExpanded.setActivated(false);
+        }
+
+        if (previousViewExpanded == null || !previousViewExpanded.equals(expandArea) || isOpen) {
+            expandArea.setVisibility(View.VISIBLE);
+            expandArea.setActivated(true);
+            expandArea.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TransitionManager.beginDelayedTransition(expandArea);
+//                    notifyDataSetChanged();
+                }
+            });
+            isOpen = false;
+        } else {
+            isOpen = true;
+        }
+        previousViewExpanded = expandArea;
+    }
+
 }

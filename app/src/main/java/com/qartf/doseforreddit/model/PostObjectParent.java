@@ -1,25 +1,14 @@
 package com.qartf.doseforreddit.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class PostObjectParent {
 
+    @SerializedName("children")
     public List<PostObject> postObjectList;
-    public String after = "";
-    public String before = "";
-
-    public PostObjectParent(List<PostObject> postObjectList, JSONObject jsonObject) throws JSONException {
-        this.postObjectList = postObjectList;
-        if (jsonObject.has("after")) {
-            after = jsonObject.getString("after");
-        }
-
-        if (jsonObject.has("before")) {
-            before = jsonObject.getString("before");
-        }
-    }
+    public String after;
+    public String before;
 
 }

@@ -5,13 +5,14 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by ART_F on 2017-09-02.
+ * Created by ART_F on 2017-09-05.
  */
 
-public class Test {
+public class SubredditParent {
 
     @SerializedName("children")
-    public List<TestObject> postObjectList;
+    public List<Subreddit> subredditList;
     public String after;
     public String before;
+
 }

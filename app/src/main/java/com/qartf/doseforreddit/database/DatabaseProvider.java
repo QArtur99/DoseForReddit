@@ -114,7 +114,6 @@ public class DatabaseProvider extends ContentProvider {
             return 0;
         }
 
-
         if (values.containsKey(Accounts.USER_NAME)) {
             String movieId = values.getAsString(Accounts.USER_NAME);
             if (movieId == null) {

@@ -53,6 +53,10 @@
             android:label="@string/app_name"
             android:parentActivityName=".activity.MainActivity"
             android:theme="@style/Theme.AppCompat.Translucent"/>
+        <provider
+            android:name=".database.DatabaseProvider"
+            android:authorities="com.qartf.doseforreddit"
+            android:exported="false" />
     </application>
 
 </manifest>

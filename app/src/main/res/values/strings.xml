@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">Reddit Dose</string>
 
+    //Navigation Drawer
+    <string name="closeDrawer">Navigation View</string>
+    <string name="openDrawer">Navigation View Closed</string>
 
+    //MainActivity pref
+    <string name="pref_post_subreddit" translatable="false">subreddit</string>
+    <string name="pref_post_subreddit_default" translatable="false">popular</string>
+    <string name="pref_post_sort_by" translatable="false">Sort posts by</string>
+    <string name="pref_post_sort_by_default" translatable="false">hot</string>
 
     //Main activity problems
     <string name="no_connection">No internet connection</string>
@@ -11,5 +19,26 @@
     <string name="no_favorite">List of favorite movies is empty </string>
     <string name="no_favorite_sub_text">Please add your favorite movies to the list</string>
     <string name="menu_login">Login</string>
+
+    //Settings
+    <string name="search_posts">Search posts</string>
+    <string name="search_subreddits">Search subreddits</string>
+
+    //Add
+    <string name="editor_insert_movie_successful">Movie added to favorite</string>
+    <string name="editor_insert_movie_failed">Error with adding movie</string>
+
+    //Login
+    <string name="pref_access_code" translatable="false">Code</string>
+    <string name="pref_login_signed_in" translatable="false">Username</string>
+
+    //Comment
+    <string name="pref_comment_sort_by" translatable="false">Sort comments by</string>
+
+    //Search dialog
+    <string name="search">Search</string>
+    <string name="cancel">Cancel</string>
+    <string name="drawerFrontPage">Front page</string>
+
 
 </resources>

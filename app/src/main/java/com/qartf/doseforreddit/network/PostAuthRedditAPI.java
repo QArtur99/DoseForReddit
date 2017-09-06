@@ -3,7 +3,7 @@ package com.qartf.doseforreddit.network;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 
-import com.qartf.doseforreddit.utility.Constants;
+import com.qartf.doseforreddit.utility.Constants.Auth;
 
 import org.json.JSONException;
 
@@ -11,16 +11,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
-
-/**
- * Created by ART_F on 2017-08-30.
- */
 
 public class PostAuthRedditAPI {
 
@@ -29,20 +24,17 @@ public class PostAuthRedditAPI {
         HashMap<String, String> args = new HashMap<>();
         args.put("grant_type", "authorization_code");
         args.put("code", code);
-        args.put("redirect_uri", Constants.REDIRECT_URI);
+        args.put("redirect_uri", Auth.REDIRECT_URI);
 
-        String jsonString = postQueryJSONObject(Constants.ACCESS_TOKEN_URL, Constants.CLIENT_ID, args);
-        return jsonString;
+        return postQueryJSONObject(Auth.ACCESS_TOKEN_URL, basicToken(Auth.CLIENT_ID), args);
     }
-
 
     public static String refreshToken(String refreshToken) throws JSONException, IOException {
         HashMap<String, String> args = new HashMap<>();
         args.put("grant_type", "refresh_token");
         args.put("refresh_token", refreshToken);
 
-        String jsonString = postQueryJSONObject(Constants.ACCESS_TOKEN_URL, Constants.CLIENT_ID, args);
-        return jsonString;
+        return postQueryJSONObject(Auth.ACCESS_TOKEN_URL, basicToken(Auth.CLIENT_ID), args);
     }
 
     public static String revokeTokenAccess(String token) throws JSONException, IOException {
@@ -50,8 +42,7 @@ public class PostAuthRedditAPI {
         args.put("token", token);
         args.put("token_type_hint", "access_token");
 
-        String jsonString = postQueryJSONObject(Constants.REVOKE_TOKEN_URL, Constants.CLIENT_ID, args);
-        return jsonString;
+        return postQueryJSONObject(Auth.REVOKE_TOKEN_URL, basicToken(Auth.CLIENT_ID), args);
     }
 
     public static String revokeRefreshToken(String token) throws JSONException, IOException {
@@ -59,24 +50,33 @@ public class PostAuthRedditAPI {
         args.put("token", token);
         args.put("token_type_hint", "refresh_token");
 
-        String jsonString = postQueryJSONObject(Constants.REVOKE_TOKEN_URL, Constants.CLIENT_ID, args);
-        return jsonString;
+        return postQueryJSONObject(Auth.REVOKE_TOKEN_URL, basicToken(Auth.CLIENT_ID), args);
     }
 
-    public static String appOnly() throws JSONException, IOException {
+    public static String getGuestAccess() throws JSONException, IOException {
         String uuid = UUID.randomUUID().toString();
         HashMap<String, String> args = new HashMap<>();
-        args.put("grant_type", Constants.NO_NAME_GRAND_TYPE);
+        args.put("grant_type", Auth.NO_NAME_GRAND_TYPE);
         args.put("device_id", uuid);
 
-        String jsonString = postQueryJSONObject(Constants.ACCESS_TOKEN_URL, Constants.CLIENT_ID, args);
+        return postQueryJSONObject(Auth.ACCESS_TOKEN_URL, basicToken(Auth.CLIENT_ID), args);
+    }
+
+    public static String getSubreddits(String token, String queryString) throws JSONException, IOException {
+        HashMap<String, String> args = new HashMap<>();
+        args.put("exact", "false");
+        args.put("query", queryString);
+        String url = Auth.BASE_URL_OAUTH + "/api/search_subreddits";
+        String jsonString = postQueryJSONObject(url, bearerToken(token), args);
         return jsonString;
     }
 
-    public static String getPopular(String token) throws JSONException, IOException {
+    public static String postSubscribe(String token, String subscribe, String fullname) throws JSONException, IOException {
         HashMap<String, String> args = new HashMap<>();
-        String url = Constants.BASE_URL_OAUTH + "/r/popular/hot";
-        String jsonString = postQueryJSONObject(url, token, args);
+        args.put("action", subscribe);
+        args.put("sr", fullname);
+        String url = Auth.BASE_URL_OAUTH + "/api/subscribe";
+        String jsonString = postQueryJSONObject(url, bearerToken(token), args);
         return jsonString;
     }
 
@@ -85,19 +85,16 @@ public class PostAuthRedditAPI {
 
         String postData = getUri(args);
 
-        String authString = token + ":";
-        String encodedAuthString = Base64.encodeToString(authString.getBytes(), Base64.NO_WRAP);
-
         HttpURLConnection urlConnection;
         URL url = new URL(urlString);
         urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("POST");
-        urlConnection.setReadTimeout(35000);
-        urlConnection.setConnectTimeout(40000);
+        urlConnection.setReadTimeout(10000);
+        urlConnection.setConnectTimeout(15000);
         urlConnection.setDoOutput(true);
 
         urlConnection.setRequestProperty("User-Agent", "android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)");
-        urlConnection.setRequestProperty("Authorization", "Basic " + encodedAuthString);
+        urlConnection.setRequestProperty("Authorization", token);
 
         OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
         out.write(postData);
@@ -116,6 +113,17 @@ public class PostAuthRedditAPI {
         return jsonString.toString();
     }
 
+    private static String basicToken(String token) {
+        String authString = token + ":";
+        String encodedAuthString = Base64.encodeToString(authString.getBytes(), Base64.NO_WRAP);
+        String newToken = "Basic " + encodedAuthString;
+        return newToken;
+    }
+
+    private static String bearerToken(String token){
+        return "bearer " + token;
+    }
+
     @NonNull
     private static String getUri(HashMap<String, String> args) {
         Set<String> keys = args.keySet();
@@ -127,9 +135,5 @@ public class PostAuthRedditAPI {
             postData += key + "=" + args.get(key);
         }
         return postData;
-    }
-
-    private String toHex(byte[] b) {
-        return String.format("%040x", new BigInteger(1, b));
     }
 }

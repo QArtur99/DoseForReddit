@@ -5,12 +5,14 @@
     <color name="colorPrimaryDark">#b71c1c</color>
     <color name="colorAccent">#2979ff</color>
     <color name="background">#e0e0e0</color>
-    <color name="itemSelector">#e3f2fd</color>
+
+    //Header
+    <color name="username">#212121</color>
+
+    //Transparent
     <color name="transparentActivity">#AA000000</color>
     <color name="transparentActivityToolbar">#212121</color>
     <color name="backgroundExoPlayer">#000000</color>
-
-    <color name="backgroundActionComments">#c8e6c9</color>
 
 
     //POST ROW
@@ -18,5 +20,28 @@
     <color name="backgroundLinkFlair">#cfd8dc</color>
     <color name="arrowColor">#757575</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="itemSelector">#bbdefb</color>
+
+    //Comment
+    <color name="backgroundActionComments">#bbdefb</color>
+    <color name="pointsText">#757575</color>
+    <color name="authorText">#37474f</color>
+
+    //Dialog
+    <color name="dialogTitleBackground">#bbdefb</color>
+    <color name="dialogTitleTextColor">#212121</color>
+    <color name="dialogButtonTextColor">#212121</color>
+
+    //Subreddit
+    <color name="subredditButtonText">#000000</color>
+    <color name="subredditButtonBackgroundSub">#00c853</color>
+    <color name="subredditButtonBackgroundUnSub">#f44336</color>
+    <color name="subredditButtonBackgroundPrivate">#ff9100</color>
+    <color name="subredditIsAdult">#f44336</color>
+    <color name="subredditPrefix">#212121</color>
+    <color name="subredditTitle">#212121</color>
+    <color name="subredditSubscribers">#757575</color>
+
+
 
 </resources>

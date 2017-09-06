@@ -1,5 +1,6 @@
 package com.qartf.doseforreddit.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.CommentsActivity;
 import com.qartf.doseforreddit.activity.ImageActivity;
@@ -25,8 +28,6 @@ import com.qartf.doseforreddit.activity.VideoActivity;
 import com.qartf.doseforreddit.adapter.PostsAdapter;
 import com.qartf.doseforreddit.model.PostObject;
 import com.qartf.doseforreddit.model.PostObjectParent;
-import com.google.gson.Gson;
-import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
     private GridLayoutManager layoutManager;
     private PostsAdapter postsAdapter;
     private String sortBy;
+    private OnImageClickListener mCallback;
 
     @Nullable
     @Override
@@ -58,6 +60,18 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
         mainActivity = ((MainActivity) getActivity());
         setAdapter(new ArrayList<PostObject>());
         return rootView;
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnImageClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnImageClickListener");
+        }
     }
 
     public void setAdapter(List<PostObject> movieList) {
@@ -104,51 +118,61 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
         Intent intent = null;
         String link = "";
         PostObject post = (PostObject) postsAdapter.getDataAtPosition(clickedItemIndex);
-        String postHint = post.postHint;
+        switch (view.getId()) {
+            case R.id.commentsAction:
+                mCallback.onImageSelected(post, view);
+                break;
+            case R.id.imageContainer:
+                String postHint = post.postHint;
+                if (!post.previewGif.isEmpty()) {
+                    String to_remove = "amp;";
+                    link = post.previewGif.replace(to_remove, "");
+                    intent = new Intent(getActivity(), VideoActivity.class);
+                } else if (postHint.equals("link")) {
+                    String to_remove = "amp;";
+                    link = post.previewUrl.replace(to_remove, "");
+                    intent = new Intent(getActivity(), ImageActivity.class);
+                } else if (postHint.equals("rich:video")) {
+                    if (post.domain.contains("youtube.com")) {
+                        Uri uri = Uri.parse(post.url);
+                        String v = uri.getQueryParameter("v");
+                        link = "https://www.youtube.com/embed/" + v;
+                        intent = new Intent(getActivity(), LinkActivity.class);
+                    } else if (post.domain.contains("youtu.be")) {
+                        Uri uri = Uri.parse(post.url);
+                        link = "https://www.youtube.com/embed/" + uri.getLastPathSegment();
+                        intent = new Intent(getActivity(), LinkActivity.class);
+                    } else if (post.domain.contains("gfycat.com")) {
+                        String to_remove = "//";
+                        link = post.url.replace(to_remove, "//fat.") + ".webm";
+                        intent = new Intent(getActivity(), VideoActivity.class);
+                    } else {
+                        String to_remove = "amp;";
+                        link = post.previewUrl.replace(to_remove, "");
+                        intent = new Intent(getActivity(), ImageActivity.class);
+                    }
+                } else if (postHint.equals("image")) {
+                    String to_remove = "amp;";
+                    link = post.previewUrl.replace(to_remove, "");
+                    intent = new Intent(getActivity(), ImageActivity.class);
+                } else if (postHint.equals("self") || post.domain.contains("self") && !post.selftext.isEmpty()) {
+                    link = post.selftext;
+                    intent = new Intent(getActivity(), SelfActivity.class);
+                } else if (postHint.isEmpty()) {
+                    link = new Gson().toJson(post);
+                    intent = new Intent(getActivity(), CommentsActivity.class);
+                }
 
-        if (!post.previewGif.isEmpty()) {
-            String to_remove = "amp;";
-            link = post.previewGif.replace(to_remove, "");
-            intent = new Intent(getActivity(), VideoActivity.class);
-        } else if (postHint.equals("link")) {
-            String to_remove = "amp;";
-            link = post.previewUrl.replace(to_remove, "");
-            intent = new Intent(getActivity(), ImageActivity.class);
-        } else if (postHint.equals("rich:video")) {
-            if (post.domain.contains("youtube.com")) {
-                Uri uri = Uri.parse(post.url);
-                String v = uri.getQueryParameter("v");
-                link = "https://www.youtube.com/embed/" + v;
-                intent = new Intent(getActivity(), LinkActivity.class);
-            } else if (post.domain.contains("youtu.be")) {
-                Uri uri = Uri.parse(post.url);
-                link = "https://www.youtube.com/embed/" + uri.getLastPathSegment();
-                intent = new Intent(getActivity(), LinkActivity.class);
-            } else if (post.domain.contains("gfycat.com")) {
-                String to_remove = "//";
-                link = post.url.replace(to_remove, "//fat.") + ".webm";
-                intent = new Intent(getActivity(), VideoActivity.class);
-            } else {
-                String to_remove = "amp;";
-                link = post.previewUrl.replace(to_remove, "");
-                intent = new Intent(getActivity(), ImageActivity.class);
-            }
-        } else if (postHint.equals("image")) {
-            String to_remove = "amp;";
-            link = post.previewUrl.replace(to_remove, "");
-            intent = new Intent(getActivity(), ImageActivity.class);
-        } else if (postHint.equals("self") || post.domain.contains("self") && !post.selftext.isEmpty()) {
-            link = post.selftext;
-            intent = new Intent(getActivity(), SelfActivity.class);
-        } else if (postHint.isEmpty()) {
-            link = new Gson().toJson(post);
-            intent = new Intent(getActivity(), CommentsActivity.class);
+                if (intent != null) {
+                    intent.putExtra("link", link);
+                    startActivity(intent);
+                }
+                break;
         }
 
-        if (intent != null) {
-            intent.putExtra("link", link);
-            startActivity(intent);
-        }
+    }
 
+    public interface OnImageClickListener {
+        void onImageSelected(Object movie, View view);
     }
 }
