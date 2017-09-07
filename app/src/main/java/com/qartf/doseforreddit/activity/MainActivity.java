@@ -1,5 +1,6 @@
 package com.qartf.doseforreddit.activity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -35,7 +36,10 @@ import android.webkit.CookieSyncManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.database.DatabaseContract;
 import com.qartf.doseforreddit.database.DatabaseHelper;
@@ -71,12 +75,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         SharedPreferences.OnSharedPreferenceChangeListener,
         NavigationView.OnNavigationItemSelectedListener,
         DetailFragment.OnListItemClickListener {
+    private static final String POST_OBJECT_STRING = "postObjectString";
+    private static final String ANONYMOUS = "Anonymous";
 
     @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tabLayout) TabLayout tabLayout;
     @BindView(R.id.navigation_view) NavigationView navigationView;
     @BindView(R.id.drawer) DrawerLayout drawerLayout;
+    @BindView(R.id.adView) AdView adView;
 
     @BindString(R.string.pref_post_subreddit) String prefPostSubreddit;
     @BindString(R.string.pref_post_sort_by) String prefPostSortBy;
@@ -91,15 +98,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private SharedPreferences sharedPreferences;
     private FragmentManager fragmentManager;
     private ActionBar actionBar;
-    private View headerView;
     private TextView headerUsername;
+    private Bundle argsSubredit, argsPost, argsDetail;
+    private String postObjectString;
+    private PostObject postObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_new);
         ButterKnife.bind(this);
-//        MainActivity.this.deleteDatabase("Doseforreddit.db");
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
+
+        if(savedInstanceState != null){
+            postObjectString = savedInstanceState.getString(POST_OBJECT_STRING);
+            if(postObjectString != null &&!postObjectString.isEmpty()){
+                postObject = new Gson().fromJson(postObjectString, new TypeToken<PostObject>() {}.getType());
+            }
+        }
+
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -146,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         drawerToggle.syncState();
 
         listViewFragment = new ListViewFragment();
+        listViewFragment.setArguments(savedInstanceState);
         fragmentManager.beginTransaction()
                 .add(R.id.fragmentFrame, listViewFragment)
                 .commit();
@@ -156,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         headerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), "Anonymous");
-                if (logged.equals("Anonymous")) {
+                String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), ANONYMOUS);
+                if (logged.equals(ANONYMOUS)) {
                     clearCookies();
                     loginReddit();
                 } else {
@@ -171,6 +193,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         getSupportLoaderManager().initLoader(Id.LOAD_USERS, null, this).forceLoad();
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(POST_OBJECT_STRING, postObjectString);
+        outState.putString("bundle", "bundle");
+    }
+
 
     private void loadDetailFragment() {
         if (findViewById(R.id.detailsViewFrame) != null) {
@@ -254,6 +284,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 break;
             case R.id.searchSubreddits:
                 new SearchDialog(this, Id.SEARCH_SUBREDDITS);
+                break;
+            case R.id.refresh:
+                loadFragment(Id.SEARCH_POSTS);
+                getSupportLoaderManager().initLoader(Id.LOAD_USERS, null, this).forceLoad();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -347,16 +381,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 return new DataLoader(this, accessToken.getAccessToken(), Id.ME);
             case Id.POSTS:
                 Bundle argsPostOnly = getPostBundle();
+                argsPost = argsPostOnly;
                 return new DataLoader(this, accessToken.getAccessToken(), argsPostOnly, Id.POSTS);
             case Id.SEARCH_POSTS:
+                argsPost = args;
                 return new DataLoader(this, accessToken.getAccessToken(), args, Id.SEARCH_POSTS);
             case Id.SEARCH_SUBREDDITS:
+                argsSubredit = args;
                 return new DataLoader(this, accessToken.getAccessToken(), args, Id.SEARCH_SUBREDDITS);
             case Id.SUBREDDIT_SUBSCRIBE:
                 return new DataLoader(this, accessToken.getAccessToken(), args, Id.SUBREDDIT_SUBSCRIBE);
             case Id.VOTE:
                 return new DataLoader(this, accessToken.getAccessToken(), args, Id.VOTE);
             case Id.COMMENTS:
+                argsDetail = args;
                 return new DataLoader(this, accessToken.getAccessToken(), args, Id.COMMENTS);
 
         }
@@ -384,7 +422,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader loader, Object data) {
-        if (data != null) {
             switch (loader.getId()) {
                 case Id.LOAD_USERS:
                     actionLoadUsers((Cursor) data);
@@ -420,16 +457,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 case Id.COMMENTS:
                     detailFragment.onLoadFinished(loader, (List<Comment>) data);
             }
-        } else {
-            if (loader.getId() == Id.POSTS) {
-                if (isGuest) {
-                    getSupportLoaderManager().restartLoader(Id.GUEST_AUTH, null, this).forceLoad();
-                } else {
-                    getSupportLoaderManager().restartLoader(Id.USER_REFRESH, null, this).forceLoad();
-                }
-            }
-
-        }
     }
 
     public void loadFragment(int fragmentId) {
@@ -470,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void actionLoadUsers(Cursor cursor) {
-        String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), "Anonymous");
+        String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), ANONYMOUS);
         headerUsername.setText(logged);
         if (cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
             do {
@@ -494,6 +521,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
+    public void restoreDetailFragment() {
+        if(postObject != null && findViewById(R.id.detailsViewFrame) != null) {
+            loadDetailFragment();
+            detailFragment.setPost(postObject);
+        }
+    }
+
+    @Override
+    public void onRefresh(int loaderId) {
+        switch (loaderId){
+            case Id.POSTS:
+                getSupportLoaderManager().restartLoader(Id.POSTS, argsPost, this).forceLoad();
+                break;
+            case Id.SEARCH_POSTS:
+                getSupportLoaderManager().restartLoader(Id.SEARCH_POSTS, argsPost, this).forceLoad();
+                break;
+            case Id.SEARCH_SUBREDDITS:
+                getSupportLoaderManager().restartLoader(Id.SEARCH_SUBREDDITS, argsSubredit, this).forceLoad();
+                break;
+            case Id.COMMENTS:
+                getSupportLoaderManager().restartLoader(Id.COMMENTS, argsDetail, this).forceLoad();
+                break;
+        }
+
+    }
+
+    @Override
     public void onImageSelected(Object object, View view) {
         Subreddit subreddit;
         PostObject postObject;
@@ -505,12 +559,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     loadDetailFragment();
                     detailFragment.setPost(postObject);
                 } else {
-                    String jsonString = new Gson().toJson(postObject);
+                    postObjectString = new Gson().toJson(postObject);
                     String tokenString = new Gson().toJson(accessToken);
                     Intent intent = new Intent(MainActivity.this, CommentsActivity.class);
-                    intent.putExtra("link", jsonString);
+                    intent.putExtra("link", postObjectString);
                     intent.putExtra("token", tokenString);
-                    startActivity(intent);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+                        startActivity(intent, bundle);
+                    } else {
+                        startActivity(intent);
+                    }
                 }
                 break;
             case R.id.shareAction:
@@ -571,9 +630,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             }, 400);
         } else if (key.equals(getResources().getString(R.string.pref_login_signed_in))) {
-            String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), "Anonymous");
+            String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), ANONYMOUS);
             headerUsername.setText(logged);
-            if (logged.equals("Anonymous")) {
+            if (logged.equals(ANONYMOUS)) {
                 isGuest = true;
                 getSupportLoaderManager().restartLoader(Id.GUEST_AUTH, null, this).forceLoad();
             } else {

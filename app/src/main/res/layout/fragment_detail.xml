@@ -46,8 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="?actionBarSize"
-                android:background="@drawable/shape_progress_bar"
-                android:elevation="8dp"/>
+                android:background="@drawable/shape_progress_bar"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"

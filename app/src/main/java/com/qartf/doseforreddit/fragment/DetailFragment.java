@@ -26,12 +26,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.LinkActivity;
-import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.CommentsAdapter;
 import com.qartf.doseforreddit.model.Comment;
 import com.qartf.doseforreddit.model.PostObject;
+import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.ArrayList;
@@ -45,8 +46,8 @@ import butterknife.ButterKnife;
  * Created by ART_F on 2017-09-06.
  */
 
-public class DetailFragment  extends Fragment implements CommentsAdapter.OnListItemClickListener,
-        View.OnClickListener {
+public class DetailFragment extends Fragment implements CommentsAdapter.OnListItemClickListener,
+        View.OnClickListener, SwipyRefreshLayout.OnRefreshListener {
 
 
     public static final String DOT = "\u2022";
@@ -79,13 +80,11 @@ public class DetailFragment  extends Fragment implements CommentsAdapter.OnListI
     private SharedPreferences sharedPreferences;
 
 
-    private LinearLayoutManager layoutManager;
     private CommentsAdapter commentsAdapter;
 
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
     private OnListItemClickListener mCallback;
-    private MainActivity mainActivity;
 
 
     @Override
@@ -105,9 +104,7 @@ public class DetailFragment  extends Fragment implements CommentsAdapter.OnListI
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         ButterKnife.bind(this, rootView);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-
-//        emptyView.setVisibility(View.GONE);
+        swipyRefreshLayout.setOnRefreshListener(this);
 
         Utility.setThumbnailSize(getActivity(), fragmentFrame);
         setListeners();
@@ -116,8 +113,8 @@ public class DetailFragment  extends Fragment implements CommentsAdapter.OnListI
         return rootView;
     }
 
-    private void setData(){
-        if(post != null){
+    private void setData() {
+        if (post != null) {
             loadPostData();
             setSpinner();
         }
@@ -131,9 +128,9 @@ public class DetailFragment  extends Fragment implements CommentsAdapter.OnListI
         shareAction.setOnClickListener(this);
     }
 
-    public void setPost(PostObject postObject){
+    public void setPost(PostObject postObject) {
         this.post = postObject;
-        if(getContext() != null) {
+        if (getContext() != null) {
             setData();
         }
     }
@@ -194,7 +191,7 @@ public class DetailFragment  extends Fragment implements CommentsAdapter.OnListI
 
 
     public void setAdapter(List<Comment> movieList) {
-        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setAutoMeasureEnabled(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -204,30 +201,13 @@ public class DetailFragment  extends Fragment implements CommentsAdapter.OnListI
 
     public void onLoadFinished(Loader loader, List<Comment> data) {
         progressBar.setVisibility(View.GONE);
-        if (true) {
-            if (commentsAdapter != null) {
-                commentsAdapter.clearMovies();
-            }
+        if (commentsAdapter != null) {
+            commentsAdapter.clearMovies();
         }
 
         if (data != null && !data.isEmpty()) {
-//            emptyView.setVisibility(View.GONE);
-
-
             commentsAdapter.setMovies(data);
-
-        } else {
-//            emptyView.setVisibility(View.VISIBLE);
-//            if (sortBy.equals(getString(R.string.no_favorite))) {
-//                emptyTitleText.setText(getString(R.string.no_favorite));
-//                emptySubtitleText.setText(getString(R.string.no_favorite_sub_text));
-//            } else {
-//                emptyTitleText.setText(getString(R.string.server_problem));
-//                emptySubtitleText.setText(getString(R.string.server_problem_sub_text));
-//            }
         }
-
-
     }
 
     @Override
@@ -295,9 +275,19 @@ public class DetailFragment  extends Fragment implements CommentsAdapter.OnListI
         previousViewExpanded = expandArea;
     }
 
+    @Override
+    public void onRefresh(SwipyRefreshLayoutDirection direction) {
+        mCallback.onRefresh(Constants.Id.COMMENTS);
+        swipyRefreshLayout.setRefreshing(false);
+    }
+
     public interface OnListItemClickListener {
+        void onRefresh(int loaderId);
+
         void getComments(PostObject post, String sortBY);
+
         void onClick(PostObject post, View view);
-        void onCommentListItemClick(Comment comment , View view);
+
+        void onCommentListItemClick(Comment comment, View view);
     }
 }
