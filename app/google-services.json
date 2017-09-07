@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "746791023437",
+    "firebase_url": "https://dose-for-reddit.firebaseio.com",
+    "project_id": "dose-for-reddit",
+    "storage_bucket": "dose-for-reddit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746791023437:android:d674f504cb5598b9",
+        "android_client_info": {
+          "package_name": "com.qartf.doseforreddit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "746791023437-6fq7bibk23bfmg6rnrm0ljfkk13ls1lm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qartf.doseforreddit",
+            "certificate_hash": "6b3d0f26852154aafe82cb4a44d763c7cf989f18"
+          }
+        },
+        {
+          "client_id": "746791023437-mjp1d9itj82dhniq47a62250tpmgatkg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx2NeEdcezwjFz94LPiw05mYG2NihT0Vc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "746791023437-mjp1d9itj82dhniq47a62250tpmgatkg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

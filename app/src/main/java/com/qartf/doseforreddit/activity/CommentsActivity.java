@@ -37,8 +37,8 @@ public class CommentsActivity extends AppCompatActivity implements LoaderManager
 
     private PostObject post;
     private AccessToken accessToken;
-    private FragmentManager fragmentManager;
     private DetailFragment detailFragment;
+    private Bundle argsDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class CommentsActivity extends AppCompatActivity implements LoaderManager
         post = new Gson().fromJson(intent.getStringExtra("link"), new TypeToken<PostObject>() {}.getType());
         accessToken = new Gson().fromJson(intent.getStringExtra("token"), AccessToken.class);
 
-        fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         detailFragment = new DetailFragment();
         detailFragment.setPost(post);
         fragmentManager.beginTransaction()
@@ -72,6 +72,16 @@ public class CommentsActivity extends AppCompatActivity implements LoaderManager
         actionBar.setDisplayHomeAsUpEnabled(true);
 
     }
+
+    @Override
+    public void onRefresh(int loaderId) {
+        switch (loaderId) {
+            case Id.COMMENTS:
+                getSupportLoaderManager().restartLoader(Id.COMMENTS, argsDetail, this).forceLoad();
+                break;
+        }
+    }
+
     @Override
     public void getComments(PostObject post, String sortBy) {
         Bundle bundle = new Bundle();
@@ -100,6 +110,7 @@ public class CommentsActivity extends AppCompatActivity implements LoaderManager
     public Loader onCreateLoader(int id, Bundle args) {
         switch (id) {
             case Id.COMMENTS:
+                argsDetail = args;
                 return new DataLoader(this, accessToken.getAccessToken(), args, Id.COMMENTS);
             case Id.VOTE:
                 return new DataLoader(this, accessToken.getAccessToken(), args, Id.VOTE);

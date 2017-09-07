@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@id/commentsNo"
                 android:layout_below="@id/commentsNo"
-                android:text="sorted by:"/>
+                android:text="@string/sorted_by"/>
 
             <RelativeLayout
                 android:id="@+id/spinnerFrame"

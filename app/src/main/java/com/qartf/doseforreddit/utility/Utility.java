@@ -1,11 +1,13 @@
 package com.qartf.doseforreddit.utility;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.View;
@@ -31,8 +33,9 @@ import java.util.TimeZone;
  */
 
 public class Utility {
-    public static final String DOT = "\u2022";
-    public static final String KILO = "K";
+    private static final String DOT = "\u2022";
+    private static final String KILO = "K";
+
     private static DecimalFormat decimalFormat = new DecimalFormat("##.#");
 
     public static void timeFormat(String timeDoubleString, TextView time) {
@@ -120,7 +123,12 @@ public class Utility {
 
         if (intent != null) {
             intent.putExtra("link", link);
-            fragmentActivity.startActivity(intent);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(fragmentActivity).toBundle();
+                fragmentActivity.startActivity(intent, bundle);
+            } else {
+                fragmentActivity.startActivity(intent);
+            }
         }
     }
 
@@ -169,7 +177,7 @@ public class Utility {
         Point size = new Point();
         display.getRealSize(size);
         int height;
-        if(pxToDp(size.x) >= 600 && context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if(pxToDp(size.y) >= 600 && context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             height = size.x / 10;
         }else{
             height = size.x / 5;
@@ -186,17 +194,15 @@ public class Utility {
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getRealSize(size);
-        if(pxToDp(size.x) >= 600 && context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if(pxToDp(size.y) >= 600 && context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             isTablet = true;
         }
         return isTablet;
     }
 
-
-    public static int pxToDp(int px) {
+    private static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
-
 
     public static void upsFormat(TextView score, int upsInteger) {
         if (upsInteger >= 10000) {
