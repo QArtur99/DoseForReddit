@@ -64,7 +64,8 @@
                     android:layout_alignBottom="@+id/spinnerSortBy"
                     android:layout_toEndOf="@+id/spinnerSortBy"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/spinner_arrow"/>
+                    android:src="@drawable/spinner_arrow"
+                    android:contentDescription="@string/sort_method"/>
 
             </RelativeLayout>
 
@@ -89,7 +90,8 @@
             android:layout_margin="4dp"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_share"
-            android:tint="@color/arrowColor"/>
+            android:tint="@color/arrowColor"
+            android:contentDescription="@string/share"/>
     </RelativeLayout>
 
 </LinearLayout>

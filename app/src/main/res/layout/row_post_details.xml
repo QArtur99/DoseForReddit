@@ -33,7 +33,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/up"
-                android:tint="@color/arrowColor"/>
+                android:tint="@color/arrowColor"
+                android:contentDescription="@string/post_vote_up"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -48,7 +49,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/down"
-                android:tint="@color/arrowColor"/>
+                android:tint="@color/arrowColor"
+                android:contentDescription="@string/post_vote_down"/>
         </RelativeLayout>
 
 
@@ -133,6 +135,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/thumbnail"/>
     </RelativeLayout>
 </LinearLayout>

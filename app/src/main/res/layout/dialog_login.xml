@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/dialogTitleBackground"
-            android:text="Do you want to log out?"
+            android:text="@string/do_you_want_to_log_out"
             android:gravity="start"
             android:padding="10dp"
             android:textColor="@color/dialogTitleTextColor"
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Log out" />
+                android:text="@string/log_out" />
 
         </LinearLayout>
     </LinearLayout>

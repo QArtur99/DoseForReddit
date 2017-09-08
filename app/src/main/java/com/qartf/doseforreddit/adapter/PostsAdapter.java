@@ -19,6 +19,7 @@ import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -99,6 +100,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         @BindView(R.id.commentsAction) ImageView commentsAction;
         @BindView(R.id.shareAction) ImageView shareAction;
 
+        @BindString(R.string.comments) String commentsString;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -123,7 +125,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             Utility.loadLinkFlairText(linkFlairText, post.linkFlairText);
             domain.setText("(" + post.domain + ")");
             subreddit.setText(post.subreddit);
-            comments.setText(DOT + post.numComents + " comments");
+            comments.setText(DOT + post.numComents + " " + commentsString);
             Utility.timeFormat(post.createdUTC, time);
             Utility.loadThumbnail(context, post, thumbnail);
         }

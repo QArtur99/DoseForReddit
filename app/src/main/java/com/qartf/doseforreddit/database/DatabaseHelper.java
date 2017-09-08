@@ -57,9 +57,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int rowsUpdated = mainActivity.getContentResolver().update(Accounts.CONTENT_URI, values, selection, selectionArgs);
 
         if (rowsUpdated == 0) {
-            Toast.makeText(mainActivity, mainActivity.getString(R.string.editor_insert_movie_failed) + "Update", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mainActivity, mainActivity.getString(R.string.editor_insert_movie_failed), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(mainActivity, mainActivity.getString(R.string.editor_insert_movie_successful) + "Update", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mainActivity, mainActivity.getString(R.string.editor_insert_movie_successful), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -16,6 +16,7 @@ import com.qartf.doseforreddit.utility.Utility;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -87,6 +88,11 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
         @BindView(R.id.createdTime) TextView createdTime;
         @BindView(R.id.subredditTitleFrame) RelativeLayout subredditTitleFrame;
 
+        @BindString(R.string.subscribers) String subscribers;
+        @BindString(R.string.subsribe) String subsribe;
+        @BindString(R.string.unsubscribe) String unsubscribe;
+        @BindString(R.string.privateSub) String privateSub;
+        @BindString(R.string.is18) String is18;
 
 
         public MyViewHolder(View itemView) {
@@ -106,14 +112,14 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
             setAdultMark(post);
             namePrefix.setText(post.display_name_prefixed);
             title.setText(post.title);
-            String subNo = post.subscribers + " subscribers";
+            String subNo = post.subscribers + " " + subscribers;
             subsribersNo.setText(subNo);
             Utility.timeFormat(post.created_utc, createdTime);
         }
 
         private void setAdultMark(Subreddit post) {
             if (post.over18.equals("true")) {
-                isAdult.setText("18+");
+                isAdult.setText(is18);
             } else {
                 isAdult.setText("");
             }
@@ -123,13 +129,13 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
             isSubscribe.setSelected(false);
             if (subreddit.user_is_subscriber.equals("false")) {
                 isSubscribe.setActivated(false);
-                isSubscribe.setText("subsribe");
+                isSubscribe.setText(subsribe);
             } else if (subreddit.user_is_subscriber.equals("true")) {
                 isSubscribe.setActivated(true);
-                isSubscribe.setText("unsubscribe");
+                isSubscribe.setText(unsubscribe);
             } else if (subreddit.user_is_subscriber.isEmpty()) {
                 isSubscribe.setSelected(true);
-                isSubscribe.setText("private");
+                isSubscribe.setText(privateSub);
             }
         }
 
@@ -142,10 +148,10 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
                     if (!subreddit.user_is_subscriber.isEmpty()) {
                         if (isSubscribe.isActivated()) {
                             isSubscribe.setActivated(false);
-                            isSubscribe.setText("subsribe");
+                            isSubscribe.setText(subsribe);
                         } else {
                             isSubscribe.setActivated(true);
-                            isSubscribe.setText("unsubscribe");
+                            isSubscribe.setText(unsubscribe);
                         }
                         mOnClickListener.onListItemClick(clickedPosition, v);
                     }

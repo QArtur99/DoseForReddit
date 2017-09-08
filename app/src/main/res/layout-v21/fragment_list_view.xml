@@ -36,7 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_empty_inventory"/>
+            android:src="@drawable/ic_empty_inventory"
+            android:contentDescription="@string/error"/>
 
         <TextView
             android:id="@+id/empty_title_text"

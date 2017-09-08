@@ -29,7 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0.2"
-            android:src="@drawable/ic_empty_inventory"/>
+            android:src="@drawable/ic_empty_inventory"
+            android:contentDescription="@string/error"/>
 
     </RelativeLayout>
 </FrameLayout>
