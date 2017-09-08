@@ -15,7 +15,8 @@
         android:layout_margin="4dp"
         android:layout_weight="1"
         android:src="@drawable/ic_arrow_upward"
-        android:tint="@color/arrowColor"/>
+        android:tint="@color/arrowColor"
+        android:contentDescription="@string/comment_vote_up"/>
 
     <ImageView
         android:id="@+id/commentVoteDown"
@@ -24,7 +25,8 @@
         android:layout_margin="4dp"
         android:layout_weight="1"
         android:src="@drawable/ic_arrow_downward"
-        android:tint="@color/arrowColor"/>
+        android:tint="@color/arrowColor"
+        android:contentDescription="@string/comment_vote_down"/>
 
 
 </LinearLayout>

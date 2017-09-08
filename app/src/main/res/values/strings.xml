@@ -32,6 +32,13 @@
     <string name="no_favorite_sub_text">Please add your favorite movies to the list</string>
     <string name="menu_login">Login</string>
 
+    //Subreddit
+    <string name="subscribers">subscribers</string>
+    <string name="subsribe">subsribe</string>
+    <string name="unsubscribe">unsubscribe</string>
+    <string name="privateSub">private</string>
+    <string name="is18">18+</string>
+
     //Settings
     <string name="search_posts">Search posts</string>
     <string name="search_subreddits">Search subreddits</string>
@@ -54,9 +61,25 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="action_refresh">Refresh</string>
+
+    ///xxxx
     <string name="image">image</string>
     <string name="sorted_by">sorted by:</string>
-    ///xxxx
+    <string name="error">Error</string>
+    <string name="logo">Logo</string>
+    <string name="username">Username</string>
+    <string name="comment_vote_up">Comment vote up</string>
+    <string name="comment_vote_down">Comment vote down</string>
+    <string name="post_vote_up">Post vote up</string>
+    <string name="post_vote_down">Post vote down</string>
+    <string name="thumbnail">Thumbnail</string>
+    <string name="sort_method">Sort method</string>
+    <string name="share">Share</string>
+    <string name="comment">Comment</string>
+    <string name="do_you_want_to_log_out">Do you want to log out?</string>
+    <string name="log_out">Log out</string>
+    <string name="enter_search_phrase">Enter search phrase</string>
+    <string name="comments">comments</string>
 
 
 </resources>

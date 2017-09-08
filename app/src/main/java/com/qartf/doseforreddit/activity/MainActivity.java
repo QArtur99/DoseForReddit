@@ -494,6 +494,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         sharedPreferences.edit().putString(getResources().getString(R.string.pref_login_signed_in), userName).apply();
+
+        if(cursor != null){
+            cursor.close();
+        }
     }
 
     private void actionLoadUsers(Cursor cursor) {

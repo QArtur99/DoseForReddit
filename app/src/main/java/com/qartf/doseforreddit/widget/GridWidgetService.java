@@ -126,6 +126,10 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         PostObjectParent postObjectParent = getPosts(accessToken.getAccessToken());
         data = postObjectParent.postObjectList;
 
+        if(cursor != null){
+            cursor.close();
+        }
+
     }
 
     private static String getRefreshToken(String refreshToken) throws IOException, JSONException {

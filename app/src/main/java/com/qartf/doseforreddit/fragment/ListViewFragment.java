@@ -104,11 +104,11 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
         if (postObjectParent != null) {
             List<PostObject> data = postObjectParent.postObjectList;
             loadingIndicator.setVisibility(View.GONE);
-            if (true) {
-                if (postsAdapter != null) {
-                    postsAdapter.clearMovies();
-                }
+
+            if (postsAdapter != null) {
+                postsAdapter.clearMovies();
             }
+
 
             if (data != null && !data.isEmpty()) {
                 emptyView.setVisibility(View.GONE);
@@ -193,7 +193,9 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
 
     public interface OnImageClickListener {
         void restoreDetailFragment();
+
         void onRefresh(int loaderId);
+
         void onImageSelected(Object movie, View view);
     }
 }
