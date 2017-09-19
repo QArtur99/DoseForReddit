@@ -70,7 +70,7 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (OnImageClickListener) context;
+            mCallback = (OnImageClickListener) ((MainActivity) context).listViewFragmentControl;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");

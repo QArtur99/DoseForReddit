@@ -112,12 +112,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
                 layoutManager.setAutoMeasureEnabled(true);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setHasFixedSize(true);
-                CommentsAdapter commentsAdapter;
-                if(Utility.isTablet(context)) {
-                    commentsAdapter = new CommentsAdapter(context, post.commentList, mOnClickListener);
-                }else{
-                    commentsAdapter = new CommentsAdapter(context, post.commentList, mOnClickListener);
-                }
+                CommentsAdapter commentsAdapter = new CommentsAdapter(context, post.commentList, mOnClickListener);
                 recyclerView.setAdapter(commentsAdapter);
             }
         }
@@ -134,12 +129,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
                     break;
                 case R.id.commentItemFrame:
                     mOnClickListener.onCommentSelected(clickedPosition, expandArea, commentFrame);
-                    break;
-                case R.id.imageContainer:
-                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
-                    break;
-                case R.id.commentsAction:
-                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
                     break;
             }
         }

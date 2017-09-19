@@ -41,6 +41,12 @@ public class Constants {
 
     }
 
+    public class Utility{
+        public static final String POST_OBJECT_STRING = "postObjectString";
+        public static final String ANONYMOUS = "Anonymous";
+    }
+
+
     public class Post{
         public static final String SUBREDDIT = "subreddit";
         public static final String SORT_BY = "sort_by";
