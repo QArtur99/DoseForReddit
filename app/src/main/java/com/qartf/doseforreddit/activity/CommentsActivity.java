@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.fragment.DetailFragment;
+import com.qartf.doseforreddit.fragmentControl.DetailFragmentControl;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.model.Comment;
 import com.qartf.doseforreddit.model.PostObject;
@@ -28,8 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CommentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks,
-        DetailFragment.OnListItemClickListener {
+public class CommentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks, DetailFragment.OnListItemClickListener {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
 
@@ -39,6 +39,7 @@ public class CommentsActivity extends AppCompatActivity implements LoaderManager
     private AccessToken accessToken;
     private DetailFragment detailFragment;
     private Bundle argsDetail;
+    public DetailFragmentControl detailFragmentControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class CommentsActivity extends AppCompatActivity implements LoaderManager
             return;
         }
 
-
+//        detailFragmentControl = new DetailFragmentControl(this);
         setToolbar();
 
         Intent intent = getIntent();

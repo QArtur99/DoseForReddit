@@ -29,6 +29,7 @@ import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.LinkActivity;
+import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.CommentsAdapter;
 import com.qartf.doseforreddit.model.Comment;
 import com.qartf.doseforreddit.model.PostObject;
@@ -91,7 +92,12 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (OnListItemClickListener) context;
+            String a  = context.getClass().getName();
+            if(a.equals("com.qartf.doseforreddit.activity.CommentsActivity")){
+                mCallback = (OnListItemClickListener) context;
+            }else{
+                mCallback = (OnListItemClickListener) ((MainActivity) context).detailFragmentControl;
+            }
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
@@ -283,11 +289,8 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
 
     public interface OnListItemClickListener {
         void onRefresh(int loaderId);
-
         void getComments(PostObject post, String sortBY);
-
         void onClick(PostObject post, View view);
-
         void onCommentListItemClick(Comment comment, View view);
     }
 }
