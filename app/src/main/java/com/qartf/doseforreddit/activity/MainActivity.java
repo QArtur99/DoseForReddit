@@ -50,6 +50,7 @@ import com.qartf.doseforreddit.model.PostObject;
 import com.qartf.doseforreddit.model.PostObjectParent;
 import com.qartf.doseforreddit.model.SubredditParent;
 import com.qartf.doseforreddit.network.DataLoader;
+import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Constants.Auth;
 import com.qartf.doseforreddit.utility.Constants.Id;
@@ -82,10 +83,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.navigation_view) NavigationView navigationView;
     @BindView(R.id.drawer) DrawerLayout drawerLayout;
     @BindView(R.id.adView) AdView adView;
-    @BindString(R.string.pref_post_subreddit) String prefPostSubreddit;
-    @BindString(R.string.pref_post_sort_by) String prefPostSortBy;
+    @BindString(R.string.pref_post_subreddit) public String prefPostSubreddit;
+    @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
     private ActionBarDrawerToggle drawerToggle;
-    private ListViewFragment listViewFragment;
+    public ListViewFragment listViewFragment;
     private SubredditListViewFragment subredditListViewFragment;
     private boolean isLoginCode = false;
     private boolean isGuest = true;
@@ -535,7 +536,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     isGuest = false;
                 }
             } while (cursor.moveToNext());
-            getSupportLoaderManager().restartLoader(Id.USER_REFRESH, null, this).forceLoad();
+//            getSupportLoaderManager().restartLoader(Id.USER_REFRESH, null, this).forceLoad();
+            RetrofitControl retrofitControl = new RetrofitControl(MainActivity.this);
+
+            retrofitControl.refreshToken();
         } else {
             isGuest = true;
             getSupportLoaderManager().restartLoader(Id.GUEST_AUTH, null, this).forceLoad();

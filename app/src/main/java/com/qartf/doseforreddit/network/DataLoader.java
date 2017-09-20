@@ -177,7 +177,7 @@ public class DataLoader extends AsyncTaskLoader<Object> {
 
         String jsonString = GetAuthRedditAPI.getPopular(accessTokenString, subreddit, subredditSortBy);
         JSONObject jsonObject = new JSONObject(jsonString).getJSONObject("data");
-        PostObjectParent postObjectParent = new Gson().fromJson(jsonObject.toString(), PostObjectParent.class);
+        PostObjectParent postObjectParent = new Gson().fromJson(jsonString, PostObjectParent.class);
         return postObjectParent;
     }
 
