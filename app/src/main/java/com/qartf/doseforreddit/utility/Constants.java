@@ -22,6 +22,7 @@ public class Constants {
         public static final String REVOKE_TOKEN_URL = "https://www.reddit.com/api/v1/revoke_token";
 
         public static final String NO_NAME_GRAND_TYPE = "https://oauth.reddit.com/grants/installed_client";
+        public static final String BASE_URL = "https://www.reddit.com";
         public static final String BASE_URL_OAUTH = "https://oauth.reddit.com";
     }
 

@@ -64,5 +64,9 @@ dependencies {
     //SwipyRefresh
     compile 'com.github.orangegangsters:swipy:1.2.3@aar'
     testCompile 'junit:junit:4.12'
+    //Retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    //Retrofit Gson converter
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
