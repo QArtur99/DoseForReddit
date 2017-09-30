@@ -1,6 +1,7 @@
 package com.qartf.doseforreddit.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.PostsAdapter;
 import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.model.PostParent;
+import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.ArrayList;
@@ -48,7 +51,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
     private GridLayoutManager layoutManager;
     private PostsAdapter postsAdapter;
     private String sortBy;
-    private OnImageClickListener mCallback;
+    private ListViewFragmentInterface mCallback;
     private int loaderId;
     private Bundle bundle;
     private SharedPreferences sharedPreferences;
@@ -82,7 +85,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (OnImageClickListener) ((MainActivity) context).listViewFragmentControl;
+            mCallback = (ListViewFragmentInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
@@ -174,24 +177,40 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
                 Utility.startIntentPreview(getActivity(), post);
                 break;
             case R.id.commentsAction:
-                sharedPreferences.edit().putInt(getString(R.string.pref_lastClicked), clickedItemIndex).apply();
-                mCallback.onImageSelected(post, view);
+                if (mainActivity.findViewById(R.id.detailsViewFrame) != null) {
+                    mCallback.loadDetailFragment();
+                    mCallback.setPost(post);
+                } else {
+                    mCallback.startDetailActivity(post);
+                }
                 break;
-            default:
-                mCallback.onImageSelected(post, view);
+            case R.id.shareAction:
+                getActivity().startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(mainActivity)
+                        .setType("text/plain")
+                        .setText(post.url)
+                        .getIntent(), getActivity().getResources().getString(R.string.action_share)));
+                break;
+            case R.id.upContainer:
+                mCallback.getRetrofitControl().postVote("1", post.name);
+                break;
+            case R.id.downContainer:
+                mCallback.getRetrofitControl().postVote("-1", post.name);
+                break;
         }
 
     }
 
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        mCallback.onRefresh(loaderId);
+        mCallback.getRetrofitControl().getSubredditPosts();
         swipyRefreshLayout.setRefreshing(false);
     }
 
-    public interface OnImageClickListener {
+    public interface ListViewFragmentInterface {
+        RetrofitControl getRetrofitControl();
         void restoreDetailFragment();
-        void onRefresh(int loaderId);
-        void onImageSelected(Object movie, View view);
+        void loadDetailFragment();
+        void setPost(Post post);
+        void startDetailActivity(Post post);
     }
 }

@@ -5,11 +5,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.database.DatabaseContract.Accounts;
 import com.qartf.doseforreddit.model.AccessToken;
 
@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public static void insertAccount(MainActivity mainActivity, String userName, AccessToken accessToken) {
+    public static void insertAccount(AppCompatActivity mainActivity, String userName, AccessToken accessToken) {
         ContentValues values = new ContentValues();
         values.put(Accounts.USER_NAME, userName);
         String jsonString = new Gson().toJson(accessToken);
@@ -47,7 +47,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public static void updateAccount(MainActivity mainActivity, String userName, AccessToken accessToken) {
+    public static void updateAccount(AppCompatActivity mainActivity, String userName, AccessToken accessToken) {
         String jsonString = new Gson().toJson(accessToken);
         ContentValues values = new ContentValues();
         values.put(Accounts.ACCESS_TOKEN, jsonString);

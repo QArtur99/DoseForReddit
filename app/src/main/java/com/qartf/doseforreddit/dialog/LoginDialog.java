@@ -4,9 +4,9 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.MainActivity;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -19,11 +19,9 @@ import butterknife.OnClick;
 public class LoginDialog {
     @BindString(R.string.pref_login_signed_in) String prefLoginSignedIn;
     private AlertDialog dialog;
-    private MainActivity mainActivity;
     private SharedPreferences sharedPreferences;
 
-    public LoginDialog(MainActivity mainActivity, SharedPreferences sharedPreferences) {
-        this.mainActivity = mainActivity;
+    public LoginDialog(AppCompatActivity mainActivity, SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
         dialog = new AlertDialog.Builder(mainActivity)
                 .setView(R.layout.dialog_login)

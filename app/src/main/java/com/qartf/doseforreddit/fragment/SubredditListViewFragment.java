@@ -22,6 +22,7 @@ import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.SubredditAdapter;
 import com.qartf.doseforreddit.model.Subreddit;
 import com.qartf.doseforreddit.model.SubredditParent;
+import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Utility;
 
@@ -48,7 +49,7 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
     private MainActivity mainActivity;
     private GridLayoutManager layoutManager;
     private SubredditAdapter subredditAdapter;
-    private OnImageClickListener mCallback;
+    private ShubredditListViewFragmentInterface mCallback;
     private View rootView;
 
     @Nullable
@@ -69,7 +70,7 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (OnImageClickListener) ((MainActivity) context).listViewFragmentControl;
+            mCallback = (ShubredditListViewFragmentInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
@@ -136,18 +137,26 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
     @Override
     public void onListItemClick(int clickedItemIndex, View view) {
         Subreddit subreddit = (Subreddit) subredditAdapter.getDataAtPosition(clickedItemIndex);
-        mCallback.onImageSelected(subreddit, view);
+        switch (view.getId()) {
+            case R.id.isSubscribe:
+                String subscribe = subreddit.subscribers.equals("true") ? Constants.Subscribe.UN_SUB : Constants.Subscribe.SUB;
+                mCallback.getRetrofitControl().postSubscribe(subscribe, subreddit.name);
+                break;
+            case R.id.subredditTitleFrame:
+                mainActivity.loadFragment(Constants.Id.SEARCH_POSTS);
+                mainActivity.sharedPreferences.edit().putString(mainActivity.getResources().getString(R.string.pref_post_subreddit), subreddit.display_name).apply();
+                break;
+        }
     }
 
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        mCallback.onRefresh(Constants.Id.SEARCH_SUBREDDITS);
+        mCallback.getRetrofitControl().searchSubreddits();
         swipyRefreshLayout.setRefreshing(false);
     }
 
-    public interface OnImageClickListener {
+    public interface ShubredditListViewFragmentInterface {
+        RetrofitControl getRetrofitControl();
         void restoreDetailFragment();
-        void onRefresh(int loaderId);
-        void onImageSelected(Object movie, View view);
     }
 }
