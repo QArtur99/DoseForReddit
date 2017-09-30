@@ -63,10 +63,10 @@ public class SearchDialog {
 
         if(searchId == Id.SEARCH_POSTS) {
             sharedPreferences.edit().putString(prefSearchPost, queryString).apply();
-            mainActivity.retrofitControl.searchPosts();
+            mainActivity.getRetrofitControl().searchPosts();
         }else if(searchId == Id.SEARCH_SUBREDDITS){
             sharedPreferences.edit().putString(prefSearchSubreddit, queryString).apply();
-            mainActivity.retrofitControl.searchSubreddits();
+            mainActivity.getRetrofitControl().searchSubreddits();
         }
 
         if (dialog != null) {
