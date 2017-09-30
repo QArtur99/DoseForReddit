@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,17 +28,17 @@ import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.LinkActivity;
-import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.CommentsAdapter;
 import com.qartf.doseforreddit.model.Comment;
-import com.qartf.doseforreddit.model.PostObject;
-import com.qartf.doseforreddit.utility.Constants;
+import com.qartf.doseforreddit.model.Post;
+import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -73,9 +72,11 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
     @BindView(R.id.nestedScrollView) NestedScrollView nestedScrollView;
     @BindView(R.id.swipeRefreshLayout) SwipyRefreshLayout swipyRefreshLayout;
     @BindView(R.id.spinnerSortBy) Spinner spinnerSortBy;
+    @BindString(R.string.pref_post_detail_sub) String prefPostDetailSub;
+    @BindString(R.string.pref_post_detail_id) String prefPostDetailId;
+    @BindString(R.string.pref_post_detail_sort_key) String prefPostDetailSortKey;
 
-
-    private PostObject post;
+    private Post post;
     private HashMap<String, String> spinnerMap;
     private boolean isOpen = false;
     private SharedPreferences sharedPreferences;
@@ -85,19 +86,14 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
 
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
-    private OnListItemClickListener mCallback;
+    private DetailFragmentInterface mCallback;
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            String a  = context.getClass().getName();
-            if(a.equals("com.qartf.doseforreddit.activity.CommentsActivity")){
-                mCallback = (OnListItemClickListener) context;
-            }else{
-                mCallback = (OnListItemClickListener) ((MainActivity) context).detailFragmentControl;
-            }
+            mCallback = (DetailFragmentInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
@@ -134,8 +130,8 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
         shareAction.setOnClickListener(this);
     }
 
-    public void setPost(PostObject postObject) {
-        this.post = postObject;
+    public void setPost(Post post) {
+        this.post = post;
         if (getContext() != null) {
             setData();
         }
@@ -179,7 +175,11 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
                 sharedPreferences.edit().putInt(getResources().getString(R.string.pref_comment_sort_by), i).apply();
                 String sortBy = (String) adapterView.getAdapter().getItem(i);
                 String sortKey = spinnerMap.get(sortBy);
-                getComments(sortKey);
+
+                sharedPreferences.edit().putString(prefPostDetailId, post.id).apply();
+                sharedPreferences.edit().putString(prefPostDetailSortKey, sortKey).apply();
+                sharedPreferences.edit().putString(prefPostDetailSub, post.subreddit).apply();
+                mCallback.getRetrofitControl().getComments();
             }
 
             @Override
@@ -190,12 +190,6 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
         });
     }
 
-
-    private void getComments(String sortBy) {
-        mCallback.getComments(post, sortBy);
-    }
-
-
     public void setAdapter(List<Comment> movieList) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setAutoMeasureEnabled(true);
@@ -205,7 +199,7 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
         recyclerView.setAdapter(commentsAdapter);
     }
 
-    public void onLoadFinished(Loader loader, List<Comment> data) {
+    public void onLoadFinished(List<Comment> data) {
         progressBar.setVisibility(View.GONE);
         if (commentsAdapter != null) {
             commentsAdapter.clearMovies();
@@ -220,10 +214,10 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.upContainer:
-                mCallback.onClick(post, v);
+                mCallback.getRetrofitControl().postVote("1", post.name);
                 break;
             case R.id.downContainer:
-                mCallback.onClick(post, v);
+                mCallback.getRetrofitControl().postVote("-1", post.name);
                 break;
             case R.id.detailContainer:
                 Intent intent = new Intent(getActivity(), LinkActivity.class);
@@ -246,7 +240,14 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
     @Override
     public void onCommentListItemClick(int clickedItemIndex, View view) {
         Comment comment = (Comment) commentsAdapter.getDataAtPosition(clickedItemIndex);
-        mCallback.onCommentListItemClick(comment, view);
+        switch (view.getId()) {
+            case R.id.commentVoteUp:
+                mCallback.getRetrofitControl().postVote("1", comment.name);
+                break;
+            case R.id.commentVoteDown:
+                mCallback.getRetrofitControl().postVote("-1", comment.name);
+                break;
+        }
     }
 
     @Override
@@ -283,14 +284,11 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
 
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        mCallback.onRefresh(Constants.Id.COMMENTS);
+        mCallback.getRetrofitControl().getComments();
         swipyRefreshLayout.setRefreshing(false);
     }
 
-    public interface OnListItemClickListener {
-        void onRefresh(int loaderId);
-        void getComments(PostObject post, String sortBY);
-        void onClick(PostObject post, View view);
-        void onCommentListItemClick(Comment comment, View view);
+    public interface DetailFragmentInterface {
+        RetrofitControl getRetrofitControl();
     }
 }

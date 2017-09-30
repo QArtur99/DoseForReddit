@@ -13,8 +13,8 @@ import com.google.gson.Gson;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.database.DatabaseContract;
 import com.qartf.doseforreddit.model.AccessToken;
-import com.qartf.doseforreddit.model.PostObject;
-import com.qartf.doseforreddit.model.PostObjectParent;
+import com.qartf.doseforreddit.model.Post;
+import com.qartf.doseforreddit.model.PostParent;
 import com.qartf.doseforreddit.network.GetAuthRedditAPI;
 import com.qartf.doseforreddit.network.PostAuthRedditAPI;
 
@@ -34,7 +34,7 @@ public class GridWidgetService extends RemoteViewsService {
 
 class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
-    private List<PostObject> data;
+    private List<Post> data;
     private static AccessToken accessToken;
 
     public GridRemoteViewsFactory(Context applicationContext) {
@@ -123,8 +123,8 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         } else {
             getGuestAccess();
         }
-        PostObjectParent postObjectParent = getPosts(accessToken.getAccessToken());
-        data = postObjectParent.postObjectList;
+        PostParent postParent = getPosts(accessToken.getAccessToken());
+        data = postParent.postList;
 
         if(cursor != null){
             cursor.close();
@@ -144,12 +144,12 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         return accessToken.getAccessToken();
     }
 
-    private PostObjectParent getPosts(String accessTokenString) throws IOException, JSONException {
+    private PostParent getPosts(String accessTokenString) throws IOException, JSONException {
 
         String jsonString = GetAuthRedditAPI.getPopular(accessTokenString, "popular", "hot");
         JSONObject jsonObject = new JSONObject(jsonString).getJSONObject("data");
-        PostObjectParent postObjectParent = new Gson().fromJson(jsonObject.toString(), PostObjectParent.class);
-        return postObjectParent;
+        PostParent postParent = new Gson().fromJson(jsonObject.toString(), PostParent.class);
+        return postParent;
     }
 
 }

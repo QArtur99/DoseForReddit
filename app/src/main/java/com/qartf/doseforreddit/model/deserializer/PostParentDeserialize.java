@@ -8,8 +8,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.qartf.doseforreddit.model.PostObject;
-import com.qartf.doseforreddit.model.PostObjectParent;
+import com.qartf.doseforreddit.model.Post;
+import com.qartf.doseforreddit.model.PostParent;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -18,25 +18,24 @@ import java.util.List;
  * Created by ART_F on 2017-09-20.
  */
 
-public class PostObjectParentDeserialize implements JsonDeserializer<PostObjectParent> {
+public class PostParentDeserialize implements JsonDeserializer<PostParent> {
 
     @Override
-    public PostObjectParent deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public PostParent deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         JsonObject data = jsonObject.getAsJsonObject("data");
-        List<PostObject> commentList = null;
         JsonArray array = data.getAsJsonArray("children");
-        commentList = new Gson().fromJson(array.toString(), new TypeToken<List<PostObject>>() {}.getType());
+        List<Post> commentList = new Gson().fromJson(array.toString(), new TypeToken<List<Post>>() {}.getType());
 
 
-        PostObjectParent postObjectParent = new PostObjectParent(
+        PostParent postParent = new PostParent(
                 commentList,
                 getNullAsEmptyString(data.get("after")),
                 getNullAsEmptyString(data.get("before"))
         );
 
 
-        return postObjectParent;
+        return postParent;
     }
 
     private String getNullAsEmptyString(JsonElement jsonElement) {

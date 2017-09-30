@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.LinkActivity;
-import com.qartf.doseforreddit.model.PostObject;
+import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.List;
@@ -28,13 +28,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     public static final String DOT = "\u2022";
     final private ListItemClickListener mOnClickListener;
 
-    private List<PostObject> data;
+    private List<Post> data;
     private LinearLayout previousView;
     private boolean isOpen = false;
     private Context context;
 
 
-    public PostsAdapter(Context context, List<PostObject> myDataset, ListItemClickListener listener) {
+    public PostsAdapter(Context context, List<Post> myDataset, ListItemClickListener listener) {
         this.context = context;
         data = myDataset;
         mOnClickListener = listener;
@@ -68,12 +68,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         notifyDataSetChanged();
     }
 
-    public void setMovies(List<PostObject> data) {
+    public void setMovies(List<Post> data) {
         this.data.addAll(data);
         notifyDataSetChanged();
     }
 
-    public List<PostObject> getData() {
+    public List<Post> getData() {
         return data;
     }
 
@@ -115,11 +115,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         }
 
         public void bind(int position) {
-            PostObject post = (PostObject) getDataAtPosition(position);
+            Post post = (Post) getDataAtPosition(position);
             loadData(post);
         }
 
-        private void loadData(PostObject post) {
+        private void loadData(Post post) {
             Utility.upsFormat(ups, Integer.valueOf(post.ups));
             title.setText(post.title);
             Utility.loadLinkFlairText(linkFlairText, post.linkFlairText);
@@ -168,7 +168,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         @Override
         public boolean onLongClick(View view) {
             int clickedPosition = getAdapterPosition();
-            PostObject post = (PostObject) getDataAtPosition(clickedPosition);
+            Post post = (Post) getDataAtPosition(clickedPosition);
             Intent intent = new Intent(context, LinkActivity.class);
             intent.putExtra("link", post.url);
             context.startActivity(intent);

@@ -3,7 +3,6 @@ package com.qartf.doseforreddit.dialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
@@ -12,8 +11,6 @@ import android.widget.TextView;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.utility.Constants.Id;
-import com.qartf.doseforreddit.utility.Constants.Post;
-import com.qartf.doseforreddit.utility.Constants.Search;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -27,6 +24,9 @@ public class SearchDialog {
     @BindString(R.string.search_subreddits) String searchSubreddits;
     @BindString(R.string.pref_post_subreddit) String prefSubredditKey;
     @BindString(R.string.pref_post_subreddit_default) String prefSubredditDefault;
+    @BindString(R.string.pref_search_post) String prefSearchPost;
+    @BindString(R.string.pref_search_subreddit) String prefSearchSubreddit;
+    @BindString(R.string.pref_empty_tag) String prefEmptyTag;
     private AlertDialog dialog;
     private MainActivity mainActivity;
     private int searchId;
@@ -58,16 +58,16 @@ public class SearchDialog {
         mainActivity.loadFragment(searchId);
 
         String queryString = searchDialogEditText.getText().toString();
-        Bundle args = new Bundle();
-        args.putString(Search.QUERY, queryString);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mainActivity);
 
         if(searchId == Id.SEARCH_POSTS) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mainActivity);
-            String subreddit = sharedPreferences.getString(prefSubredditKey, prefSubredditDefault);
-            args.putString(Post.SUBREDDIT, subreddit);
+            sharedPreferences.edit().putString(prefSearchPost, queryString).apply();
+            mainActivity.retrofitControl.searchPosts();
+        }else if(searchId == Id.SEARCH_SUBREDDITS){
+            sharedPreferences.edit().putString(prefSearchSubreddit, queryString).apply();
+            mainActivity.retrofitControl.searchSubreddits();
         }
-
-        mainActivity.getSupportLoaderManager().restartLoader(searchId, args, mainActivity).forceLoad();
 
         if (dialog != null) {
             dialog.dismiss();

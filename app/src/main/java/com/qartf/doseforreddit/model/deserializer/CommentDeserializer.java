@@ -21,6 +21,7 @@ public class CommentDeserializer implements JsonDeserializer<Comment> {
 
     @Override
     public Comment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+
         JsonObject jsonObject = json.getAsJsonObject();
         JsonObject data = jsonObject.getAsJsonObject("data");
         List<Comment> commentList = null;
@@ -30,6 +31,7 @@ public class CommentDeserializer implements JsonDeserializer<Comment> {
             JsonArray array = datax.getAsJsonArray("children");
             commentList = new Gson().fromJson(array.toString(), new TypeToken<List<Comment>>() {}.getType());
         }
+
         Comment comment = new Comment(
                 getNullAsEmptyString(jsonObject.get("kind")),
                 getNullAsEmptyString(data.get("subreddit_id")),

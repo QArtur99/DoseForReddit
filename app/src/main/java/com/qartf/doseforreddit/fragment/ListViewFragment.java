@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,8 +23,8 @@ import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutD
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.PostsAdapter;
-import com.qartf.doseforreddit.model.PostObject;
-import com.qartf.doseforreddit.model.PostObjectParent;
+import com.qartf.doseforreddit.model.Post;
+import com.qartf.doseforreddit.model.PostParent;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.ArrayList;
@@ -66,7 +65,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
         swipyRefreshLayout.setOnRefreshListener(this);
         emptyView.setVisibility(View.GONE);
         mainActivity = ((MainActivity) getActivity());
-        setAdapter(new ArrayList<PostObject>());
+        setAdapter(new ArrayList<Post>());
         bundle = getArguments();
         getBundleData();
 
@@ -90,7 +89,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
         }
     }
 
-    public void setAdapter(List<PostObject> movieList) {
+    public void setAdapter(List<Post> movieList) {
         layoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -99,10 +98,9 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
     }
 
 
-    public void onLoadFinished(Loader loader, PostObjectParent postObjectParent) {
-        loaderId = loader.getId();
-        if (postObjectParent != null) {
-            List<PostObject> data = postObjectParent.postObjectList;
+    public void onLoadFinished(PostParent postParent) {
+        if (postParent != null) {
+            List<Post> data = postParent.postList;
             loadingIndicator.setVisibility(View.GONE);
 
             if (postsAdapter != null) {
@@ -170,7 +168,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
 
     @Override
     public void onListItemClick(int clickedItemIndex, View view) {
-        PostObject post = (PostObject) postsAdapter.getDataAtPosition(clickedItemIndex);
+        Post post = (Post) postsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
             case R.id.imageContainer:
                 Utility.startIntentPreview(getActivity(), post);
