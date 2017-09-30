@@ -4,7 +4,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.qartf.doseforreddit.model.deserializer.PostDeserializer;
 
 @JsonAdapter(PostDeserializer.class)
-public class PostObject {
+public class Post {
 
     public String kind;
     public String domain;
@@ -31,7 +31,7 @@ public class PostObject {
     public String numComents;
 
 
-    public PostObject(String kind, String domain, String subreddit, String selftext, String linkFlairText, String id, String title, String previewUrl, String previewGif, String thumbnail, String subRedditId, String postHint, String parentWhiteListStatus, String name, String permaLink, String subRedditType, String url, String whiteListStatus, String author, String createdUTC, String subredditNamePrefixed, String ups, String numComents) {
+    public Post(String kind, String domain, String subreddit, String selftext, String linkFlairText, String id, String title, String previewUrl, String previewGif, String thumbnail, String subRedditId, String postHint, String parentWhiteListStatus, String name, String permaLink, String subRedditType, String url, String whiteListStatus, String author, String createdUTC, String subredditNamePrefixed, String ups, String numComents) {
         this.kind = kind;
         this.domain = domain;
         this.subreddit = subreddit;

@@ -6,7 +6,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -86,7 +85,7 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
     }
 
 
-    public void onLoadFinished(Loader loader, SubredditParent subredditParent) {
+    public void onLoadFinished(SubredditParent subredditParent) {
         if (subredditParent != null) {
             List<Subreddit> data = subredditParent.subredditList;
             loadingIndicator.setVisibility(View.GONE);

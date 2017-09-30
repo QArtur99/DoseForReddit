@@ -25,7 +25,7 @@ import com.qartf.doseforreddit.activity.ImageActivity;
 import com.qartf.doseforreddit.activity.LinkActivity;
 import com.qartf.doseforreddit.activity.SelfActivity;
 import com.qartf.doseforreddit.activity.VideoActivity;
-import com.qartf.doseforreddit.model.PostObject;
+import com.qartf.doseforreddit.model.Post;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -88,7 +88,7 @@ public class Utility {
         return -1;
     }
     
-    public static void startIntentPreview(FragmentActivity fragmentActivity, PostObject post){
+    public static void startIntentPreview(FragmentActivity fragmentActivity, Post post){
         Intent intent = null;
         String link = "";
         String postHint = post.postHint;
@@ -135,7 +135,7 @@ public class Utility {
         }
     }
 
-    public static void loadThumbnail(Context context, PostObject post, ImageView thumbnail) {
+    public static void loadThumbnail(Context context, Post post, ImageView thumbnail) {
         if(!post.previewUrl.isEmpty() && checkThumbnail(post.thumbnail)){
             String to_remove = "amp;";
             String new_string = post.previewUrl.replace(to_remove, "");

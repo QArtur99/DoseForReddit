@@ -5,18 +5,18 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.qartf.doseforreddit.model.PostObject;
+import com.qartf.doseforreddit.model.Post;
 
 import java.lang.reflect.Type;
 
-public class PostDeserializer implements JsonDeserializer<PostObject> {
-    PostObject date;
+public class PostDeserializer implements JsonDeserializer<Post> {
+    Post date;
 
     @Override
-    public PostObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public Post deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         if (jsonObject.has("postHint")) {
-            date = new PostObject(
+            date = new Post(
                     jsonObject.get("kind").getAsString(),
                     jsonObject.get("domain").getAsString(),
                     jsonObject.get("subreddit").getAsString(),
@@ -45,7 +45,7 @@ public class PostDeserializer implements JsonDeserializer<PostObject> {
             JsonObject data = jsonObject.getAsJsonObject("data");
             JsonObject preview = checkImages(data);
 
-            date = new PostObject(
+            date = new Post(
                     getNullAsEmptyString(jsonObject.get("kind")),
                     getNullAsEmptyString(data.get("domain")),
                     getNullAsEmptyString(data.get("subreddit")),

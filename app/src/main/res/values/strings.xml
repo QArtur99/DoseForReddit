@@ -23,6 +23,16 @@
     <string name="pref_post_sort_by" translatable="false">Sort posts by</string>
     <string name="pref_post_sort_by_default" translatable="false">hot</string>
 
+    <string name="pref_post_detail_sub" translatable="false">Post detail sub</string>
+    <string name="pref_post_detail_id" translatable="false">Post detail id</string>
+    <string name="pref_post_detail_sort_key" translatable="false">Post detail sort key</string>
+
+    <string name="pref_search_post" translatable="false">Search Post</string>
+    <string name="pref_search_subreddit" translatable="false">Search Subreddit</string>
+    <string name="pref_empty_tag" translatable="false"/>
+
+
+
     //Main activity problems
     <string name="no_connection">No internet connection</string>
     <string name="no_connection_sub_text">Please fix your internet connection</string>

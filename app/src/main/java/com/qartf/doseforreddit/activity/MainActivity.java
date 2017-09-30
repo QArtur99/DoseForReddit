@@ -42,22 +42,14 @@ import com.qartf.doseforreddit.dialog.SearchDialog;
 import com.qartf.doseforreddit.fragment.DetailFragment;
 import com.qartf.doseforreddit.fragment.ListViewFragment;
 import com.qartf.doseforreddit.fragment.SubredditListViewFragment;
-import com.qartf.doseforreddit.fragmentControl.DetailFragmentControl;
 import com.qartf.doseforreddit.fragmentControl.ListViewFragmentControl;
 import com.qartf.doseforreddit.model.AccessToken;
-import com.qartf.doseforreddit.model.Comment;
-import com.qartf.doseforreddit.model.PostObject;
-import com.qartf.doseforreddit.model.PostObjectParent;
-import com.qartf.doseforreddit.model.SubredditParent;
-import com.qartf.doseforreddit.network.DataLoader;
+import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Constants.Auth;
 import com.qartf.doseforreddit.utility.Constants.Id;
-import com.qartf.doseforreddit.utility.Constants.Post;
 import com.qartf.doseforreddit.utility.Utility;
-
-import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -66,17 +58,16 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
+        RetrofitControl.RetrofitControlInterface, DetailFragment.DetailFragmentInterface{
 
     public DetailFragment detailFragment;
     public AccessToken accessToken;
     public SharedPreferences sharedPreferences;
     public FragmentManager fragmentManager;
-    public Bundle argsPost, argsSubredit, argsDetail;
     public String postObjectString;
-    public PostObject postObject;
+    public Post post;
     public ListViewFragmentControl listViewFragmentControl;
-    public DetailFragmentControl detailFragmentControl;
     @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tabLayout) TabLayout tabLayout;
@@ -87,11 +78,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
     private ActionBarDrawerToggle drawerToggle;
     public ListViewFragment listViewFragment;
-    private SubredditListViewFragment subredditListViewFragment;
+    public SubredditListViewFragment subredditListViewFragment;
     private boolean isLoginCode = false;
     private boolean isGuest = true;
     private ActionBar actionBar;
     private TextView headerUsername;
+    public RetrofitControl retrofitControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +99,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (savedInstanceState != null) {
             postObjectString = savedInstanceState.getString(Constants.Utility.POST_OBJECT_STRING);
             if (postObjectString != null && !postObjectString.isEmpty()) {
-                postObject = new Gson().fromJson(postObjectString, new TypeToken<PostObject>() {}.getType());
+                post = new Gson().fromJson(postObjectString, new TypeToken<Post>() {}.getType());
             }
         }
-
+        retrofitControl = new RetrofitControl(MainActivity.this, this);
         listViewFragmentControl = new ListViewFragmentControl(this);
-        detailFragmentControl = new DetailFragmentControl(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -124,7 +115,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setTabLayout();
         setNavigationDrawer();
 
-        getSupportLoaderManager().initLoader(Id.LOAD_USERS, null, this).forceLoad();
+        if(!isLoginCode) {
+            getSupportLoaderManager().initLoader(Id.LOAD_USERS, null, this).forceLoad();
+        }
 
     }
 
@@ -303,12 +296,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(prefPostSubreddit)) {
-            getSupportLoaderManager().restartLoader(Id.POSTS, null, this).forceLoad();
+            retrofitControl.getSubredditPosts();
         } else if (key.equals(prefPostSortBy)) {
             setTabLayoutPosition();
             new Handler().postDelayed(new Runnable() {
                 public void run() {
-                    getSupportLoaderManager().restartLoader(Id.POSTS, null, MainActivity.this).forceLoad();
+                    retrofitControl.getSubredditPosts();
                 }
             }, 400);
         } else if (key.equals(getResources().getString(R.string.pref_login_signed_in))) {
@@ -316,10 +309,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             headerUsername.setText(logged);
             if (logged.equals(Constants.Utility.ANONYMOUS)) {
                 isGuest = true;
-                getSupportLoaderManager().restartLoader(Id.GUEST_AUTH, null, this).forceLoad();
+                retrofitControl.guestToken();
             } else {
                 isGuest = false;
-                getSupportLoaderManager().restartLoader(Id.POSTS, null, this).forceLoad();
+                retrofitControl.getSubredditPosts();
             }
         }
     }
@@ -397,19 +390,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 snackbar.show();
             } else if (!loginCode.isEmpty()) {
-                getAccessToken(loginCode);
+                retrofitControl.accessToken(loginCode);
             }
             sharedPreferences.edit().putString(getResources().getString(R.string.pref_access_code), "").apply();
             isLoginCode = false;
         }
 
 
-    }
-
-    private void getAccessToken(String code) {
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.LOGIN_TAG, code);
-        getSupportLoaderManager().initLoader(Id.USER_AUTH, bundle, this).forceLoad();
     }
 
     @Override
@@ -419,33 +406,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switch (id) {
             case Id.LOAD_USERS:
                 return new CursorLoader(this, DatabaseContract.Accounts.CONTENT_URI, DatabaseContract.Accounts.PROJECTION_LIST, null, null, null);
-            case Id.GUEST_AUTH:
-                return new DataLoader(this, Id.GUEST_AUTH);
-            case Id.USER_AUTH:
-                String code = args.getString(Constants.LOGIN_TAG);
-                return new DataLoader(this, code, Id.USER_AUTH);
-            case Id.USER_REFRESH:
-                return new DataLoader(this, accessToken.getRefreshToken(), Id.USER_REFRESH);
-            case Id.ME:
-                return new DataLoader(this, accessToken.getAccessToken(), Id.ME);
-            case Id.POSTS:
-                Bundle argsPostOnly = getPostBundle();
-                argsPost = argsPostOnly;
-                return new DataLoader(this, accessToken.getAccessToken(), argsPostOnly, Id.POSTS);
-            case Id.SEARCH_POSTS:
-                argsPost = args;
-                return new DataLoader(this, accessToken.getAccessToken(), args, Id.SEARCH_POSTS);
-            case Id.SEARCH_SUBREDDITS:
-                argsSubredit = args;
-                return new DataLoader(this, accessToken.getAccessToken(), args, Id.SEARCH_SUBREDDITS);
-            case Id.SUBREDDIT_SUBSCRIBE:
-                return new DataLoader(this, accessToken.getAccessToken(), args, Id.SUBREDDIT_SUBSCRIBE);
-            case Id.VOTE:
-                return new DataLoader(this, accessToken.getAccessToken(), args, Id.VOTE);
-            case Id.COMMENTS:
-                argsDetail = args;
-                return new DataLoader(this, accessToken.getAccessToken(), args, Id.COMMENTS);
-
         }
         return null;
     }
@@ -456,36 +416,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case Id.LOAD_USERS:
                 actionLoadUsers((Cursor) data);
                 break;
-            case Id.GUEST_AUTH:
-                accessToken.setAccessToken((String) data);
-                getSupportLoaderManager().restartLoader(Id.POSTS, null, this).forceLoad();
-                break;
-            case Id.USER_AUTH:
-                accessToken = (AccessToken) data;
-                getSupportLoaderManager().restartLoader(Id.ME, null, this).forceLoad();
-                break;
-            case Id.USER_REFRESH:
-                accessToken.setAccessToken((String) data);
-                getSupportLoaderManager().restartLoader(Id.POSTS, null, this).forceLoad();
-                break;
-            case Id.ME:
-                actionMe((String) data);
-                break;
-            case Id.POSTS:
-                listViewFragment.onLoadFinished(loader, (PostObjectParent) data);
-                break;
-            case Id.SEARCH_POSTS:
-                listViewFragment.onLoadFinished(loader, (PostObjectParent) data);
-                break;
-            case Id.SEARCH_SUBREDDITS:
-                subredditListViewFragment.onLoadFinished(loader, (SubredditParent) data);
-                break;
-            case Id.SUBREDDIT_SUBSCRIBE:
-                break;
-            case Id.VOTE:
-                break;
-            case Id.COMMENTS:
-                detailFragment.onLoadFinished(loader, (List<Comment>) data);
         }
     }
 
@@ -494,18 +424,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    @NonNull
-    private Bundle getPostBundle() {
-        Bundle argsPostOnly = new Bundle();
-        String subreddit = sharedPreferences.getString(prefPostSubreddit, getResources().getString(R.string.pref_post_subreddit_default));
-        String subredditSortBy = sharedPreferences.getString(prefPostSortBy, getResources().getString(R.string.pref_post_sort_by_default));
-        argsPostOnly.putString(Post.SUBREDDIT, subreddit);
-        argsPostOnly.putString(Post.SORT_BY, subredditSortBy);
-        actionBar.setTitle("/r/" + subreddit);
-        return argsPostOnly;
-    }
-
-    private void actionMe(String userName) {
+    public void actionMe(String userName) {
         String selection = DatabaseContract.Accounts.USER_NAME + "=?";
         String[] selectionArgs = new String[]{userName};
         Cursor cursor = getContentResolver().query(DatabaseContract.Accounts.CONTENT_URI,
@@ -528,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void actionLoadUsers(Cursor cursor) {
         String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
         headerUsername.setText(logged);
-        if (cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
+        if (!logged.equals(Constants.Utility.ANONYMOUS) && cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
             do {
                 String userName = cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.USER_NAME));
                 if (userName.equals(logged)) {
@@ -536,13 +455,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     isGuest = false;
                 }
             } while (cursor.moveToNext());
-//            getSupportLoaderManager().restartLoader(Id.USER_REFRESH, null, this).forceLoad();
-            RetrofitControl retrofitControl = new RetrofitControl(MainActivity.this);
-
             retrofitControl.refreshToken();
         } else {
             isGuest = true;
-            getSupportLoaderManager().restartLoader(Id.GUEST_AUTH, null, this).forceLoad();
+            retrofitControl.guestToken();
         }
     }
 
@@ -554,4 +470,39 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    @Override
+    public AccessToken getAccessToken() {
+        return accessToken;
+    }
+
+    @Override
+    public void setAccessToken(AccessToken accessToken) {
+        this.accessToken = accessToken;
+
+    }
+
+    @Override
+    public void setAccessTokenValue(String accessToken) {
+        this.accessToken.setAccessToken(accessToken);
+    }
+
+    @Override
+    public DetailFragment getDetailFragment() {
+        return detailFragment;
+    }
+
+    @Override
+    public ListViewFragment getListViewFragment() {
+        return listViewFragment;
+    }
+
+    @Override
+    public SubredditListViewFragment getSubredditListViewFragment() {
+        return subredditListViewFragment;
+    }
+
+    @Override
+    public RetrofitControl getRetrofitControl() {
+        return retrofitControl;
+    }
 }

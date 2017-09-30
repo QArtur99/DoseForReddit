@@ -1,13 +1,13 @@
 package com.qartf.doseforreddit.model;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+import com.qartf.doseforreddit.model.deserializer.SubredditParentDeserializer;
 
 import java.util.List;
 
-/**
- * Created by ART_F on 2017-09-05.
- */
 
+@JsonAdapter(SubredditParentDeserializer.class)
 public class SubredditParent {
 
     @SerializedName("children")
@@ -15,4 +15,9 @@ public class SubredditParent {
     public String after;
     public String before;
 
+    public SubredditParent(List<Subreddit> subredditList, String after, String before) {
+        this.subredditList = subredditList;
+        this.after = after;
+        this.before = before;
+    }
 }

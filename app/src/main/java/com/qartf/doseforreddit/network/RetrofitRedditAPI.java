@@ -1,11 +1,15 @@
 package com.qartf.doseforreddit.network;
 
+import com.qartf.doseforreddit.model.AboutMe;
 import com.qartf.doseforreddit.model.AccessToken;
-import com.qartf.doseforreddit.model.PostObjectParent;
+import com.qartf.doseforreddit.model.CommentParent;
+import com.qartf.doseforreddit.model.PostParent;
+import com.qartf.doseforreddit.model.SubredditParent;
 import com.qartf.doseforreddit.utility.Constants.Auth;
 
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -22,6 +26,15 @@ import retrofit2.http.QueryMap;
 
 public interface RetrofitRedditAPI {
 
+
+    @FormUrlEncoded
+    @POST(Auth.ACCESS_TOKEN_URL)
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<AccessToken> accessToken(@Header("Authorization") String authorization,
+                                  @Field("grant_type") String grant_type,
+                                  @Field("code") String code,
+                                  @Field("redirect_uri") String redirectUti);
+
     @FormUrlEncoded
     @POST(Auth.ACCESS_TOKEN_URL)
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
@@ -29,13 +42,55 @@ public interface RetrofitRedditAPI {
                                    @Field("grant_type") String grant_type,
                                    @Field("refresh_token") String refresh_token);
 
-
-    @GET("/r/{subbreddit_name}/{sort}")
+    @FormUrlEncoded
+    @POST(Auth.ACCESS_TOKEN_URL)
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Call<PostObjectParent> getSubredditPosts(@Header("Authorization") String authorization,
-                                             @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
-                                             @Path(value = "sort", encoded = true) String sort,
-                                             @QueryMap Map<String, String> options);
+    Call<AccessToken> guestToken(@Header("Authorization") String authorization,
+                                 @Field("grant_type") String grant_type,
+                                 @Field("device_id") String deviceId);
 
+    @GET(Auth.BASE_URL_OAUTH + "/api/v1/me")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<AboutMe> getAboutMe(@Header("Authorization") String authorization);
+
+
+    @GET(Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/{sort}")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<PostParent> getSubredditPosts(@Header("Authorization") String authorization,
+                                       @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                       @Path(value = "sort", encoded = true) String sort,
+                                       @QueryMap Map<String, String> options);
+
+    @GET(Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/comments/{id}")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<CommentParent> getComments(@Header("Authorization") String authorization,
+                                    @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                    @Path(value = "id", encoded = true) String sort,
+                                    @QueryMap Map<String, String> options);
+
+    @GET(Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/search")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<PostParent> searchPosts(@Header("Authorization") String authorization,
+                                 @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                 @QueryMap Map<String, String> options);
+
+    @GET(Auth.BASE_URL_OAUTH + "/subreddits/search")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<SubredditParent> searchSubreddits(@Header("Authorization") String authorization,
+                                           @QueryMap Map<String, String> options);
+
+    @FormUrlEncoded
+    @POST(Auth.BASE_URL_OAUTH + "/api/subscribe")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<ResponseBody> postSubscribe(@Header("Authorization") String authorization,
+                               @Field("action") String subscribe,
+                               @Field("sr") String fullname);
+
+    @FormUrlEncoded
+    @POST(Auth.BASE_URL_OAUTH + "/api/vote")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Call<ResponseBody> postVote(@Header("Authorization") String authorization,
+                                @Field("dir") String dir,
+                                @Field("id") String fullname);
 
 }
