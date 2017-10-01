@@ -16,7 +16,6 @@ import com.qartf.doseforreddit.model.Comment;
 import com.qartf.doseforreddit.model.CommentParent;
 import com.qartf.doseforreddit.model.PostParent;
 import com.qartf.doseforreddit.model.SubredditParent;
-import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Constants.Auth;
 
 import java.util.HashMap;
@@ -36,7 +35,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitControl {
     private SharedPreferences sharedPreferences;
     private RetrofitControlInterface mCallback;
-    private Retrofit retrofit;
     private RetrofitRedditAPI feedAPI;
     @BindString(R.string.pref_post_subreddit) public String prefPostSubreddit;
     @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
@@ -54,8 +52,8 @@ public class RetrofitControl {
         ButterKnife.bind(this, activity);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         this.mCallback = mCallback;
-        retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.Auth.BASE_URL)
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Auth.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         feedAPI = retrofit.create(RetrofitRedditAPI.class);

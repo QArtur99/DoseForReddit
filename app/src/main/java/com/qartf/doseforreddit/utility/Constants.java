@@ -48,33 +48,9 @@ public class Constants {
     }
 
 
-    public class Post{
-        public static final String SUBREDDIT = "subreddit";
-        public static final String SORT_BY = "sort_by";
-    }
-
-    public class Comments {
-        public static final String SUBREDDIT = "subreddit";
-        public static final String ID = "id";
-        public static final String SORT = "sort";
-    }
-
-    public class Vote {
-        public static final String DIR = "dir";
-        public static final String FULLNAME = "fullname";
-    }
-
-    public class Search {
-        public static final String QUERY = "query";
-        public static final String POST = "post";
-        public static final String SUBREDDIT = "subreddit";
-    }
-
     public class Subscribe{
-        public static final String SUBSCRIBE = "subscribe";
         public static final String SUB = "sub";
         public static final String UN_SUB = "unsub";
-        public static final String FULLNAME = "fullname";
     }
 
 

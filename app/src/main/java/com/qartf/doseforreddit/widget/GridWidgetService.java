@@ -15,11 +15,9 @@ import com.qartf.doseforreddit.database.DatabaseContract;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.model.PostParent;
-import com.qartf.doseforreddit.network.GetAuthRedditAPI;
-import com.qartf.doseforreddit.network.PostAuthRedditAPI;
+import com.qartf.doseforreddit.network.RetrofitControlWidget;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,8 +33,8 @@ public class GridWidgetService extends RemoteViewsService {
 class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
     private List<Post> data;
-    private static AccessToken accessToken;
-
+    private AccessToken accessToken;
+    private RetrofitControlWidget retrofitControlWidget;
     public GridRemoteViewsFactory(Context applicationContext) {
         mContext = applicationContext;
     }
@@ -49,7 +47,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         data = new ArrayList<>();
-
+        retrofitControlWidget = new RetrofitControlWidget();
         try {
             actionLoadUsers();
         } catch (IOException | JSONException e) {
@@ -119,38 +117,16 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                     accessToken = new Gson().fromJson(cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.ACCESS_TOKEN)), AccessToken.class);
                 }
             } while (cursor.moveToNext());
-            getRefreshToken(accessToken.getRefreshToken());
+            accessToken = retrofitControlWidget.refreshToken(accessToken.getRefreshToken());
         } else {
-            getGuestAccess();
+            accessToken = retrofitControlWidget.guestToken();
         }
-        PostParent postParent = getPosts(accessToken.getAccessToken());
+        PostParent postParent = retrofitControlWidget.getSubredditPosts(accessToken.getAccessToken());
         data = postParent.postList;
 
         if(cursor != null){
             cursor.close();
         }
-
     }
-
-    private static String getRefreshToken(String refreshToken) throws IOException, JSONException {
-        String jsonString = PostAuthRedditAPI.refreshToken(refreshToken);
-        accessToken = new Gson().fromJson(jsonString, AccessToken.class);
-        return accessToken.getAccessToken();
-    }
-
-    private static String getGuestAccess() throws IOException, JSONException {
-        String jsonString = PostAuthRedditAPI.getGuestAccess();
-        accessToken = new Gson().fromJson(jsonString, AccessToken.class);
-        return accessToken.getAccessToken();
-    }
-
-    private PostParent getPosts(String accessTokenString) throws IOException, JSONException {
-
-        String jsonString = GetAuthRedditAPI.getPopular(accessTokenString, "popular", "hot");
-        JSONObject jsonObject = new JSONObject(jsonString).getJSONObject("data");
-        PostParent postParent = new Gson().fromJson(jsonObject.toString(), PostParent.class);
-        return postParent;
-    }
-
 }
 
