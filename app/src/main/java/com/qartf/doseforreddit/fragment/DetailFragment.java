@@ -1,20 +1,11 @@
 package com.qartf.doseforreddit.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -40,13 +31,12 @@ import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by ART_F on 2017-09-06.
  */
 
-public class DetailFragment extends Fragment implements CommentsAdapter.OnListItemClickListener,
+public class DetailFragment extends BaseFragment<DetailFragment.DetailFragmentInterface> implements CommentsAdapter.OnListItemClickListener,
         View.OnClickListener, SwipyRefreshLayout.OnRefreshListener {
 
 
@@ -64,13 +54,11 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
     @BindView(R.id.downContainer) RelativeLayout downContainer;
     @BindView(R.id.detailContainer) RelativeLayout detailContainer;
     @BindView(R.id.imageContainer) RelativeLayout imageContainer;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
     @BindView(R.id.selftext) TextView selftext;
     @BindView(R.id.commentsNo) TextView commentsNo;
     @BindView(R.id.loading_indicator) ProgressBar progressBar;
     @BindView(R.id.fragmentFrame) LinearLayout fragmentFrame;
     @BindView(R.id.nestedScrollView) NestedScrollView nestedScrollView;
-    @BindView(R.id.swipeRefreshLayout) SwipyRefreshLayout swipyRefreshLayout;
     @BindView(R.id.spinnerSortBy) Spinner spinnerSortBy;
     @BindString(R.string.pref_post_detail_sub) String prefPostDetailSub;
     @BindString(R.string.pref_post_detail_id) String prefPostDetailId;
@@ -79,40 +67,25 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
     private Post post;
     private HashMap<String, String> spinnerMap;
     private boolean isOpen = false;
-    private SharedPreferences sharedPreferences;
-
 
     private CommentsAdapter commentsAdapter;
-
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
-    private DetailFragmentInterface mCallback;
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (DetailFragmentInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnImageClickListener");
-        }
+    public int getContentLayout() {
+        return R.layout.fragment_detail;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        ButterKnife.bind(this, rootView);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    public void initComponents() {
         swipyRefreshLayout.setOnRefreshListener(this);
 
         Utility.setThumbnailSize(getActivity(), fragmentFrame);
         setListeners();
         setAdapter(new ArrayList<Comment>());
         setData();
-        return rootView;
     }
 
     private void setData() {

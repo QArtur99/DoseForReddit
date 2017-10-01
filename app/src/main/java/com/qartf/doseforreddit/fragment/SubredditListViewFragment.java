@@ -1,24 +1,11 @@
 package com.qartf.doseforreddit.fragment;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.SubredditAdapter;
 import com.qartf.doseforreddit.model.Subreddit;
 import com.qartf.doseforreddit.model.SubredditParent;
@@ -29,52 +16,26 @@ import com.qartf.doseforreddit.utility.Utility;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by ART_F on 2017-09-05.
  */
 
-public class SubredditListViewFragment extends Fragment implements SubredditAdapter.ListItemClickListener,
+public class SubredditListViewFragment extends
+        BaseFragment<SubredditListViewFragment.ShubredditListViewFragmentInterface> implements SubredditAdapter.ListItemClickListener,
         SwipyRefreshLayout.OnRefreshListener {
 
-    @BindView(R.id.emptyView) RelativeLayout emptyView;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
-    @BindView(R.id.swipeRefreshLayout) SwipyRefreshLayout swipyRefreshLayout;
-    @BindView(R.id.loading_indicator) ProgressBar loadingIndicator;
-    @BindView(R.id.empty_title_text) TextView emptyTitleText;
-    @BindView(R.id.empty_subtitle_text) TextView emptySubtitleText;
-
-    private MainActivity mainActivity;
     private GridLayoutManager layoutManager;
     private SubredditAdapter subredditAdapter;
-    private ShubredditListViewFragmentInterface mCallback;
-    private View rootView;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_list_view, container, false);
-        ButterKnife.bind(this, rootView);
-        swipyRefreshLayout.setOnRefreshListener(this);
-
-        emptyView.setVisibility(View.GONE);
-        mainActivity = ((MainActivity) getActivity());
-        setAdapter(new ArrayList<Subreddit>());
-        return rootView;
+    public int getContentLayout() {
+        return R.layout.fragment_list_view;
     }
 
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (ShubredditListViewFragmentInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnImageClickListener");
-        }
+    public void initComponents() {
+        swipyRefreshLayout.setOnRefreshListener(this);
+        setAdapter(new ArrayList<Subreddit>());
     }
 
     public void setAdapter(List<Subreddit> movieList) {
@@ -119,21 +80,6 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
         }
     }
 
-    private boolean checkConnection() {
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        return isConnected;
-    }
-
-    private void setInfoNoConnection() {
-        recyclerView.setVisibility(View.GONE);
-        loadingIndicator.setVisibility(View.GONE);
-        emptyView.setVisibility(View.VISIBLE);
-        emptyTitleText.setText(getString(R.string.no_connection));
-        emptySubtitleText.setText(getString(R.string.no_connection_sub_text));
-    }
-
     @Override
     public void onListItemClick(int clickedItemIndex, View view) {
         Subreddit subreddit = (Subreddit) subredditAdapter.getDataAtPosition(clickedItemIndex);
@@ -143,8 +89,8 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
                 mCallback.getRetrofitControl().postSubscribe(subscribe, subreddit.name);
                 break;
             case R.id.subredditTitleFrame:
-                mainActivity.loadFragment(Constants.Id.SEARCH_POSTS);
-                mainActivity.sharedPreferences.edit().putString(mainActivity.getResources().getString(R.string.pref_post_subreddit), subreddit.display_name).apply();
+                mCallback.loadFragment(Constants.Id.SEARCH_POSTS);
+                sharedPreferences.edit().putString(getString(R.string.pref_post_subreddit), subreddit.display_name).apply();
                 break;
         }
     }
@@ -157,6 +103,9 @@ public class SubredditListViewFragment extends Fragment implements SubredditAdap
 
     public interface ShubredditListViewFragmentInterface {
         RetrofitControl getRetrofitControl();
+
         void restoreDetailFragment();
+
+        void loadFragment(int fragmentId);
     }
 }

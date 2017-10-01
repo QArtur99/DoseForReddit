@@ -1,29 +1,15 @@
 package com.qartf.doseforreddit.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.MainActivity;
 import com.qartf.doseforreddit.adapter.PostsAdapter;
 import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.model.PostParent;
@@ -33,46 +19,30 @@ import com.qartf.doseforreddit.utility.Utility;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
-
-public class ListViewFragment extends Fragment implements PostsAdapter.ListItemClickListener,
+public class ListViewFragment extends BaseFragment<ListViewFragment.ListViewFragmentInterface> implements PostsAdapter.ListItemClickListener,
         SwipyRefreshLayout.OnRefreshListener, View.OnTouchListener {
 
-    @BindView(R.id.loading_indicator) public ProgressBar loadingIndicator;
-    @BindView(R.id.emptyView) RelativeLayout emptyView;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
-    @BindView(R.id.swipeRefreshLayout) SwipyRefreshLayout swipyRefreshLayout;
-    @BindView(R.id.empty_title_text) TextView emptyTitleText;
-    @BindView(R.id.empty_subtitle_text) TextView emptySubtitleText;
-
-    private MainActivity mainActivity;
     private GridLayoutManager layoutManager;
     private PostsAdapter postsAdapter;
     private String sortBy;
-    private ListViewFragmentInterface mCallback;
     private int loaderId;
     private Bundle bundle;
-    private SharedPreferences sharedPreferences;
     private int firstView = 0;
-    private View rootView;
 
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_list_view, container, false);
-        ButterKnife.bind(this, rootView);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    public int getContentLayout() {
+        return R.layout.fragment_list_view;
+    }
+
+    @Override
+    public void initComponents() {
         recyclerView.setOnTouchListener(this);
         swipyRefreshLayout.setOnRefreshListener(this);
-        emptyView.setVisibility(View.GONE);
-        mainActivity = ((MainActivity) getActivity());
         setAdapter(new ArrayList<Post>());
         bundle = getArguments();
         getBundleData();
-
-        return rootView;
     }
 
     private void getBundleData() {
@@ -81,16 +51,6 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (ListViewFragmentInterface) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnImageClickListener");
-        }
-    }
 
     public void setAdapter(List<Post> movieList) {
         layoutManager = new GridLayoutManager(getContext(), 1);
@@ -131,28 +91,11 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
             }
         } else {
             if (checkConnection()) {
-                emptyView.setVisibility(View.VISIBLE);
-                emptyTitleText.setText(getString(R.string.server_problem));
-                emptySubtitleText.setText(getString(R.string.server_problem_sub_text));
+                setInfoServerIsBroken();
             } else {
                 setInfoNoConnection();
             }
         }
-    }
-
-    private boolean checkConnection() {
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        return isConnected;
-    }
-
-    private void setInfoNoConnection() {
-        recyclerView.setVisibility(View.GONE);
-        loadingIndicator.setVisibility(View.GONE);
-        emptyView.setVisibility(View.VISIBLE);
-        emptyTitleText.setText(getString(R.string.no_connection));
-        emptySubtitleText.setText(getString(R.string.no_connection_sub_text));
     }
 
     public int getFirstVisibleItemPosition() {
@@ -177,7 +120,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
                 Utility.startIntentPreview(getActivity(), post);
                 break;
             case R.id.commentsAction:
-                if (mainActivity.findViewById(R.id.detailsViewFrame) != null) {
+                if (getActivity().findViewById(R.id.detailsViewFrame) != null) {
                     mCallback.loadDetailFragment();
                     mCallback.setPost(post);
                 } else {
@@ -185,7 +128,7 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
                 }
                 break;
             case R.id.shareAction:
-                getActivity().startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(mainActivity)
+                getActivity().startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
                         .setType("text/plain")
                         .setText(post.url)
                         .getIntent(), getActivity().getResources().getString(R.string.action_share)));
@@ -208,9 +151,13 @@ public class ListViewFragment extends Fragment implements PostsAdapter.ListItemC
 
     public interface ListViewFragmentInterface {
         RetrofitControl getRetrofitControl();
+
         void restoreDetailFragment();
+
         void loadDetailFragment();
+
         void setPost(Post post);
+
         void startDetailActivity(Post post);
     }
 }
