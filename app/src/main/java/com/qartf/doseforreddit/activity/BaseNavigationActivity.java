@@ -1,6 +1,8 @@
 package com.qartf.doseforreddit.activity;
 
+import android.content.res.Configuration;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -25,8 +27,7 @@ import butterknife.BindView;
  * Created by ART_F on 2017-09-30.
  */
 
-public abstract class BaseNavigationActivity extends BaseViewActivity implements NavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener{
+public abstract class BaseNavigationActivity extends BaseViewActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tabLayout) TabLayout tabLayout;
@@ -41,61 +42,8 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
 
     @Override
     public void initNavigation() {
-        setTabLayout();
-        setNavigationDrawer();
-    }
-
-    private void setNavigationDrawer() {
-        navigationView.setNavigationItemSelectedListener(this);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                invalidateOptionsMenu();
-                try {
-                } catch (Exception e) {
-                    //null
-                }
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                try {
-
-                } catch (Exception e) {
-                    //null
-                }
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-            }
-
-
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        View headerView = getLayoutInflater().inflate(R.layout.header, navigationView, false);
-        headerView.setOnClickListener(this);
-        headerUsername = headerView.findViewById(R.id.username);
-        navigationView.addHeaderView(headerView);
-    }
-
-    private void setTabLayout() {
-
-        tabLayout.addTab(tabLayout.newTab().setText("HOT"), 0);
-        tabLayout.addTab(tabLayout.newTab().setText("NEW"), 1);
-        tabLayout.addTab(tabLayout.newTab().setText("RISING"), 2);
-        tabLayout.addTab(tabLayout.newTab().setText("CONTROVERSIAL"), 3);
-        tabLayout.addTab(tabLayout.newTab().setText("TOP"), 4);
-
-        LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
-        linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        drawable.setSize(4, 1);
-//        linearLayout.setDividerPadding(30);
-        linearLayout.setDividerDrawable(drawable);
+        setTabLayoutDivider();
+        addTabLayoutTabs();
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -115,6 +63,27 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
             }
         });
         setTabLayoutPosition();
+
+
+        setNavigationDrawer();
+        initHeaderView();
+    }
+
+
+    private void setTabLayoutDivider() {LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
+        linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        drawable.setSize(4, 1);
+        linearLayout.setDividerDrawable(drawable);
+    }
+
+    private void addTabLayoutTabs() {
+        tabLayout.addTab(tabLayout.newTab().setText("HOT"), 0);
+        tabLayout.addTab(tabLayout.newTab().setText("NEW"), 1);
+        tabLayout.addTab(tabLayout.newTab().setText("RISING"), 2);
+        tabLayout.addTab(tabLayout.newTab().setText("CONTROVERSIAL"), 3);
+        tabLayout.addTab(tabLayout.newTab().setText("TOP"), 4);
     }
 
     public void setTabLayoutPosition() {
@@ -128,16 +97,45 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
-        if (logged.equals(Constants.Utility.ANONYMOUS)) {
-            Utility.clearCookies(this);
-            loginReddit();
-        } else {
-            new LoginDialog(this, sharedPreferences);
-        }
-        drawerLayout.closeDrawers();
+
+    private void setNavigationDrawer() {
+        navigationView.setNavigationItemSelectedListener(this);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+
+        };
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+    }
+
+    private void initHeaderView() {
+        View headerView = getLayoutInflater().inflate(R.layout.header, navigationView, false);
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+                if (logged.equals(Constants.Utility.ANONYMOUS)) {
+                    Utility.clearCookies(BaseNavigationActivity.this);
+                    loginReddit();
+                } else {
+                    new LoginDialog(BaseNavigationActivity.this, sharedPreferences);
+                }
+                drawerLayout.closeDrawers();
+            }
+        });
+        headerUsername = headerView.findViewById(R.id.username);
+        navigationView.addHeaderView(headerView);
     }
 
     @Override
@@ -169,5 +167,18 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
     public abstract void loginReddit();
 
     public abstract void searchDialog(int id);
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
 
 }

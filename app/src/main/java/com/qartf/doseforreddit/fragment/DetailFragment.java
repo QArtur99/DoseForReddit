@@ -236,7 +236,6 @@ public class DetailFragment extends Fragment implements CommentsAdapter.OnListIt
         }
     }
 
-
     @Override
     public void onCommentListItemClick(int clickedItemIndex, View view) {
         Comment comment = (Comment) commentsAdapter.getDataAtPosition(clickedItemIndex);

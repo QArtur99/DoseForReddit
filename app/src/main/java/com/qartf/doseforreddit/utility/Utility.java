@@ -44,37 +44,37 @@ public class Utility {
     public static void timeFormat(String timeDoubleString, TextView time) {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         long currentTime = calendar.getTimeInMillis() / 1000L;
-        double timeDouble = Double.valueOf(timeDoubleString);
-        long trueTime = currentTime - ((long) timeDouble);
-        if (trueTime >= 31536000) {
-            int date = (int) trueTime / 31536000;
+        double pastTime = Double.valueOf(timeDoubleString);
+        long secAgo = currentTime - ((long) pastTime);
+        if (secAgo >= 31536000) {
+            int date = (int) secAgo / 31536000;
             String dateString = DOT + String.valueOf(date);
             dateString += (date == 1) ? "yr" : "yrs";
             time.setText(dateString);
-        } else if (trueTime >= 2592000) {
-            int date = (int) trueTime / 2592000;
+        } else if (secAgo >= 2592000) {
+            int date = (int) secAgo / 2592000;
             String dateString = DOT + String.valueOf(date) + "m";
             time.setText(dateString);
-        } else if (trueTime >= 604800) {
-            int date = (int) trueTime / 604800;
+        } else if (secAgo >= 604800) {
+            int date = (int) secAgo / 604800;
             String dateString = DOT + String.valueOf(date) + "wk";
             time.setText(dateString);
-        } else if (trueTime >= 86400) {
-            int date = (int) trueTime / 86400;
+        } else if (secAgo >= 86400) {
+            int date = (int) secAgo / 86400;
             String dateString = DOT + String.valueOf(date);
             dateString += (date == 1) ? "day" : "days";
             time.setText(dateString);
-        } else if (trueTime >= 3600) {
-            int date = (int) trueTime / 3600;
+        } else if (secAgo >= 3600) {
+            int date = (int) secAgo / 3600;
             String dateString = DOT + String.valueOf(date);
             dateString += (date == 1) ? "hr" : "hrs";
             time.setText(dateString);
-        } else if (trueTime >= 60) {
-            int date = (int) trueTime / 60;
+        } else if (secAgo >= 60) {
+            int date = (int) secAgo / 60;
             String dateString = DOT + String.valueOf(date) + "min";
             time.setText(dateString);
         } else {
-            String dateString = DOT + String.valueOf(trueTime) + "sec";
+            String dateString = DOT + String.valueOf(secAgo) + "sec";
             time.setText(dateString);
         }
     }

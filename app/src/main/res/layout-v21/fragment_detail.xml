@@ -5,6 +5,7 @@
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     app:srl_direction="both">
 
     <android.support.v4.widget.NestedScrollView
@@ -39,21 +40,42 @@
 
             <include layout="@layout/row_post_opiton_comment_view"/>
 
-            <ProgressBar
-                android:id="@+id/loading_indicator"
-                style="@style/Widget.AppCompat.ProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="?actionBarSize"
-                android:background="@drawable/shape_progress_bar"
-                android:elevation="8dp"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <RelativeLayout
+                android:id="@+id/test"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"/>
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:descendantFocusability="blocksDescendants"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"/>
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/loading_indicator"
+                    style="@style/Widget.AppCompat.ProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="?actionBarSize"
+                    android:background="@drawable/shape_progress_bar"
+                    android:elevation="8dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"/>
+
+
+            </RelativeLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>

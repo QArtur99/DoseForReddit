@@ -3,7 +3,6 @@ package com.qartf.doseforreddit.activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -53,7 +51,6 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
     @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
     @BindView(R.id.adView) AdView adView;
     private boolean isLoginCode = false;
-    private boolean isGuest = true;
 
     @Override
     public int getContentLayout() {
@@ -63,7 +60,6 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
     @Override
     public void initComponents() {
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
         loadAd();
 
         if (savedInstanceState != null) {
@@ -79,12 +75,10 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
 
 
         accessToken = new AccessToken();
-
         loadStartFragment(savedInstanceState);
 
-        if (!isLoginCode) {
-            getSupportLoaderManager().initLoader(Id.LOAD_USERS, null, this).forceLoad();
-        }
+        getSupportLoaderManager().initLoader(Id.LOAD_USERS, null, this).forceLoad();
+        setTitle();
     }
 
     private void loadAd() {
@@ -135,6 +129,7 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(prefPostSubreddit)) {
+            setTitle();
             retrofitControl.getSubredditPosts();
         } else if (key.equals(prefPostSortBy)) {
             setTabLayoutPosition();
@@ -147,13 +142,16 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
             String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
             headerUsername.setText(logged);
             if (logged.equals(Constants.Utility.ANONYMOUS)) {
-                isGuest = true;
                 retrofitControl.guestToken();
             } else {
-                isGuest = false;
                 retrofitControl.getSubredditPosts();
             }
         }
+    }
+
+    private void setTitle() {
+        String subreddit = sharedPreferences.getString(prefPostSubreddit, "");
+        getSupportActionBar().setTitle("/r/" + subreddit);
     }
 
     @Override
@@ -191,21 +189,9 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
         return true;
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
-
     public void loginReddit() {
         String url = String.format(Auth.AUTH_URL, Auth.CLIENT_ID, Auth.STATE, Auth.REDIRECT_URI, Auth.SCOPE);
-        Intent intent = new Intent(MainActivity.this, LinkActivity.class);
+        Intent intent = new Intent(this, LinkActivity.class);
         intent.putExtra("login", Uri.parse(url).toString());
         startActivity(intent);
         isLoginCode = true;
@@ -272,12 +258,10 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
                 String userName = cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.USER_NAME));
                 if (userName.equals(logged)) {
                     accessToken = new Gson().fromJson(cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.ACCESS_TOKEN)), AccessToken.class);
-                    isGuest = false;
                 }
             } while (cursor.moveToNext());
             retrofitControl.refreshToken();
         } else {
-            isGuest = true;
             retrofitControl.guestToken();
         }
     }
