@@ -10,6 +10,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -22,10 +24,6 @@ import com.qartf.doseforreddit.utility.Utility;
 
 import butterknife.BindString;
 import butterknife.BindView;
-
-/**
- * Created by ART_F on 2017-09-30.
- */
 
 public abstract class BaseNavigationActivity extends BaseViewActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -86,7 +84,7 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
         tabLayout.addTab(tabLayout.newTab().setText("TOP"), 4);
     }
 
-    public void setTabLayoutPosition() {
+    protected void setTabLayoutPosition() {
         String[] postSortValue = getResources().getStringArray(R.array.sortValuePost);
         String subredditSortBy = sharedPreferences.getString(prefPostSortBy, getResources().getString(R.string.pref_post_sort_by_default));
         int tabLayoutIndex = Utility.getTabLayoutIndex(postSortValue, subredditSortBy);
@@ -168,6 +166,12 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
 
     public abstract void searchDialog(int id);
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

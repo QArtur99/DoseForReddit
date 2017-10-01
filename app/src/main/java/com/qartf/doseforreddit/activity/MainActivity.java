@@ -14,8 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -98,6 +96,7 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
                 .commit();
     }
 
+    @Override
     public void loadFragment(int fragmentId) {
         switch (fragmentId) {
             case Id.SEARCH_POSTS:
@@ -152,13 +151,6 @@ public class MainActivity extends BaseNavigationActivity implements LoaderManage
     private void setTitle() {
         String subreddit = sharedPreferences.getString(prefPostSubreddit, "");
         getSupportActionBar().setTitle("/r/" + subreddit);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu, menu);
-        return true;
     }
 
     @Override
