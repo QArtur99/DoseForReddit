@@ -13,7 +13,7 @@ import com.qartf.doseforreddit.fragment.SubredditListViewFragment;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.network.RetrofitControl;
 
-public abstract class BaseViewActivity extends BaseActivity implements RetrofitControl.RetrofitControlInterface{
+public abstract class BaseRetrofitActivity extends BaseActivity implements RetrofitControl.RetrofitControlInterface{
 
 
     protected AccessToken accessToken;
@@ -21,9 +21,9 @@ public abstract class BaseViewActivity extends BaseActivity implements RetrofitC
     protected ListViewFragment listViewFragment;
     protected SubredditListViewFragment subredditListViewFragment;
     protected RetrofitControl retrofitControl;
-    public SharedPreferences sharedPreferences;
+    protected SharedPreferences sharedPreferences;
 
-    BaseViewActivity(){}
+    BaseRetrofitActivity(){}
 
     @Override
     public AccessToken getAccessToken() {

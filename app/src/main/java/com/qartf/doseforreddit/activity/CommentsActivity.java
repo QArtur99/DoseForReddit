@@ -17,7 +17,7 @@ import com.qartf.doseforreddit.network.RetrofitControl;
 
 import butterknife.BindView;
 
-public class CommentsActivity extends BaseViewActivity implements DetailFragment.DetailFragmentInterface{
+public class CommentsActivity extends BaseRetrofitActivity implements DetailFragment.DetailFragmentInterface{
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     private Post post;

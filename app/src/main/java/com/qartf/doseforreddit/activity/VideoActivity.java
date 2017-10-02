@@ -2,17 +2,11 @@ package com.qartf.doseforreddit.activity;
 
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.qartf.doseforreddit.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -30,16 +24,15 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.qartf.doseforreddit.R;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class VideoActivity extends AppCompatActivity implements ExoPlayer.EventListener, View.OnClickListener{
+public class VideoActivity extends BaseNavigationChildActivity implements ExoPlayer.EventListener, View.OnClickListener{
 
 
     private static final String TAG = VideoActivity.class.getSimpleName();
     private static MediaSessionCompat mMediaSession;
-    @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.playerView) SimpleExoPlayerView mPlayerView;
     @BindView(R.id.layoutFrame) RelativeLayout layoutFrame;
     private PlaybackStateCompat.Builder mStateBuilder;
@@ -47,11 +40,12 @@ public class VideoActivity extends AppCompatActivity implements ExoPlayer.EventL
     String link;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video);
-        ButterKnife.bind(this);
-        setToolbar();
+    public int getContentLayout() {
+        return R.layout.activity_video;
+    }
+
+    @Override
+    public void initComponents() {
         layoutFrame.setOnClickListener(this);
         link = getIntent().getStringExtra("link");
 
@@ -60,13 +54,6 @@ public class VideoActivity extends AppCompatActivity implements ExoPlayer.EventL
                 (getResources(), R.drawable.dose_for_reddit_red));
 
         initializePlayer(Uri.parse(link));
-    }
-
-    private void setToolbar() {
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void initializeMediaSession() {
@@ -189,18 +176,4 @@ public class VideoActivity extends AppCompatActivity implements ExoPlayer.EventL
             mExoPlayer.seekTo(0);
         }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
-    }
-
 }
