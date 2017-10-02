@@ -1,5 +1,6 @@
 package com.qartf.doseforreddit.utility;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ShareCompat;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -244,6 +246,13 @@ public class Utility {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void shareContent(Activity context, String postUrl){
+                context.startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(context)
+                        .setType("text/plain")
+                        .setText(postUrl)
+                        .getIntent(), context.getResources().getString(R.string.action_share)));
     }
 
     public static void clearCookies(Context context) {

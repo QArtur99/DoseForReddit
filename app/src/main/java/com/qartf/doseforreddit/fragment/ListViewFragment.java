@@ -1,8 +1,6 @@
 package com.qartf.doseforreddit.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,12 +40,15 @@ public class ListViewFragment extends BaseFragment<ListViewFragment.ListViewFrag
         swipyRefreshLayout.setOnRefreshListener(this);
         setAdapter(new ArrayList<Post>());
         bundle = getArguments();
-        getBundleData();
     }
 
     private void getBundleData() {
         if (bundle != null) {
+            if (Utility.isTablet(getContext())) {
+                mCallback.restoreDetailFragment();
+            }
             firstView = sharedPreferences.getInt(getString(R.string.pref_firstView), 0);
+            recyclerView.scrollToPosition(firstView);
         }
     }
 
@@ -70,24 +71,10 @@ public class ListViewFragment extends BaseFragment<ListViewFragment.ListViewFrag
                 postsAdapter.clearMovies();
             }
 
-
             if (data != null && !data.isEmpty()) {
                 emptyView.setVisibility(View.GONE);
-
-
                 postsAdapter.setMovies(data);
-                if (bundle != null) {
-                    if (Utility.isTablet(getContext())) {
-                        rootView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mCallback.restoreDetailFragment();
-                            }
-                        });
-                    }
-                    recyclerView.scrollToPosition(firstView);
-                }
-
+                getBundleData();
             }
         } else {
             if (checkConnection()) {
@@ -128,10 +115,7 @@ public class ListViewFragment extends BaseFragment<ListViewFragment.ListViewFrag
                 }
                 break;
             case R.id.shareAction:
-                getActivity().startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
-                        .setType("text/plain")
-                        .setText(post.url)
-                        .getIntent(), getActivity().getResources().getString(R.string.action_share)));
+                Utility.shareContent(getActivity(), post.url);
                 break;
             case R.id.upContainer:
                 mCallback.getRetrofitControl().postVote("1", post.name);
