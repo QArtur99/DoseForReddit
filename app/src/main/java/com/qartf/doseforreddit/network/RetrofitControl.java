@@ -36,8 +36,8 @@ public class RetrofitControl {
     private SharedPreferences sharedPreferences;
     private RetrofitControlInterface mCallback;
     private RetrofitRedditAPI feedAPI;
-    @BindString(R.string.pref_post_subreddit) public String prefPostSubreddit;
-    @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
+    @BindString(R.string.pref_post_subreddit) String prefPostSubreddit;
+    @BindString(R.string.pref_post_sort_by) String prefPostSortBy;
     @BindString(R.string.pref_search_post) String prefSearchPost;
     @BindString(R.string.pref_search_subreddit) String prefSearchSubreddit;
     @BindString(R.string.pref_empty_tag) String prefEmptyTag;
@@ -86,7 +86,6 @@ public class RetrofitControl {
                 String token = response.body().getAccessToken();
                 mCallback.setAccessTokenValue(token);
                 getSubredditPosts();
-//                mainActivity.getSupportLoaderManager().restartLoader(Constants.Id.POSTS, null, mainActivity).forceLoad();
             }
 
             @Override
@@ -107,7 +106,6 @@ public class RetrofitControl {
                 String token = response.body().getAccessToken();
                 mCallback.setAccessTokenValue(token);
                 getSubredditPosts();
-//                mainActivity.getSupportLoaderManager().restartLoader(Constants.Id.POSTS, null, mainActivity).forceLoad();
             }
 
             @Override
@@ -287,7 +285,6 @@ public class RetrofitControl {
         DetailFragment getDetailFragment();
         ListViewFragment getListViewFragment();
         SubredditListViewFragment getSubredditListViewFragment();
-
     }
 
 }

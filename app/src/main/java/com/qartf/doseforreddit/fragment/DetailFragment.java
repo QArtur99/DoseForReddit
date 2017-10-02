@@ -2,7 +2,6 @@ package com.qartf.doseforreddit.fragment;
 
 import android.content.Intent;
 import android.support.transition.TransitionManager;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -201,10 +200,7 @@ public class DetailFragment extends BaseFragment<DetailFragment.DetailFragmentIn
                 Utility.startIntentPreview(getActivity(), post);
                 break;
             case R.id.shareAction:
-                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
-                        .setType("text/plain")
-                        .setText(post.url)
-                        .getIntent(), getString(R.string.action_share)));
+                Utility.shareContent(getActivity(), post.url);
                 break;
         }
     }

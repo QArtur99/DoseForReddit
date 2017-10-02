@@ -61,19 +61,12 @@ public class SubredditListViewFragment extends
                 emptyView.setVisibility(View.GONE);
                 subredditAdapter.setMovies(data);
                 if (Utility.isTablet(getContext())) {
-                    rootView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mCallback.restoreDetailFragment();
-                        }
-                    });
+                    mCallback.restoreDetailFragment();
                 }
             }
         } else {
             if (checkConnection()) {
-                emptyView.setVisibility(View.VISIBLE);
-                emptyTitleText.setText(getString(R.string.server_problem));
-                emptySubtitleText.setText(getString(R.string.server_problem_sub_text));
+                setInfoServerIsBroken();
             } else {
                 setInfoNoConnection();
             }
