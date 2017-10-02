@@ -25,18 +25,18 @@ import com.qartf.doseforreddit.utility.Utility;
 import butterknife.BindString;
 import butterknife.BindView;
 
-public abstract class BaseNavigationActivity extends BaseViewActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class BaseNavigationMainActivity extends BaseRetrofitActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.tabLayout) TabLayout tabLayout;
-    @BindView(R.id.navigation_view) NavigationView navigationView;
-    @BindView(R.id.drawer) DrawerLayout drawerLayout;
     @BindString(R.string.pref_post_subreddit) public String prefPostSubreddit;
     @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
     protected ActionBarDrawerToggle drawerToggle;
     protected TextView headerUsername;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.tabLayout) TabLayout tabLayout;
+    @BindView(R.id.navigation_view) NavigationView navigationView;
+    @BindView(R.id.drawer) DrawerLayout drawerLayout;
 
-    BaseNavigationActivity(){}
+    BaseNavigationMainActivity() {}
 
     @Override
     public void initNavigation() {
@@ -68,7 +68,8 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
     }
 
 
-    private void setTabLayoutDivider() {LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
+    private void setTabLayoutDivider() {
+        LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
         linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
         GradientDrawable drawable = new GradientDrawable();
         drawable.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
@@ -124,10 +125,10 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
             public void onClick(View view) {
                 String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
                 if (logged.equals(Constants.Utility.ANONYMOUS)) {
-                    Utility.clearCookies(BaseNavigationActivity.this);
+                    Utility.clearCookies(BaseNavigationMainActivity.this);
                     loginReddit();
                 } else {
-                    new LoginDialog(BaseNavigationActivity.this, sharedPreferences);
+                    new LoginDialog(BaseNavigationMainActivity.this, sharedPreferences);
                 }
                 drawerLayout.closeDrawers();
             }
@@ -162,9 +163,41 @@ public abstract class BaseNavigationActivity extends BaseViewActivity implements
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        switch (item.getItemId()) {
+            case R.id.menuLogin:
+                Utility.clearCookies(this);
+                loginReddit();
+                break;
+            case R.id.searchPosts:
+                searchDialog(Constants.Id.SEARCH_POSTS);
+                break;
+            case R.id.searchSubreddits:
+                searchDialog(Constants.Id.SEARCH_SUBREDDITS);
+                break;
+            case R.id.refresh:
+                loadFragment(Constants.Id.SEARCH_POSTS);
+                loadUsers();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
+
     public abstract void loginReddit();
 
     public abstract void searchDialog(int id);
+
+    public abstract void loadFragment(int id);
+
+    public abstract void loadUsers();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
