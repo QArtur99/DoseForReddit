@@ -126,7 +126,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             domain.setText("(" + post.domain + ")");
             subreddit.setText(post.subreddit);
             comments.setText(DOT + post.numComents + " " + commentsString);
-            Utility.timeFormat(post.createdUTC, time);
+            time.setText(Utility.timeFormat(post.createdUTC));
             Utility.loadThumbnail(context, post, thumbnail);
         }
 

@@ -1,17 +1,10 @@
 package com.qartf.doseforreddit.utility;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ShareCompat;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +16,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.activity.ImageActivity;
-import com.qartf.doseforreddit.activity.LinkActivity;
-import com.qartf.doseforreddit.activity.SelfActivity;
-import com.qartf.doseforreddit.activity.VideoActivity;
 import com.qartf.doseforreddit.model.Post;
 
 import java.text.DecimalFormat;
@@ -41,44 +30,39 @@ public class Utility {
     private static final String DOT = "\u2022";
     private static final String KILO = "K";
 
-    private static DecimalFormat decimalFormat = new DecimalFormat("##.#");
+    private static final DecimalFormat decimalFormat = new DecimalFormat("##.#");
 
-    public static void timeFormat(String timeDoubleString, TextView time) {
+    public static String timeFormat(String timeDoubleString) {
+        String dateString;
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         long currentTime = calendar.getTimeInMillis() / 1000L;
         double pastTime = Double.valueOf(timeDoubleString);
         long secAgo = currentTime - ((long) pastTime);
         if (secAgo >= 31536000) {
             int date = (int) secAgo / 31536000;
-            String dateString = DOT + String.valueOf(date);
+            dateString = DOT + String.valueOf(date);
             dateString += (date == 1) ? "yr" : "yrs";
-            time.setText(dateString);
         } else if (secAgo >= 2592000) {
             int date = (int) secAgo / 2592000;
-            String dateString = DOT + String.valueOf(date) + "m";
-            time.setText(dateString);
+            dateString = DOT + String.valueOf(date) + "m";
         } else if (secAgo >= 604800) {
             int date = (int) secAgo / 604800;
-            String dateString = DOT + String.valueOf(date) + "wk";
-            time.setText(dateString);
+            dateString = DOT + String.valueOf(date) + "wk";
         } else if (secAgo >= 86400) {
             int date = (int) secAgo / 86400;
-            String dateString = DOT + String.valueOf(date);
+            dateString = DOT + String.valueOf(date);
             dateString += (date == 1) ? "day" : "days";
-            time.setText(dateString);
         } else if (secAgo >= 3600) {
             int date = (int) secAgo / 3600;
-            String dateString = DOT + String.valueOf(date);
+            dateString = DOT + String.valueOf(date);
             dateString += (date == 1) ? "hr" : "hrs";
-            time.setText(dateString);
         } else if (secAgo >= 60) {
             int date = (int) secAgo / 60;
-            String dateString = DOT + String.valueOf(date) + "min";
-            time.setText(dateString);
+            dateString = DOT + String.valueOf(date) + "min";
         } else {
-            String dateString = DOT + String.valueOf(secAgo) + "sec";
-            time.setText(dateString);
+            dateString = DOT + String.valueOf(secAgo) + "sec";
         }
+        return dateString;
     }
 
     public static int getTabLayoutIndex(String[] array, String value) {
@@ -90,53 +74,6 @@ public class Utility {
         return -1;
     }
     
-    public static void startIntentPreview(FragmentActivity fragmentActivity, Post post){
-        Intent intent = null;
-        String link = "";
-        String postHint = post.postHint;
-        if (!post.previewGif.isEmpty()) {
-            String to_remove = "amp;";
-            link = post.previewGif.replace(to_remove, "");
-            intent = new Intent(fragmentActivity, VideoActivity.class);
-        } else if (postHint.equals("link")) {
-            String to_remove = "amp;";
-            link = post.previewUrl.replace(to_remove, "");
-            intent = new Intent(fragmentActivity, ImageActivity.class);
-        } else if (postHint.equals("rich:video")) {
-            if (post.domain.contains("youtube.com")) {
-                Uri uri = Uri.parse(post.url);
-                String v = uri.getQueryParameter("v");
-                link = "https://www.youtube.com/embed/" + v;
-                intent = new Intent(fragmentActivity, LinkActivity.class);
-            } else if (post.domain.contains("youtu.be")) {
-                Uri uri = Uri.parse(post.url);
-                link = "https://www.youtube.com/embed/" + uri.getLastPathSegment();
-                intent = new Intent(fragmentActivity, LinkActivity.class);
-            } else {
-                String to_remove = "amp;";
-                link = post.previewUrl.replace(to_remove, "");
-                intent = new Intent(fragmentActivity, ImageActivity.class);
-            }
-        } else if (postHint.equals("image")) {
-            String to_remove = "amp;";
-            link = post.previewUrl.replace(to_remove, "");
-            intent = new Intent(fragmentActivity, ImageActivity.class);
-        } else if (postHint.equals("self") || post.domain.contains("self") && !post.selftext.isEmpty()) {
-            link = post.selftext;
-            intent = new Intent(fragmentActivity, SelfActivity.class);
-        }
-
-        if (intent != null) {
-            intent.putExtra("link", link);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(fragmentActivity).toBundle();
-                fragmentActivity.startActivity(intent, bundle);
-            } else {
-                fragmentActivity.startActivity(intent);
-            }
-        }
-    }
-
     public static void loadThumbnail(Context context, Post post, ImageView thumbnail) {
         if(!post.previewUrl.isEmpty() && checkThumbnail(post.thumbnail)){
             String to_remove = "amp;";
@@ -248,11 +185,23 @@ public class Utility {
         }
     }
 
-    public static void shareContent(Activity context, String postUrl){
-                context.startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(context)
-                        .setType("text/plain")
-                        .setText(postUrl)
-                        .getIntent(), context.getResources().getString(R.string.action_share)));
+    public static <T>  T getFragmentInstance(Class<T> fragmentClass, T fragmentInstance){
+        if (fragmentInstance == null) {
+            try {
+                fragmentInstance = fragmentClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return fragmentInstance;
+    }
+
+    public static String handleEscapeCharacter( String str ) {
+        String[] escapeCharacters = { "&gt;", "&lt;", "&amp;", "&quot;", "&apos;" };
+        String[] onReadableCharacter = {">", "<", "&", "\"\"", "'"};
+        for (int i = 0; i < escapeCharacters.length; i++) {
+            str = str.replace(escapeCharacters[i], onReadableCharacter[i]);
+        } return str;
     }
 
     public static void clearCookies(Context context) {

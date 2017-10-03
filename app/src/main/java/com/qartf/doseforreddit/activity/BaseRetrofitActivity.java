@@ -5,11 +5,10 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.database.DatabaseContract;
 import com.qartf.doseforreddit.database.DatabaseHelper;
 import com.qartf.doseforreddit.fragment.DetailFragment;
-import com.qartf.doseforreddit.fragment.ListViewFragment;
-import com.qartf.doseforreddit.fragment.SubredditListViewFragment;
+import com.qartf.doseforreddit.fragment.PostsFragment;
+import com.qartf.doseforreddit.fragment.SubredditsFragment;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.network.RetrofitControl;
 
@@ -18,8 +17,8 @@ public abstract class BaseRetrofitActivity extends BaseActivity implements Retro
 
     protected AccessToken accessToken;
     protected DetailFragment detailFragment;
-    protected ListViewFragment listViewFragment;
-    protected SubredditListViewFragment subredditListViewFragment;
+    protected PostsFragment postsFragment;
+    protected SubredditsFragment subredditsFragment;
     protected RetrofitControl retrofitControl;
     protected SharedPreferences sharedPreferences;
 
@@ -32,12 +31,7 @@ public abstract class BaseRetrofitActivity extends BaseActivity implements Retro
 
     @Override
     public void actionMe(String userName) {
-        String selection = DatabaseContract.Accounts.USER_NAME + "=?";
-        String[] selectionArgs = new String[]{userName};
-        Cursor cursor = getContentResolver().query(DatabaseContract.Accounts.CONTENT_URI,
-                DatabaseContract.Accounts.PROJECTION_LIST,
-                selection, selectionArgs, null);
-
+        Cursor cursor = DatabaseHelper.updateUser(this, userName);
         if (cursor != null && cursor.getCount() == 0) {
             DatabaseHelper.insertAccount(this, userName, accessToken);
         } else {
@@ -67,14 +61,12 @@ public abstract class BaseRetrofitActivity extends BaseActivity implements Retro
         return detailFragment;
     }
 
-    @Override
-    public ListViewFragment getListViewFragment() {
-        return listViewFragment;
+    public PostsFragment getPostsFragment() {
+        return postsFragment;
     }
 
-    @Override
-    public SubredditListViewFragment getSubredditListViewFragment() {
-        return subredditListViewFragment;
+    public SubredditsFragment getSubredditsFragment() {
+        return subredditsFragment;
     }
 
 }

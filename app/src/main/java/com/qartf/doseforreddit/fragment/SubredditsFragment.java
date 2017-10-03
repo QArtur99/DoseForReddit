@@ -20,8 +20,8 @@ import java.util.List;
  * Created by ART_F on 2017-09-05.
  */
 
-public class SubredditListViewFragment extends
-        BaseFragment<SubredditListViewFragment.ShubredditListViewFragmentInterface> implements SubredditAdapter.ListItemClickListener,
+public class SubredditsFragment extends
+        BaseFragment<SubredditsFragment.ShubredditListViewFragmentInterface> implements SubredditAdapter.ListItemClickListener,
         SwipyRefreshLayout.OnRefreshListener {
 
     private GridLayoutManager layoutManager;

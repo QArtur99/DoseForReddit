@@ -100,19 +100,19 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
             loadData(post);
         }
 
-        private void loadData(Comment post) {
-            String authorString = post.author + DOT;
+        private void loadData(Comment comment) {
+            String authorString = comment.author + DOT;
             author.setText(authorString);
-            Utility.upsFormatPoints(score, Integer.valueOf(post.ups));
-            Utility.timeFormat(post.createdUtc, time);
-            body.setText(post.body);
-            if(post.commentList != null){
+            Utility.upsFormatPoints(score, Integer.valueOf(comment.ups));
+            time.setText(Utility.timeFormat(comment.createdUtc));
+            body.setText(comment.body);
+            if(comment.commentList != null){
                 childrenCommentFrame.setVisibility(View.VISIBLE);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
                 layoutManager.setAutoMeasureEnabled(true);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setHasFixedSize(true);
-                CommentsAdapter commentsAdapter = new CommentsAdapter(context, post.commentList, mOnClickListener);
+                CommentsAdapter commentsAdapter = new CommentsAdapter(context, comment.commentList, mOnClickListener);
                 recyclerView.setAdapter(commentsAdapter);
             }
         }

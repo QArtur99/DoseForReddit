@@ -12,13 +12,14 @@ import com.qartf.doseforreddit.adapter.PostsAdapter;
 import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.model.PostParent;
 import com.qartf.doseforreddit.network.RetrofitControl;
+import com.qartf.doseforreddit.utility.Navigation;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ListViewFragment extends BaseFragment<ListViewFragment.ListViewFragmentInterface> implements PostsAdapter.ListItemClickListener,
+public class PostsFragment extends BaseFragment<PostsFragment.ListViewFragmentInterface> implements PostsAdapter.ListItemClickListener,
         SwipyRefreshLayout.OnRefreshListener, View.OnTouchListener {
 
     private GridLayoutManager layoutManager;
@@ -104,7 +105,7 @@ public class ListViewFragment extends BaseFragment<ListViewFragment.ListViewFrag
         Post post = (Post) postsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
             case R.id.imageContainer:
-                Utility.startIntentPreview(getActivity(), post);
+                Navigation.startIntentPreview(getActivity(), post);
                 break;
             case R.id.commentsAction:
                 if (getActivity().findViewById(R.id.detailsViewFrame) != null) {
@@ -115,7 +116,7 @@ public class ListViewFragment extends BaseFragment<ListViewFragment.ListViewFrag
                 }
                 break;
             case R.id.shareAction:
-                Utility.shareContent(getActivity(), post.url);
+                Navigation.shareContent(getActivity(), post.url);
                 break;
             case R.id.upContainer:
                 mCallback.getRetrofitControl().postVote("1", post.name);

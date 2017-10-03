@@ -26,7 +26,6 @@ public class Constants {
         public static final String BASE_URL_OAUTH = "https://oauth.reddit.com";
     }
 
-    //Loaders id
     public class Id {
         public static final int LOAD_USERS = 5;
         public static final int GUEST_AUTH = 6;
