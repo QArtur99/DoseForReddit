@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,7 +12,6 @@ import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.model.Subreddit;
 import com.qartf.doseforreddit.utility.Utility;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import butterknife.BindString;
@@ -22,19 +20,11 @@ import butterknife.ButterKnife;
 
 public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyViewHolder> {
 
-    public static final String DOT = "\u2022";
-    public static final String KILO = "K";
     final private ListItemClickListener mOnClickListener;
-    private DecimalFormat decimalFormat = new DecimalFormat("##.#");
 
     private List<Subreddit> data;
-    private LinearLayout previousView;
-    private boolean isOpen = false;
-    private Context context;
-
 
     public SubredditAdapter(Context context, List<Subreddit> myDataset, ListItemClickListener listener) {
-        this.context = context;
         data = myDataset;
         mOnClickListener = listener;
     }
@@ -107,14 +97,14 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
             loadData(post);
         }
 
-        private void loadData(Subreddit post) {
-            setSubscribeButton(post);
-            setAdultMark(post);
-            namePrefix.setText(post.display_name_prefixed);
-            title.setText(post.title);
-            String subNo = post.subscribers + " " + subscribers;
+        private void loadData(Subreddit subreddit) {
+            setSubscribeButton(subreddit);
+            setAdultMark(subreddit);
+            namePrefix.setText(subreddit.display_name_prefixed);
+            title.setText(subreddit.title);
+            String subNo = subreddit.subscribers + " " + subscribers;
             subsribersNo.setText(subNo);
-            Utility.timeFormat(post.created_utc, createdTime);
+            createdTime.setText(Utility.timeFormat(subreddit.created_utc));
         }
 
         private void setAdultMark(Subreddit post) {

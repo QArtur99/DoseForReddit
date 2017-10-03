@@ -22,6 +22,7 @@ import com.qartf.doseforreddit.adapter.CommentsAdapter;
 import com.qartf.doseforreddit.model.Comment;
 import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.network.RetrofitControl;
+import com.qartf.doseforreddit.utility.Navigation;
 import com.qartf.doseforreddit.utility.Utility;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class DetailFragment extends BaseFragment<DetailFragment.DetailFragmentIn
     @BindView(R.id.selftext) TextView selftext;
     @BindView(R.id.commentsNo) TextView commentsNo;
     @BindView(R.id.loading_indicator) ProgressBar progressBar;
-    @BindView(R.id.fragmentFrame) LinearLayout fragmentFrame;
+    @BindView(R.id.mainFrame) LinearLayout fragmentFrame;
     @BindView(R.id.nestedScrollView) NestedScrollView nestedScrollView;
     @BindView(R.id.spinnerSortBy) Spinner spinnerSortBy;
     @BindString(R.string.pref_post_detail_sub) String prefPostDetailSub;
@@ -116,7 +117,7 @@ public class DetailFragment extends BaseFragment<DetailFragment.DetailFragmentIn
         domain.setText("(" + post.domain + ")");
         subreddit.setText(post.subreddit);
         comments.setText(DOT + post.numComents + " comments");
-        Utility.timeFormat(post.createdUTC, time);
+        time.setText(Utility.timeFormat(post.createdUTC));
         Utility.loadThumbnail(getContext(), post, thumbnail);
 
         if (post.selftext != null && !post.selftext.isEmpty()) {
@@ -197,10 +198,10 @@ public class DetailFragment extends BaseFragment<DetailFragment.DetailFragmentIn
                 startActivity(intent);
                 break;
             case R.id.imageContainer:
-                Utility.startIntentPreview(getActivity(), post);
+                Navigation.startIntentPreview(getActivity(), post);
                 break;
             case R.id.shareAction:
-                Utility.shareContent(getActivity(), post.url);
+                Navigation.shareContent(getActivity(), post.url);
                 break;
         }
     }

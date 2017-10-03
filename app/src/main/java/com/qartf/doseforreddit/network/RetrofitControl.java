@@ -8,8 +8,8 @@ import android.util.Log;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.fragment.DetailFragment;
-import com.qartf.doseforreddit.fragment.ListViewFragment;
-import com.qartf.doseforreddit.fragment.SubredditListViewFragment;
+import com.qartf.doseforreddit.fragment.PostsFragment;
+import com.qartf.doseforreddit.fragment.SubredditsFragment;
 import com.qartf.doseforreddit.model.AboutMe;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.model.Comment;
@@ -144,7 +144,7 @@ public class RetrofitControl {
         call.enqueue(new Callback<PostParent>() {
             @Override
             public void onResponse(Call<PostParent> call, Response<PostParent> response) {
-                mCallback.getListViewFragment().onLoadFinished(response.body());
+                mCallback.getPostsFragment().onLoadFinished(response.body());
             }
 
             @Override
@@ -199,7 +199,7 @@ public class RetrofitControl {
         call.enqueue(new Callback<PostParent>() {
             @Override
             public void onResponse(Call<PostParent> call, Response<PostParent> response) {
-                mCallback.getListViewFragment().onLoadFinished(response.body());
+                mCallback.getPostsFragment().onLoadFinished(response.body());
             }
 
             @Override
@@ -222,7 +222,7 @@ public class RetrofitControl {
         call.enqueue(new Callback<SubredditParent>() {
             @Override
             public void onResponse(Call<SubredditParent> call, Response<SubredditParent> response) {
-                mCallback.getSubredditListViewFragment().onLoadFinished(response.body());
+                mCallback.getSubredditsFragment().onLoadFinished(response.body());
             }
 
             @Override
@@ -283,8 +283,8 @@ public class RetrofitControl {
         void setAccessToken(AccessToken accessToken);
         void setAccessTokenValue(String accessToken);
         DetailFragment getDetailFragment();
-        ListViewFragment getListViewFragment();
-        SubredditListViewFragment getSubredditListViewFragment();
+        PostsFragment getPostsFragment();
+        SubredditsFragment getSubredditsFragment();
     }
 
 }

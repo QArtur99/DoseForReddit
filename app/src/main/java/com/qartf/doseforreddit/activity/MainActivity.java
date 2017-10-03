@@ -1,16 +1,11 @@
 package com.qartf.doseforreddit.activity;
 
-import android.app.ActivityOptions;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -23,14 +18,14 @@ import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.database.DatabaseContract;
 import com.qartf.doseforreddit.dialog.SearchDialog;
 import com.qartf.doseforreddit.fragment.DetailFragment;
-import com.qartf.doseforreddit.fragment.ListViewFragment;
-import com.qartf.doseforreddit.fragment.SubredditListViewFragment;
+import com.qartf.doseforreddit.fragment.PostsFragment;
+import com.qartf.doseforreddit.fragment.SubredditsFragment;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Constants;
-import com.qartf.doseforreddit.utility.Constants.Auth;
 import com.qartf.doseforreddit.utility.Constants.Id;
+import com.qartf.doseforreddit.utility.Navigation;
 import com.qartf.doseforreddit.utility.Utility;
 
 import butterknife.BindView;
@@ -39,10 +34,9 @@ import butterknife.BindView;
 public class MainActivity extends BaseNavigationMainActivity implements LoaderManager.LoaderCallbacks,
         SharedPreferences.OnSharedPreferenceChangeListener,
         DetailFragment.DetailFragmentInterface,
-        ListViewFragment.ListViewFragmentInterface,
-        SubredditListViewFragment.ShubredditListViewFragmentInterface {
+        PostsFragment.ListViewFragmentInterface,
+        SubredditsFragment.ShubredditListViewFragmentInterface {
 
-    public FragmentManager fragmentManager;
     public String postObjectString;
     public Post post;
     @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
@@ -74,7 +68,7 @@ public class MainActivity extends BaseNavigationMainActivity implements LoaderMa
         accessToken = new AccessToken();
         loadStartFragment(savedInstanceState);
 
-        getSupportLoaderManager().initLoader(Id.LOAD_USERS, null, this).forceLoad();
+        loadUsers();
         setTitle();
     }
 
@@ -87,34 +81,23 @@ public class MainActivity extends BaseNavigationMainActivity implements LoaderMa
     }
 
     public void loadStartFragment(Bundle savedInstanceState) {
-        fragmentManager = getSupportFragmentManager();
-        listViewFragment = new ListViewFragment();
-        listViewFragment.setArguments(savedInstanceState);
-        setFragmentFrame(listViewFragment);
+        postsFragment = new PostsFragment();
+        postsFragment.setArguments(savedInstanceState);
+        Navigation.setFragmentFrame(this, R.id.mainFrame, postsFragment);
     }
 
     @Override
     public void loadFragment(int fragmentId) {
         switch (fragmentId) {
             case Id.SEARCH_POSTS:
-                if (listViewFragment == null) {
-                    listViewFragment = new ListViewFragment();
-                }
-                setFragmentFrame(listViewFragment);
+                postsFragment = Utility.getFragmentInstance(PostsFragment.class, postsFragment);
+                Navigation.setFragmentFrame(this, R.id.mainFrame, postsFragment);
                 break;
             case Id.SEARCH_SUBREDDITS:
-                if (subredditListViewFragment == null) {
-                    subredditListViewFragment = new SubredditListViewFragment();
-                }
-                setFragmentFrame(subredditListViewFragment);
+                subredditsFragment = Utility.getFragmentInstance(SubredditsFragment.class, subredditsFragment);
+                Navigation.setFragmentFrame(this, R.id.mainFrame, subredditsFragment);
                 break;
         }
-    }
-
-    private void setFragmentFrame(Fragment fragment) {
-        fragmentManager.beginTransaction()
-                .add(R.id.fragmentFrame, fragment)
-                .commit();
     }
 
     @Override
@@ -153,10 +136,7 @@ public class MainActivity extends BaseNavigationMainActivity implements LoaderMa
     }
 
     public void loginReddit() {
-        String url = String.format(Auth.AUTH_URL, Auth.CLIENT_ID, Auth.STATE, Auth.REDIRECT_URI, Auth.SCOPE);
-        Intent intent = new Intent(this, LinkActivity.class);
-        intent.putExtra("login", Uri.parse(url).toString());
-        startActivity(intent);
+        Navigation.startLoginActivity(this);
         isLoginCode = true;
     }
 
@@ -263,29 +243,16 @@ public class MainActivity extends BaseNavigationMainActivity implements LoaderMa
 
     @Override
     public void startDetailActivity(Post post) {
-        this.post = post;
         postObjectString = new Gson().toJson(post);
         String tokenString = new Gson().toJson(accessToken);
-        Intent intent = new Intent(MainActivity.this, CommentsActivity.class);
-        intent.putExtra("link", postObjectString);
-        intent.putExtra("token", tokenString);
+        Navigation.startCommentsActivity(this, postObjectString, tokenString);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
-            startActivity(intent, bundle);
-        } else {
-            startActivity(intent);
-        }
     }
 
     public void loadDetailFragment() {
         if (findViewById(R.id.detailsViewFrame) != null) {
-            if (detailFragment == null) {
-                detailFragment = new DetailFragment();
-            }
-            fragmentManager.beginTransaction()
-                    .replace(R.id.detailsViewFrame, detailFragment)
-                    .commit();
+            detailFragment = Utility.getFragmentInstance(DetailFragment.class, detailFragment);
+            Navigation.setFragmentFrame(this, R.id.detailsViewFrame, detailFragment);
         }
     }
 

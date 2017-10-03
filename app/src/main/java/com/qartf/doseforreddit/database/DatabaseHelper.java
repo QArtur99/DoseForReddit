@@ -2,6 +2,7 @@ package com.qartf.doseforreddit.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
@@ -61,6 +62,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Toast.makeText(mainActivity, mainActivity.getString(R.string.editor_insert_movie_successful), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public static Cursor updateUser(AppCompatActivity appCompatActivity, String userName){
+        String selection = DatabaseContract.Accounts.USER_NAME + "=?";
+        String[] selectionArgs = new String[]{userName};
+        Cursor cursor = appCompatActivity.getContentResolver().query(DatabaseContract.Accounts.CONTENT_URI,
+                DatabaseContract.Accounts.PROJECTION_LIST,
+                selection, selectionArgs, null);
+        return cursor;
     }
 
 }
