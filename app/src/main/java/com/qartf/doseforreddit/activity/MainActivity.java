@@ -246,7 +246,6 @@ public class MainActivity extends BaseNavigationMainActivity implements LoaderMa
         postObjectString = new Gson().toJson(post);
         String tokenString = new Gson().toJson(accessToken);
         Navigation.startCommentsActivity(this, postObjectString, tokenString);
-
     }
 
     public void loadDetailFragment() {
