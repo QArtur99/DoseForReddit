@@ -23,6 +23,7 @@ allprojects {
 
 ext {
     supportLibVersion = '26.0.0-alpha1'
+    retrofitVersion = '2.3.0'
 }
 
 task clean(type: Delete) {

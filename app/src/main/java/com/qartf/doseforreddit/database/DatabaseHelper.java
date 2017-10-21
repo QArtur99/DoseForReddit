@@ -73,4 +73,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public static Cursor getUsers(Context appCompatActivity){
+        Cursor cursor = appCompatActivity.getContentResolver().query(DatabaseContract.Accounts.CONTENT_URI,
+                DatabaseContract.Accounts.PROJECTION_LIST,
+                null, null, null);
+        return cursor;
+    }
+
 }

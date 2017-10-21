@@ -1,9 +1,9 @@
-package com.qartf.doseforreddit.activity;
+package com.qartf.doseforreddit.mvp;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -20,13 +20,16 @@ import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.dialog.LoginDialog;
+import com.qartf.doseforreddit.mvp.root.App;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Utility;
+
+import javax.inject.Inject;
 
 import butterknife.BindString;
 import butterknife.BindView;
 
-public abstract class BaseNavigationMainActivity extends BaseRetrofitActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class BaseNavigationMainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindString(R.string.pref_post_subreddit) public String prefPostSubreddit;
     @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
@@ -37,11 +40,14 @@ public abstract class BaseNavigationMainActivity extends BaseRetrofitActivity im
     @BindView(R.id.navigation_view) NavigationView navigationView;
     @BindView(R.id.drawer) DrawerLayout drawerLayout;
 
+    @Inject
+    SharedPreferences sharedPreferences;
+
     BaseNavigationMainActivity() {}
 
     @Override
     public void initNavigation() {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        ((App) getApplication()).getComponent().inject(this);
         setTabLayoutDivider();
         addTabLayoutTabs();
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

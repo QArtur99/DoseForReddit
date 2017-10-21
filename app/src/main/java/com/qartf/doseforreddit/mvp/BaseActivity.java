@@ -1,4 +1,4 @@
-package com.qartf.doseforreddit.activity;
+package com.qartf.doseforreddit.mvp;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

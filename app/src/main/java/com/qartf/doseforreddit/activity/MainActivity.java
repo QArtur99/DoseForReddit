@@ -16,7 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.database.DatabaseContract;
-import com.qartf.doseforreddit.dialog.SearchDialog;
+import com.qartf.doseforreddit.database.DatabaseHelper;
 import com.qartf.doseforreddit.fragment.DetailFragment;
 import com.qartf.doseforreddit.fragment.PostsFragment;
 import com.qartf.doseforreddit.fragment.SubredditsFragment;
@@ -68,7 +68,8 @@ public class MainActivity extends BaseNavigationMainActivity implements LoaderMa
         accessToken = new AccessToken();
         loadStartFragment(savedInstanceState);
 
-        loadUsers();
+//        loadUsers();
+        actionLoadUsers(DatabaseHelper.getUsers(this));
         setTitle();
     }
 
@@ -142,7 +143,7 @@ public class MainActivity extends BaseNavigationMainActivity implements LoaderMa
 
     @Override
     public void searchDialog(int id) {
-        new SearchDialog(this, id);
+//        new SearchDialog(this, id);
     }
 
     @Override
