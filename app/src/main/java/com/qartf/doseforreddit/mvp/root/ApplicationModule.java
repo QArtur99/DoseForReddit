@@ -28,7 +28,6 @@ public class ApplicationModule {
     @Provides
     @Singleton
     public SharedPreferences provideSharedPrefs() {
-//        return application.getSharedPreferences("dragger-prefs", Context.MODE_PRIVATE);
         return PreferenceManager.getDefaultSharedPreferences(application);
     }
 }

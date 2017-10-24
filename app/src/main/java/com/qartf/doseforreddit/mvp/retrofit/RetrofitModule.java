@@ -7,6 +7,8 @@ import com.qartf.doseforreddit.mvp.data.network.RetrofitRedditAPI;
 import com.qartf.doseforreddit.mvp.data.repository.MemoryRepository;
 import com.qartf.doseforreddit.mvp.data.repository.RetrofitRepository;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,6 +17,7 @@ import dagger.Provides;
 public class RetrofitModule {
 
     @Provides
+    @Singleton
     public RetrofitMVP.Presenter provideLoginActivityPresenter(RetrofitMVP.Model model){
         return new RetrofitPresenter(model);
     }

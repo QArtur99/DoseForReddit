@@ -33,7 +33,7 @@ public interface RetrofitMVP {
 
         void setView(RetrofitMVP.View view);
 
-        void rxUnsubscribe();
+        void onStop();
 
         void loadAccessToken();
 
@@ -48,7 +48,7 @@ public interface RetrofitMVP {
     interface Model {
         Observable<AccessToken> getAccessToken();
         Observable<PostParent> getPosts(AccessToken accessToken);
-
+        void onStop();
 //        void createUser(String name, String lastName);
 //
 //        User getUser();

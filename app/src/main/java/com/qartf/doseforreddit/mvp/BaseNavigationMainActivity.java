@@ -20,7 +20,9 @@ import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.dialog.LoginDialog;
+import com.qartf.doseforreddit.mvp.retrofit.RetrofitMVP;
 import com.qartf.doseforreddit.mvp.root.App;
+import com.qartf.doseforreddit.mvp.sharedPreferences.SharedPreferencesMVP;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Utility;
 
@@ -42,6 +44,10 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
 
     @Inject
     SharedPreferences sharedPreferences;
+    @Inject
+    SharedPreferencesMVP.Presenter presenter;
+    @Inject
+    RetrofitMVP.Presenter presenterx;
 
     BaseNavigationMainActivity() {}
 

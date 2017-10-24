@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.dialog.SearchDialog;
 import com.qartf.doseforreddit.model.Post;
+import com.qartf.doseforreddit.mvp.sharedPreferences.SharedPreferencesMVP;
 import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Navigation;
@@ -12,7 +13,7 @@ import com.qartf.doseforreddit.utility.Utility;
 
 
 public class MainActivity extends BaseNavigationMainActivity implements MainFragment.ListViewFragmentInterface,
-        SearchDialog.SearchDialogInter.View{
+        SearchDialog.SearchDialogInter.View, SharedPreferencesMVP.View {
 
     private MainFragment postsFragment;
 
@@ -36,6 +37,12 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
     @Override
     public RetrofitControl getRetrofitControl() {
         return null;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        presenter.setView(this);
     }
 
     @Override
@@ -87,5 +94,36 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
     @Override
     public void loadUsers() {
         postsFragment.loadUser();
+    }
+
+    @Override
+    public void setTitle() {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+    }
+
+    @Override
+    public void getPosts() {
+        presenterx.loadPosts(postsFragment.getAccessToken());
+    }
+
+    @Override
+    public void setTabLayoutPos() {
+        setTabLayoutPosition();
+    }
+
+    @Override
+    public void setUserName(String userName) {
+
+    }
+
+    @Override
+    public void loadUser() {
+
     }
 }

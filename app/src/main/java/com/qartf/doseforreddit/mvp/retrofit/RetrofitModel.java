@@ -25,5 +25,10 @@ public class RetrofitModel implements RetrofitMVP.Model {
         return repository.getPosts(accessToken);
     }
 
+    @Override
+    public void onStop() {
+
+    }
+
 
 }

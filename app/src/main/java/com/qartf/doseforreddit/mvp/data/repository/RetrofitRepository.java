@@ -9,7 +9,6 @@ public interface RetrofitRepository {
     Observable<AccessToken> getAccessToken();
     Observable<AccessToken> refreshToken(AccessToken accessToken);
     Observable<PostParent> getPosts(AccessToken accessToken);
-
 //    User getUser();
 //
 //    void saveUser(User user);

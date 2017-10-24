@@ -126,7 +126,7 @@ public class RetrofitPresenter implements RetrofitMVP.Presenter {
     }
 
     @Override
-    public void rxUnsubscribe() {
+    public void onStop() {
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }

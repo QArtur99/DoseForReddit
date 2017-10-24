@@ -96,7 +96,7 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
     @Override
     public void onStop() {
         super.onStop();
-        presenter.rxUnsubscribe();
+        presenter.onStop();
 //        resultList.clear();
 //        listAdapter.notifyDataSetChanged();
     }
@@ -120,6 +120,7 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
 
     @Override
     public void setPostParent(PostParent postParent) {
+        postsAdapter.clearMovies();
         emptyView.setVisibility(View.GONE);
         postsAdapter.setMovies(postParent.postList);
     }
