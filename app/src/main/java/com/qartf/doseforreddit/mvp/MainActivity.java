@@ -1,21 +1,25 @@
 package com.qartf.doseforreddit.mvp;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.dialog.SearchDialog;
 import com.qartf.doseforreddit.model.Post;
 import com.qartf.doseforreddit.mvp.sharedPreferences.SharedPreferencesMVP;
+import com.qartf.doseforreddit.mvp.token.TokenMVP;
 import com.qartf.doseforreddit.network.RetrofitControl;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Navigation;
 import com.qartf.doseforreddit.utility.Utility;
 
 
-public class MainActivity extends BaseNavigationMainActivity implements MainFragment.ListViewFragmentInterface,
-        SearchDialog.SearchDialogInter.View, SharedPreferencesMVP.View {
+public class MainActivity extends BaseNavigationMainActivity implements PostsFragment.ListViewFragmentInterface,
+SubredditsFragment.ListViewFragmentInterface,
+        SearchDialog.SearchDialogInter, SharedPreferencesMVP.View, TokenMVP.View {
 
-    private MainFragment postsFragment;
+    private PostsFragment postsFragment;
+    private SubredditsFragment subredditsFragment;
 
     @Override
     public int getContentLayout() {
@@ -29,7 +33,7 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
     }
 
     public void loadStartFragment(Bundle savedInstanceState) {
-        postsFragment = new MainFragment();
+        postsFragment = new PostsFragment();
         postsFragment.setArguments(savedInstanceState);
         Navigation.setFragmentFrame(this, R.id.mainFrame, postsFragment);
     }
@@ -42,7 +46,9 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
     @Override
     protected void onStart() {
         super.onStart();
-        presenter.setView(this);
+        tokenPresenter.setView(this);
+        tokenPresenter.tokenInfo();
+        presenterPref.setView(this);
     }
 
     @Override
@@ -72,7 +78,17 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
 
     @Override
     public void searchDialog(int id) {
-        new SearchDialog(this, id, postsFragment, this);
+        new SearchDialog(this, id, this);
+
+    }
+
+    @Override
+    public void searchPosts() {
+        postPresenter.loadPosts();
+    }
+
+    @Override
+    public void searchSubreddits() {
 
     }
 
@@ -80,20 +96,15 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
     public void loadFragment(int fragmentId) {
         switch (fragmentId) {
             case Constants.Id.SEARCH_POSTS:
-                postsFragment = Utility.getFragmentInstance(MainFragment.class, postsFragment);
+                postsFragment = Utility.getFragmentInstance(PostsFragment.class, postsFragment);
                 Navigation.setFragmentFrame(this, R.id.mainFrame, postsFragment);
                 break;
             case Constants.Id.SEARCH_SUBREDDITS:
-//                subredditsFragment = Utility.getFragmentInstance(SubredditsFragment.class, subredditsFragment);
-//                Navigation.setFragmentFrame(this, R.id.mainFrame, subredditsFragment);
+                subredditsFragment = Utility.getFragmentInstance(SubredditsFragment.class, subredditsFragment);
+                Navigation.setFragmentFrame(this, R.id.mainFrame, subredditsFragment);
                 break;
         }
 
-    }
-
-    @Override
-    public void loadUsers() {
-        postsFragment.loadUser();
     }
 
     @Override
@@ -102,14 +113,20 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        tokenPresenter.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.onDestroy();
+        presenterPref.onDestroy();
     }
 
     @Override
     public void getPosts() {
-        presenterx.loadPosts(postsFragment.getAccessToken());
+        postPresenter.loadPosts();
     }
 
     @Override
@@ -125,5 +142,10 @@ public class MainActivity extends BaseNavigationMainActivity implements MainFrag
     @Override
     public void loadUser() {
 
+    }
+
+    @Override
+    public void tokenInfo(String info) {
+        Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
     }
 }

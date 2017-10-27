@@ -29,16 +29,15 @@ public class SearchDialog {
     @BindString(R.string.pref_empty_tag) String prefEmptyTag;
     private AlertDialog dialog;
     private int searchId;
-    private SearchDialogInter.Data searchDialogInterData;
-    private SearchDialogInter.View searchDialogInterView;
+    private SearchDialogInter searchDialogInter;
+
     private Context context;
 
-    public SearchDialog(Context context, int searchId, SearchDialogInter.Data searchDialogInterData
-            , SearchDialogInter.View searchDialogInterView) {
+    public SearchDialog(Context context, int searchId, SearchDialogInter searchDialogInter) {
         this.context = context;
         this.searchId = searchId;
-        this.searchDialogInterData = searchDialogInterData;
-        this.searchDialogInterView = searchDialogInterView;
+        this.searchDialogInter = searchDialogInter;
+
         dialog = new AlertDialog.Builder(context)
                 .setView(R.layout.dialog_search)
                 .create();
@@ -60,7 +59,7 @@ public class SearchDialog {
 
     @OnClick(R.id.searchDialog)
     public void searchDialogOnClick() {
-        searchDialogInterView.loadFragment(searchId);
+        searchDialogInter.loadFragment(searchId);
 
         String queryString = searchDialogEditText.getText().toString();
 
@@ -68,10 +67,10 @@ public class SearchDialog {
 
         if(searchId == Id.SEARCH_POSTS) {
             sharedPreferences.edit().putString(prefSearchPost, queryString).apply();
-            searchDialogInterData.searchPosts();
+            searchDialogInter.searchPosts();
         }else if(searchId == Id.SEARCH_SUBREDDITS){
             sharedPreferences.edit().putString(prefSearchSubreddit, queryString).apply();
-            searchDialogInterData.searchSubreddits();
+            searchDialogInter.searchSubreddits();
         }
 
         if (dialog != null) {
@@ -80,15 +79,11 @@ public class SearchDialog {
     }
 
     public interface SearchDialogInter {
-        interface Data {
             void searchPosts();
 
             void searchSubreddits();
-        }
 
-        interface View{
             void loadFragment(int fragmentId);
-        }
     }
 
 }

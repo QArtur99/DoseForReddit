@@ -2,30 +2,29 @@ package com.qartf.doseforreddit.mvp.data.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.util.Base64;
 
-import com.google.gson.Gson;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.database.DatabaseContract;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.model.PostParent;
+import com.qartf.doseforreddit.model.SubredditParent;
 import com.qartf.doseforreddit.mvp.data.network.RetrofitRedditAPI;
-import com.qartf.doseforreddit.utility.Constants;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.UUID;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 
-public class MemoryRepository implements RetrofitRepository {
+public class MemoryRepository implements DataRepository.Retrofit {
 
-    private static final long STALE_MS = 20 * 1000;
+    private static final long TIME_LIMIT_IN_SECONDS = 60;
+    private static final int CALL_PER_MINUTE = 4;
+
     String prefPostSubreddit;
     String prefPostSortBy;
     String prefSearchPost;
@@ -36,25 +35,54 @@ public class MemoryRepository implements RetrofitRepository {
     String prefPostDetailSub;
     String prefPostDetailId;
     String prefPostDetailSortKey;
+    Subject<String> mObservable = PublishSubject.create();
     private Context context;
     private SharedPreferences sharedPreferences;
     private RetrofitRedditAPI retrofitRedditAPI;
-    private long timestamp;
+    private DataRepository.Token token;
+    private ArrayDeque<Long> callCounterLine = new ArrayDeque<>();
 
 
-    public MemoryRepository(Context context, SharedPreferences sharedPreferences, RetrofitRedditAPI retrofitRedditAPI) {
+
+    public MemoryRepository(Context context, SharedPreferences sharedPreferences, RetrofitRedditAPI retrofitRedditAPI, DataRepository.Token token) {
         this.context = context;
         this.sharedPreferences = sharedPreferences;
         this.retrofitRedditAPI = retrofitRedditAPI;
-        this.timestamp = System.currentTimeMillis();
+        this.token = token;
         loadStrıngPref();
+        this.callCounterLine.addFirst(System.currentTimeMillis() / 1000);
     }
 
-    private static String basicToken(String token) {
-        String authString = token + ":";
-        String encodedAuthString = Base64.encodeToString(authString.getBytes(), Base64.NO_WRAP);
-        String newToken = "Basic " + encodedAuthString;
-        return newToken;
+    public boolean setCallCounter() {
+        if (callCounterLine.size() > CALL_PER_MINUTE) {
+            callCounterLine.removeLast();
+        }
+
+        long now = System.currentTimeMillis() / 1000;
+        long timeGap = now - callCounterLine.getLast();
+        if (callCounterLine.size() >= CALL_PER_MINUTE && TIME_LIMIT_IN_SECONDS > timeGap) {
+            String waitString = String.valueOf(TIME_LIMIT_IN_SECONDS - timeGap);
+            String x = "You have to wait:" + waitString + "seconds";
+            mObservable.onNext(x);
+            return true;
+        }
+        callCounterLine.addFirst(System.currentTimeMillis() / 1000);
+        return false;
+    }
+
+
+    public Observable<Object> tokenInfo() {
+        return mObservable.map(new Function<String, Object>() {
+            @Override
+            public Object apply(@NonNull String value) throws Exception {
+                return String.valueOf(value);
+            }
+        });
+    }
+
+    public String getBearerToken(AccessToken accessToken) {
+        String token = "bearer " + accessToken.getAccessToken();
+        return token;
     }
 
     private void loadStrıngPref() {
@@ -71,97 +99,87 @@ public class MemoryRepository implements RetrofitRepository {
 
     }
 
-    public Cursor getUsers() {
-        Cursor cursor = context.getContentResolver().query(DatabaseContract.Accounts.CONTENT_URI,
-                DatabaseContract.Accounts.PROJECTION_LIST, null, null, null);
-        return cursor;
-    }
+//    public Observable<AccessToken> getAccess() {
+//        return Observable.create(new ObservableOnSubscribe<AccessToken>() {
+//            @Override
+//            public void subscribe(@NonNull ObservableEmitter<AccessToken> subscribe) throws Exception {
+//                try {
+//                    Cursor cursor = getUsers();
+//                    String logged = sharedPreferences.getString(context.getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+//                    if (!logged.equals(Constants.Utility.ANONYMOUS) && cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
+//                        do {
+//                            String userName = cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.USER_NAME));
+//                            if (userName.equals(logged)) {
+//                                AccessToken accessToken = new Gson().fromJson(cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.ACCESS_TOKEN)), AccessToken.class);
+//                                subscribe.onNext(accessToken);
+//                            }
+//                            subscribe.onComplete();
+//                        } while (cursor.moveToNext());
+//                    }
+//                } catch (SQLException exception) {
+//                    exception.printStackTrace();
+//                }
+//            }
+//        });
+//
+//    }
 
-    public Observable<AccessToken> getAccessTokenUser() {
-        AccessToken accessToken = null;
-        Cursor cursor = getUsers();
-        String logged = sharedPreferences.getString(context.getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
-        if (!logged.equals(Constants.Utility.ANONYMOUS) && cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
-            do {
-                String userName = cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.USER_NAME));
-                if (userName.equals(logged)) {
-                    accessToken = new Gson().fromJson(cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.ACCESS_TOKEN)), AccessToken.class);
-                }
-            } while (cursor.moveToNext());
+
+
+
+    @Override
+    public Observable<PostParent> getPosts() {
+
+        if (setCallCounter()) {
+            return Observable.empty();
         }
-        if (accessToken != null) {
-            return refreshToken(accessToken);
-        }
-        return Observable.empty();
-    }
 
-    public Observable<AccessToken> getAccessTokenGuest() {
-        String uuid = UUID.randomUUID().toString();
-        return retrofitRedditAPI.guestToken(basicToken(Constants.Auth.CLIENT_ID), Constants.Auth.NO_NAME_GRAND_TYPE, uuid);
-    }
-
-    public Observable<AccessToken> getAccess() {
-        return Observable.create(new ObservableOnSubscribe<AccessToken>() {
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<PostParent>>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<AccessToken> subscribe) throws Exception {
-                try {
-                    Cursor cursor = getUsers();
-                    String logged = sharedPreferences.getString(context.getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
-                    if (!logged.equals(Constants.Utility.ANONYMOUS) && cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
-                        do {
-                            String userName = cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.USER_NAME));
-                            if (userName.equals(logged)) {
-                                AccessToken accessToken = new Gson().fromJson(cursor.getString(cursor.getColumnIndex(DatabaseContract.Accounts.ACCESS_TOKEN)), AccessToken.class);
-                                subscribe.onNext(accessToken);
-                            }
-                            subscribe.onComplete();
-                        } while (cursor.moveToNext());
-                    }
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
+            public ObservableSource<PostParent> apply(AccessToken accessToken) throws Exception {
+                token.setAccessToken(accessToken);
+
+                String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
+                String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
+                HashMap<String, String> args = new HashMap<>();
+                return retrofitRedditAPI.getPosts(getBearerToken(accessToken), subreddit, subredditSortBy, args);
             }
         });
-
     }
+
 
 //    @Override
-//    public Observable<AccessToken> getAccessTokenFromMemory() {
+//    public Observable<PostParent> getPosts() {
 //
-//        if (isUpToDate() && accessToken != null) {
-//            return Observable.just(accessToken);
-//        } else {
-//            timestamp = System.currentTimeMillis();
-//            accessToken = null;
+//        if (setCallCounter()) {
 //            return Observable.empty();
 //        }
-//    }
 //
-//    public boolean isUpToDate() {
-//        return System.currentTimeMillis() - timestamp < STALE_MS;
+//        String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
+//        String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
+//        HashMap<String, String> args = new HashMap<>();
+//        return retrofitRedditAPI.getPosts(token.getBearerToken(), subreddit, subredditSortBy, args);
 //    }
 
     @Override
-    public Observable<AccessToken> refreshToken(AccessToken accessToken) {
-        return retrofitRedditAPI.refreshToken(basicToken(Constants.Auth.CLIENT_ID), "refresh_token", accessToken.getRefreshToken());
-    }
+    public Observable<SubredditParent> getSubreddits() {
 
-    private String getBearerToken(AccessToken accessToken) {
-        String token = "bearer " + accessToken.getAccessToken();
-        return token;
-    }
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
 
-    @Override
-    public Observable<AccessToken> getAccessToken() {
-        return getAccessTokenUser().switchIfEmpty(getAccessTokenGuest());
-    }
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubredditParent>>() {
+            @Override
+            public ObservableSource<SubredditParent> apply(AccessToken accessToken) throws Exception {
+                token.setAccessToken(accessToken);
 
-    @Override
-    public Observable<PostParent> getPosts(AccessToken accessToken) {
-        String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
-        String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
-        HashMap<String, String> args = new HashMap<>();
-        return retrofitRedditAPI.getPosts(getBearerToken(accessToken), subreddit, subredditSortBy, args);
+                String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
+                HashMap<String, String> args = new HashMap<>();
+                args.put("limit", "30");
+                args.put("q", queryString);
+                return retrofitRedditAPI.getSubreddits(getBearerToken(accessToken), args);
+            }
+        });
     }
 
 }

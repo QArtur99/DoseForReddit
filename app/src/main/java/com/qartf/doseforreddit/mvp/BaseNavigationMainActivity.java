@@ -20,9 +20,11 @@ import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.dialog.LoginDialog;
-import com.qartf.doseforreddit.mvp.retrofit.RetrofitMVP;
+import com.qartf.doseforreddit.mvp.post.PostMVP;
 import com.qartf.doseforreddit.mvp.root.App;
 import com.qartf.doseforreddit.mvp.sharedPreferences.SharedPreferencesMVP;
+import com.qartf.doseforreddit.mvp.subreddit.SubredditMVP;
+import com.qartf.doseforreddit.mvp.token.TokenMVP;
 import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Utility;
 
@@ -45,9 +47,13 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
     @Inject
     SharedPreferences sharedPreferences;
     @Inject
-    SharedPreferencesMVP.Presenter presenter;
+    SharedPreferencesMVP.Presenter presenterPref;
     @Inject
-    RetrofitMVP.Presenter presenterx;
+    PostMVP.Presenter postPresenter;
+    @Inject
+    SubredditMVP.Presenter subredditPresenter;
+    @Inject
+    TokenMVP.Presenter tokenPresenter;
 
     BaseNavigationMainActivity() {}
 
@@ -197,7 +203,6 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 break;
             case R.id.refresh:
                 loadFragment(Constants.Id.SEARCH_POSTS);
-                loadUsers();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -210,8 +215,6 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
     public abstract void searchDialog(int id);
 
     public abstract void loadFragment(int id);
-
-    public abstract void loadUsers();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -14,7 +14,7 @@ android {
         }
     }
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.qartf.doseforreddit"
         minSdkVersion 19
@@ -59,7 +59,7 @@ dependencies {
     //Gson
     compile 'com.google.code.gson:gson:2.8.1'
     //Network Retrofit
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     //SwipyRefresh
     compile 'com.github.orangegangsters:swipy:1.2.3@aar'
     testCompile 'junit:junit:4.12'

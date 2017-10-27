@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.qartf.doseforreddit.mvp.data.network.RetrofitRedditAPI;
+import com.qartf.doseforreddit.mvp.data.repository.DataRepository;
+import com.qartf.doseforreddit.mvp.data.repository.MemoryRepository;
+import com.qartf.doseforreddit.mvp.data.repository.TokenRepository;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -30,4 +35,17 @@ public class ApplicationModule {
     public SharedPreferences provideSharedPrefs() {
         return PreferenceManager.getDefaultSharedPreferences(application);
     }
+
+    @Provides
+    @Singleton
+    public DataRepository.Retrofit provideRetrofitRepository(Context context, SharedPreferences sharedPreferences, RetrofitRedditAPI retrofitRedditAPI, DataRepository.Token token){
+        return new MemoryRepository(context, sharedPreferences, retrofitRedditAPI, token);
+    }
+
+    @Provides
+    @Singleton
+    public DataRepository.Token provideTokenRepository(Context context, SharedPreferences sharedPreferences, RetrofitRedditAPI retrofitRedditAPI){
+        return new TokenRepository(context, sharedPreferences, retrofitRedditAPI);
+    }
+
 }

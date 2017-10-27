@@ -6,13 +6,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.adapter.PostsAdapter;
-import com.qartf.doseforreddit.dialog.SearchDialog;
+import com.qartf.doseforreddit.adapter.SubredditAdapter;
 import com.qartf.doseforreddit.model.AccessToken;
 import com.qartf.doseforreddit.model.Post;
-import com.qartf.doseforreddit.model.PostParent;
-import com.qartf.doseforreddit.mvp.retrofit.RetrofitMVP;
+import com.qartf.doseforreddit.model.Subreddit;
+import com.qartf.doseforreddit.model.SubredditParent;
 import com.qartf.doseforreddit.mvp.root.App;
+import com.qartf.doseforreddit.mvp.subreddit.SubredditMVP;
 import com.qartf.doseforreddit.network.RetrofitControl;
 
 import java.util.ArrayList;
@@ -20,23 +20,18 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Function;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-
-public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, PostsAdapter.ListItemClickListener,
-        SearchDialog.SearchDialogInter.Data{
+public class SubredditsFragment extends BaseFragmentMvp implements SubredditMVP.View, SubredditAdapter.ListItemClickListener {
 
     ListViewFragmentInterface mCallback;
-    private AccessToken accessToken;
     private GridLayoutManager layoutManager;
-    private PostsAdapter postsAdapter;
+    private SubredditAdapter postsAdapter;
     Subject<AccessToken> mObservable = PublishSubject.create();
 
     @Inject
-    RetrofitMVP.Presenter presenter;
+    SubredditMVP.Presenter presenter;
     @Inject
     Navigator navigator;
 
@@ -45,7 +40,7 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
         super.onAttach(context);
         try {
             ((App) context.getApplicationContext()).getComponent().inject(this);
-            mCallback = (ListViewFragmentInterface) context;
+            mCallback = (SubredditsFragment.ListViewFragmentInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
@@ -60,28 +55,25 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
     @Override
     public void initComponents() {
         this.navigator.setActivity(getActivity());
-        setAdapter(new ArrayList<Post>());
+        setAdapter(new ArrayList<Subreddit>());
     }
 
-    public void loadUser(){
-        presenter.loadAccessToken();
-    }
 
-    public void method() {
-        mObservable.map(new Function<AccessToken, Object>() {
-            @Override
-            public Object apply(@NonNull AccessToken value) throws Exception {
-                presenter.loadPosts(accessToken);
-                return String.valueOf(value);
-            }
-        }).subscribe();
-    }
+//    public void method() {
+//        mObservable.map(new Function<AccessToken, Object>() {
+//            @Override
+//            public Object apply(@NonNull AccessToken value) throws Exception {
+//                presenter.loadPosts();
+//                return String.valueOf(value);
+//            }
+//        }).subscribe();
+//    }
 
-    public void setAdapter(List<Post> movieList) {
+    public void setAdapter(List<Subreddit> movieList) {
         layoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        postsAdapter = new PostsAdapter(getContext(), movieList, this);
+        postsAdapter = new SubredditAdapter(getContext(), movieList, this);
         recyclerView.setAdapter(postsAdapter);
     }
 
@@ -89,8 +81,8 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
     public void onStart() {
         super.onStart();
         presenter.setView(this);
+        presenter.loadSubreddits();
 //        method();
-        presenter.loadAccessToken();
     }
 
     @Override
@@ -101,17 +93,6 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
 //        listAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void setAccessToken(AccessToken accessToken) {
-        this.accessToken = accessToken;
-        presenter.loadPosts(accessToken);
-//        mObservable.onNext(this.accessToken);
-    }
-
-    @Override
-    public AccessToken getAccessToken() {
-        return this.accessToken;
-    }
 
     @Override
     public void showToast(AccessToken accessToken) {
@@ -119,10 +100,10 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
     }
 
     @Override
-    public void setPostParent(PostParent postParent) {
+    public void setSubredditParent(SubredditParent postParent) {
         postsAdapter.clearMovies();
         emptyView.setVisibility(View.GONE);
-        postsAdapter.setMovies(postParent.postList);
+        postsAdapter.setMovies(postParent.subredditList);
     }
 
     @Override
@@ -143,19 +124,10 @@ public class MainFragment extends BaseFragmentMvp implements RetrofitMVP.View, P
             mCallback.setPost(post);
         } else {
 //            navigator.startDetailActivity(post, accessToken);
-            presenter.loadPosts(accessToken);
+            presenter.loadSubreddits();
         }
     }
 
-    @Override
-    public void searchPosts() {
-        presenter.loadPosts(accessToken);
-    }
-
-    @Override
-    public void searchSubreddits() {
-        presenter.loadPosts(accessToken);
-    }
 
     public interface ListViewFragmentInterface {
         RetrofitControl getRetrofitControl();

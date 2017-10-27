@@ -1,18 +1,16 @@
-package com.qartf.doseforreddit.mvp.retrofit;
+package com.qartf.doseforreddit.mvp.subreddit;
 
 import com.qartf.doseforreddit.model.AccessToken;
-import com.qartf.doseforreddit.model.PostParent;
+import com.qartf.doseforreddit.model.SubredditParent;
 
 import io.reactivex.Observable;
 
 
-public interface RetrofitMVP {
+public interface SubredditMVP {
 
     interface View {
-        void setAccessToken(AccessToken accessToken);
-        AccessToken getAccessToken();
         void showToast(AccessToken accessToken);
-        void setPostParent(PostParent postParent);
+        void setSubredditParent(SubredditParent postParent);
 
         void error(String errorString);
         void setLoadIndicatorOff();
@@ -31,13 +29,11 @@ public interface RetrofitMVP {
 
     interface Presenter {
 
-        void setView(RetrofitMVP.View view);
+        void setView(SubredditMVP.View view);
 
         void onStop();
 
-        void loadAccessToken();
-
-        void loadPosts(AccessToken accessToken);
+        void loadSubreddits();
 //
 //        void loginButtonClicked();
 //
@@ -46,13 +42,7 @@ public interface RetrofitMVP {
     }
 
     interface Model {
-        Observable<AccessToken> getAccessToken();
-        Observable<PostParent> getPosts(AccessToken accessToken);
-        void onStop();
-//        void createUser(String name, String lastName);
-//
-//        User getUser();
-
+        Observable<SubredditParent> getSubreddits();
 
     }
 }
