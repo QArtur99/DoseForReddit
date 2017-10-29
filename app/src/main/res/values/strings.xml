@@ -54,8 +54,8 @@
     <string name="search_subreddits">Search subreddits</string>
 
     //Add
-    <string name="editor_insert_movie_successful">Movie added to favorite</string>
-    <string name="editor_insert_movie_failed">Error with adding movie</string>
+    <string name="editor_insert_user_successful">User signed in!</string>
+    <string name="editor_insert_user_failed">Error with signing in</string>
 
     //Login
     <string name="pref_access_code" translatable="false">Code</string>

@@ -2,9 +2,9 @@ package com.qartf.doseforreddit.network;
 
 import android.util.Base64;
 
-import com.qartf.doseforreddit.model.AccessToken;
-import com.qartf.doseforreddit.model.PostParent;
-import com.qartf.doseforreddit.utility.Constants;
+import com.qartf.doseforreddit.mvp.data.model.AccessToken;
+import com.qartf.doseforreddit.mvp.data.model.PostParent;
+import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
 
 import java.io.IOException;
 import java.util.HashMap;

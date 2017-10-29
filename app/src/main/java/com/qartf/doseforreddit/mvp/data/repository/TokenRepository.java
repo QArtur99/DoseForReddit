@@ -7,10 +7,11 @@ import android.util.Base64;
 
 import com.google.gson.Gson;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.database.DatabaseContract;
-import com.qartf.doseforreddit.model.AccessToken;
+import com.qartf.doseforreddit.mvp.data.database.DatabaseContract;
+import com.qartf.doseforreddit.mvp.data.database.DatabaseHelper;
+import com.qartf.doseforreddit.mvp.data.model.AccessToken;
 import com.qartf.doseforreddit.mvp.data.network.RetrofitRedditAPI;
-import com.qartf.doseforreddit.utility.Constants;
+import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
 
 import java.util.UUID;
 
@@ -27,27 +28,28 @@ public class TokenRepository implements DataRepository.Token {
     private SharedPreferences sharedPreferences;
     private RetrofitRedditAPI retrofitRedditAPI;
     private long timestamp;
-;
+    ;
 
 
-    public TokenRepository(Context context, SharedPreferences sharedPreferences, RetrofitRedditAPI retrofitRedditAPI){
+    public TokenRepository(Context context, SharedPreferences sharedPreferences, RetrofitRedditAPI retrofitRedditAPI) {
         this.context = context;
         this.sharedPreferences = sharedPreferences;
         this.retrofitRedditAPI = retrofitRedditAPI;
         this.timestamp = System.currentTimeMillis() / 1000;
     }
 
-    public Cursor getUsers() {
-        Cursor cursor = context.getContentResolver().query(DatabaseContract.Accounts.CONTENT_URI,
-                DatabaseContract.Accounts.PROJECTION_LIST, null, null, null);
-        return cursor;
+    private static String basicToken(String token) {
+        String authString = token + ":";
+        String encodedAuthString = Base64.encodeToString(authString.getBytes(), Base64.NO_WRAP);
+        String newToken = "Basic " + encodedAuthString;
+        return newToken;
     }
 
     public Observable<AccessToken> getAccessTokenX() {
         long currentGap = (System.currentTimeMillis() / 1000) - timestamp;
 
-        if(accessToken == null){
-            Cursor cursor = getUsers();
+        if (accessToken == null) {
+            Cursor cursor = DatabaseHelper.getUsers(context);
             String logged = sharedPreferences.getString(context.getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
             if (!logged.equals(Constants.Utility.ANONYMOUS) && cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
                 do {
@@ -61,16 +63,17 @@ public class TokenRepository implements DataRepository.Token {
 
             if (accessToken != null) {
                 return refreshTokenRX(accessToken);
-            }else {
+            } else {
+                accessToken = new AccessToken();
                 return getAccessTokenGuest();
             }
-        }else if (currentGap >= TIME_LIMIT_HOUR) {
-                this.timestamp = System.currentTimeMillis() / 1000;
+        } else if (currentGap >= TIME_LIMIT_HOUR) {
+            this.timestamp = System.currentTimeMillis() / 1000;
             String logged = sharedPreferences.getString(context.getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
 
-            if(!logged.equals(Constants.Utility.ANONYMOUS)){
+            if (!logged.equals(Constants.Utility.ANONYMOUS)) {
                 return refreshTokenRX(accessToken);
-            }else {
+            } else {
                 return getAccessTokenGuest();
             }
         }
@@ -79,23 +82,31 @@ public class TokenRepository implements DataRepository.Token {
     }
 
     @Override
+    public AccessToken getAccessToken() {
+        return accessToken;
+    }
+
+    @Override
     public void setAccessToken(AccessToken accessToken) {
         this.accessToken = accessToken;
     }
 
-    public Observable<AccessToken> getAccessTokenGuest() {
-        String uuid = UUID.randomUUID().toString();
-        return retrofitRedditAPI.guestTokenRX(basicToken(Constants.Auth.CLIENT_ID), Constants.Auth.NO_NAME_GRAND_TYPE, uuid);
+    @Override
+    public void setAccessTokenValue(String accessTokenValue) {
+        this.accessToken.setAccessToken(accessTokenValue);
+    }
+
+    public Observable<AccessToken> accessTokenRX() {
+        String loginCode = sharedPreferences.getString(context.getResources().getString(R.string.pref_access_code), "");
+        return retrofitRedditAPI.accessTokenRX(basicToken(Constants.Auth.CLIENT_ID), "authorization_code", loginCode, Constants.Auth.REDIRECT_URI);
     }
 
     public Observable<AccessToken> refreshTokenRX(AccessToken accessToken) {
         return retrofitRedditAPI.refreshTokenRX(basicToken(Constants.Auth.CLIENT_ID), "refresh_token", accessToken.getRefreshToken());
     }
 
-    private static String basicToken(String token) {
-        String authString = token + ":";
-        String encodedAuthString = Base64.encodeToString(authString.getBytes(), Base64.NO_WRAP);
-        String newToken = "Basic " + encodedAuthString;
-        return newToken;
+    public Observable<AccessToken> getAccessTokenGuest() {
+        String uuid = UUID.randomUUID().toString();
+        return retrofitRedditAPI.guestTokenRX(basicToken(Constants.Auth.CLIENT_ID), Constants.Auth.NO_NAME_GRAND_TYPE, uuid);
     }
 }

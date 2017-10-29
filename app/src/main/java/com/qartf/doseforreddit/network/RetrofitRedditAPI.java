@@ -1,11 +1,11 @@
 package com.qartf.doseforreddit.network;
 
-import com.qartf.doseforreddit.model.AboutMe;
-import com.qartf.doseforreddit.model.AccessToken;
-import com.qartf.doseforreddit.model.CommentParent;
-import com.qartf.doseforreddit.model.PostParent;
-import com.qartf.doseforreddit.model.SubredditParent;
-import com.qartf.doseforreddit.utility.Constants.Auth;
+import com.qartf.doseforreddit.mvp.data.model.AboutMe;
+import com.qartf.doseforreddit.mvp.data.model.AccessToken;
+import com.qartf.doseforreddit.mvp.data.model.CommentParent;
+import com.qartf.doseforreddit.mvp.data.model.PostParent;
+import com.qartf.doseforreddit.mvp.data.model.SubredditParent;
+import com.qartf.doseforreddit.mvp.presenter.utility.Constants.Auth;
 
 import java.util.Map;
 

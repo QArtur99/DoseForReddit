@@ -1,13 +1,16 @@
 package com.qartf.doseforreddit.mvp.data.network;
 
-import com.qartf.doseforreddit.model.AccessToken;
-import com.qartf.doseforreddit.model.PostParent;
-import com.qartf.doseforreddit.model.SubredditParent;
-import com.qartf.doseforreddit.utility.Constants;
+import com.qartf.doseforreddit.mvp.data.model.AboutMe;
+import com.qartf.doseforreddit.mvp.data.model.AccessToken;
+import com.qartf.doseforreddit.mvp.data.model.CommentParent;
+import com.qartf.doseforreddit.mvp.data.model.PostParent;
+import com.qartf.doseforreddit.mvp.data.model.SubredditParent;
+import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
 
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -17,10 +20,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
-
-/**
- * Created by ART_F on 2017-10-20.
- */
 
 public interface RetrofitRedditAPI {
 
@@ -70,6 +69,12 @@ public interface RetrofitRedditAPI {
                                  @Field("grant_type") String grant_type,
                                  @Field("device_id") String deviceId);
 
+    @GET(Constants.Auth.BASE_URL_OAUTH + "/api/v1/me")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<AboutMe> getAboutMe(@Header("Authorization") String authorization);
+
+
+
     @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/{sort}")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<PostParent> getPosts(@Header("Authorization") String authorization,
@@ -77,9 +82,38 @@ public interface RetrofitRedditAPI {
                                        @Path(value = "sort", encoded = true) String sort,
                                        @QueryMap Map<String, String> options);
 
+    @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/search")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<PostParent> searchPosts(@Header("Authorization") String authorization,
+                                 @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                 @QueryMap Map<String, String> options);
+
+    @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/comments/{id}")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<CommentParent> getComments(@Header("Authorization") String authorization,
+                                    @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                    @Path(value = "id", encoded = true) String sort,
+                                    @QueryMap Map<String, String> options);
+
+
     @GET(Constants.Auth.BASE_URL_OAUTH + "/subreddits/search")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<SubredditParent> getSubreddits(@Header("Authorization") String authorization,
                                            @QueryMap Map<String, String> options);
+
+
+    @FormUrlEncoded
+    @POST(Constants.Auth.BASE_URL_OAUTH + "/api/subscribe")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<ResponseBody> postSubscribe(@Header("Authorization") String authorization,
+                                     @Field("action") String subscribe,
+                                     @Field("sr") String fullname);
+
+    @FormUrlEncoded
+    @POST(Constants.Auth.BASE_URL_OAUTH + "/api/vote")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<ResponseBody> postVote(@Header("Authorization") String authorization,
+                                @Field("dir") String dir,
+                                @Field("id") String fullname);
 
 }
