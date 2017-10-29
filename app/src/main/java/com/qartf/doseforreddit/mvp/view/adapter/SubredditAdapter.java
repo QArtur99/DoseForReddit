@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.data.model.Subreddit;
+import com.qartf.doseforreddit.mvp.data.entity.Subreddit;
 import com.qartf.doseforreddit.mvp.presenter.utility.Utility;
 
 import java.util.List;

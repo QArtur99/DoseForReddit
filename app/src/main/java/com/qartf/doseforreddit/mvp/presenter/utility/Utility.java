@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.data.model.Post;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;

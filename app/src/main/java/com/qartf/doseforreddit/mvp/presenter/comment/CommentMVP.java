@@ -1,8 +1,8 @@
 package com.qartf.doseforreddit.mvp.presenter.comment;
 
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
-import com.qartf.doseforreddit.mvp.data.model.CommentParent;
-import com.qartf.doseforreddit.mvp.data.model.Post;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.CommentParent;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -51,14 +51,11 @@ public interface CommentMVP {
 
     interface Presenter {
 
-        String getPostId();
-
-        String getPostSubreddit();
-
-
         void setView(CommentMVP.View view);
 
         void setPost(Post post);
+
+        Post getPost();
 
         void loadPostData();
 

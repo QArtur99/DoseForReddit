@@ -1,7 +1,7 @@
-package com.qartf.doseforreddit.mvp.data.model;
+package com.qartf.doseforreddit.mvp.data.entity;
 
 import com.google.gson.annotations.JsonAdapter;
-import com.qartf.doseforreddit.mvp.data.model.deserializer.PostDeserializer;
+import com.qartf.doseforreddit.mvp.data.entity.deserializer.PostDeserializer;
 
 @JsonAdapter(PostDeserializer.class)
 public class Post {

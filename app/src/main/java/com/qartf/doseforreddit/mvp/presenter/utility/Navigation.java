@@ -10,12 +10,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.gson.Gson;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.mvp.view.activity.ImageActivity;
 import com.qartf.doseforreddit.mvp.view.activity.LinkActivity;
 import com.qartf.doseforreddit.mvp.view.activity.SelfActivity;
 import com.qartf.doseforreddit.mvp.view.activity.VideoActivity;
-import com.qartf.doseforreddit.mvp.data.model.Post;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 import com.qartf.doseforreddit.mvp.view.activity.CommentsActivity;
 
 
@@ -41,14 +42,13 @@ public class Navigation {
         initActivity(activity, intent);
     }
 
-    public static void startCommentsActivity(Activity activity, String postObject, String accessToken){
-        Intent intent = new Intent(activity, CommentsActivity.class);
-        intent.putExtra("link", postObject);
-        intent.putExtra("token", accessToken);
+    public static void startLinkActivity(Activity activity, String url){
+        Intent intent = new Intent(activity, LinkActivity.class);
+        intent.putExtra("link", url);
         initActivity(activity, intent);
     }
 
-    public static void startCommentsActivityMVP(Activity activity, String postObject){
+    public static void startCommentsActivity(Activity activity, String postObject){
         Intent intent = new Intent(activity, CommentsActivity.class);
         intent.putExtra("link", postObject);
         initActivity(activity, intent);
@@ -61,6 +61,11 @@ public class Navigation {
         } else {
             activity.startActivity(intent);
         }
+    }
+
+    public static void startDetailActivity(Activity activity, Post post) {
+        String postObjectString = new Gson().toJson(post);
+        startCommentsActivity(activity, postObjectString);
     }
 
     public static void startIntentPreview(FragmentActivity fragmentActivity, Post post){

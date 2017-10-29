@@ -1,4 +1,4 @@
-package com.qartf.doseforreddit.mvp.data.model.deserializer;
+package com.qartf.doseforreddit.mvp.data.entity.deserializer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.qartf.doseforreddit.mvp.data.model.Comment;
+import com.qartf.doseforreddit.mvp.data.entity.Comment;
 
 import java.lang.reflect.Type;
 import java.util.List;

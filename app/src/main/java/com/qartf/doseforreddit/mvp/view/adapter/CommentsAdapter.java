@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.data.model.Comment;
+import com.qartf.doseforreddit.mvp.data.entity.Comment;
 import com.qartf.doseforreddit.mvp.presenter.utility.Utility;
 
 import java.util.List;

@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.data.model.Post;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 import com.qartf.doseforreddit.mvp.presenter.sharedPreferences.SharedPreferencesMVP;
 import com.qartf.doseforreddit.mvp.presenter.token.TokenMVP;
 import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
@@ -78,7 +78,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void loginReddit() {
-        navigator.startLoginActivity();
+        Navigation.startLoginActivity(this);
         isLoginCode = true;
     }
 

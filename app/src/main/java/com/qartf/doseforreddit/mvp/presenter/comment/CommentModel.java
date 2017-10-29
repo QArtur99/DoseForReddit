@@ -1,6 +1,6 @@
 package com.qartf.doseforreddit.mvp.presenter.comment;
 
-import com.qartf.doseforreddit.mvp.data.model.CommentParent;
+import com.qartf.doseforreddit.mvp.data.entity.CommentParent;
 import com.qartf.doseforreddit.mvp.data.repository.DataRepository;
 
 import io.reactivex.Observable;

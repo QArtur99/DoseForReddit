@@ -1,11 +1,11 @@
-package com.qartf.doseforreddit.mvp.data.model.deserializer;
+package com.qartf.doseforreddit.mvp.data.entity.deserializer;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.qartf.doseforreddit.mvp.data.model.Subreddit;
+import com.qartf.doseforreddit.mvp.data.entity.Subreddit;
 
 import java.lang.reflect.Type;
 

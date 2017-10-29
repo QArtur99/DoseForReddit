@@ -2,7 +2,7 @@ package com.qartf.doseforreddit.mvp.presenter.post;
 
 import android.support.annotation.Nullable;
 
-import com.qartf.doseforreddit.mvp.data.model.PostParent;
+import com.qartf.doseforreddit.mvp.data.entity.PostParent;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;

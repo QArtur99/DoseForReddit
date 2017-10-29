@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.data.model.Post;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 import com.qartf.doseforreddit.mvp.presenter.comment.CommentMVP;
 import com.qartf.doseforreddit.mvp.presenter.root.App;
 import com.qartf.doseforreddit.mvp.view.fragment.DetailFragment;

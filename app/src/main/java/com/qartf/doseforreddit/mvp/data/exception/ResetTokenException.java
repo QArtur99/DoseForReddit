@@ -1,4 +1,4 @@
-package com.qartf.doseforreddit.mvp.presenter;
+package com.qartf.doseforreddit.mvp.data.exception;
 
 /**
  * Created by ART_F on 2017-10-20.

@@ -12,6 +12,7 @@ import com.qartf.doseforreddit.mvp.view.activity.MainActivity;
 import com.qartf.doseforreddit.mvp.view.fragment.DetailFragment;
 import com.qartf.doseforreddit.mvp.view.fragment.PostsFragment;
 import com.qartf.doseforreddit.mvp.view.fragment.SubredditsFragment;
+import com.qartf.doseforreddit.mvp.view.widget.GridRemoteViewsFactory;
 
 import javax.inject.Singleton;
 
@@ -30,6 +31,7 @@ public interface ApplicationComponent {
     void inject(PostsFragment postsFragment);
     void inject(SubredditsFragment subredditsFragment);
     void inject(DetailFragment detailFragment);
+    void inject(GridRemoteViewsFactory gridRemoteViewsFactory);
 
 
 }

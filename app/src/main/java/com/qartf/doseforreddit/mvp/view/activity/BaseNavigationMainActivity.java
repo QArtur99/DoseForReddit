@@ -20,8 +20,6 @@ import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.mvp.presenter.comment.CommentMVP;
-import com.qartf.doseforreddit.mvp.view.dialog.LoginDialog;
-import com.qartf.doseforreddit.mvp.presenter.Navigator;
 import com.qartf.doseforreddit.mvp.presenter.post.PostMVP;
 import com.qartf.doseforreddit.mvp.presenter.root.App;
 import com.qartf.doseforreddit.mvp.presenter.sharedPreferences.SharedPreferencesMVP;
@@ -29,6 +27,7 @@ import com.qartf.doseforreddit.mvp.presenter.subreddit.SubredditMVP;
 import com.qartf.doseforreddit.mvp.presenter.token.TokenMVP;
 import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
 import com.qartf.doseforreddit.mvp.presenter.utility.Utility;
+import com.qartf.doseforreddit.mvp.view.dialog.LoginDialog;
 
 import javax.inject.Inject;
 
@@ -56,8 +55,6 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
     SubredditMVP.Presenter subredditPresenter;
     @Inject
     TokenMVP.Presenter tokenPresenter;
-    @Inject
-    Navigator navigator;
     @Inject
     CommentMVP.Presenter commentPresenter;
 

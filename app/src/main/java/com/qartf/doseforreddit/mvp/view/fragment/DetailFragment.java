@@ -1,6 +1,5 @@
 package com.qartf.doseforreddit.mvp.view.fragment;
 
-import android.content.Intent;
 import android.support.transition.TransitionManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,12 +17,10 @@ import android.widget.Toast;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.view.activity.LinkActivity;
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
-import com.qartf.doseforreddit.mvp.data.model.Comment;
-import com.qartf.doseforreddit.mvp.data.model.CommentParent;
-import com.qartf.doseforreddit.mvp.data.model.Post;
-import com.qartf.doseforreddit.mvp.presenter.Navigator;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.Comment;
+import com.qartf.doseforreddit.mvp.data.entity.CommentParent;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 import com.qartf.doseforreddit.mvp.presenter.comment.CommentMVP;
 import com.qartf.doseforreddit.mvp.presenter.root.App;
 import com.qartf.doseforreddit.mvp.presenter.utility.Navigation;
@@ -43,7 +40,6 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         View.OnClickListener, SwipyRefreshLayout.OnRefreshListener {
 
 
-    public static final String DOT = "\u2022";
     @BindView(R.id.thumbnail) ImageView thumbnail;
     @BindView(R.id.shareAction) ImageView shareAction;
     @BindView(R.id.ups) TextView ups;
@@ -67,7 +63,6 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @BindString(R.string.pref_post_detail_id) String prefPostDetailId;
     @BindString(R.string.pref_post_detail_sort_key) String prefPostDetailSortKey;
 
-    private Post post;
     private HashMap<String, String> spinnerMap;
     private boolean isOpen = false;
 
@@ -77,8 +72,6 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Inject
     CommentMVP.Presenter presenter;
-    @Inject
-    Navigator navigator;
 
     @Override
     public int getContentLayout() {
@@ -187,8 +180,8 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     }
 
     public void loadComments() {
-        sharedPreferences.edit().putString(prefPostDetailId, presenter.getPostId()).apply();
-        sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPostSubreddit()).apply();
+        sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
+        sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
         presenter.loadComments();
     }
 
@@ -201,36 +194,23 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         recyclerView.setAdapter(commentsAdapter);
     }
 
-    public void onLoadFinished(List<Comment> data) {
-        progressBar.setVisibility(View.GONE);
-        if (commentsAdapter != null) {
-            commentsAdapter.clearMovies();
-        }
-
-        if (data != null && !data.isEmpty()) {
-            commentsAdapter.setMovies(data);
-        }
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.upContainer:
-                presenter.postVote("1", post.name);
+                presenter.postVote("1", presenter.getPost().name);
                 break;
             case R.id.downContainer:
-                presenter.postVote("-1", post.name);
+                presenter.postVote("-1", presenter.getPost().name);
                 break;
             case R.id.detailContainer:
-                Intent intent = new Intent(getActivity(), LinkActivity.class);
-                intent.putExtra("link", post.url);
-                startActivity(intent);
+                Navigation.startLinkActivity(getActivity(), presenter.getPost().url);
                 break;
             case R.id.imageContainer:
-                Navigation.startIntentPreview(getActivity(), post);
+                Navigation.startIntentPreview(getActivity(), presenter.getPost());
                 break;
             case R.id.shareAction:
-                Navigation.shareContent(getActivity(), post.url);
+                Navigation.shareContent(getActivity(), presenter.getPost().url);
                 break;
         }
     }

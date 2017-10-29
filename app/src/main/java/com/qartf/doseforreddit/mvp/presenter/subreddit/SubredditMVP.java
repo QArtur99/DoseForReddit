@@ -1,7 +1,7 @@
 package com.qartf.doseforreddit.mvp.presenter.subreddit;
 
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
-import com.qartf.doseforreddit.mvp.data.model.SubredditParent;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.SubredditParent;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;

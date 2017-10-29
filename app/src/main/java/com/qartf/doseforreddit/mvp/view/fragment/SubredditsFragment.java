@@ -7,10 +7,9 @@ import android.widget.Toast;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
-import com.qartf.doseforreddit.mvp.data.model.Subreddit;
-import com.qartf.doseforreddit.mvp.data.model.SubredditParent;
-import com.qartf.doseforreddit.mvp.presenter.Navigator;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.Subreddit;
+import com.qartf.doseforreddit.mvp.data.entity.SubredditParent;
 import com.qartf.doseforreddit.mvp.presenter.root.App;
 import com.qartf.doseforreddit.mvp.presenter.subreddit.SubredditMVP;
 import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
@@ -29,8 +28,6 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
 
     @Inject
     SubredditMVP.Presenter presenter;
-    @Inject
-    Navigator navigator;
 
     @Override
     public int getContentLayout() {
@@ -40,7 +37,6 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
     @Override
     public void initComponents() {
         ((App) getContext().getApplicationContext()).getComponent().inject(this);
-        this.navigator.setActivity(getActivity());
         swipyRefreshLayout.setOnRefreshListener(this);
         setAdapter(new ArrayList<Subreddit>());
     }

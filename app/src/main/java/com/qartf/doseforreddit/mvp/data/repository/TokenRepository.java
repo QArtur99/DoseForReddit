@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.mvp.data.database.DatabaseContract;
 import com.qartf.doseforreddit.mvp.data.database.DatabaseHelper;
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
 import com.qartf.doseforreddit.mvp.data.network.RetrofitRedditAPI;
 import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
 

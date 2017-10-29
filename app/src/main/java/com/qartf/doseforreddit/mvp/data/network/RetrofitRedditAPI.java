@@ -1,10 +1,10 @@
 package com.qartf.doseforreddit.mvp.data.network;
 
-import com.qartf.doseforreddit.mvp.data.model.AboutMe;
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
-import com.qartf.doseforreddit.mvp.data.model.CommentParent;
-import com.qartf.doseforreddit.mvp.data.model.PostParent;
-import com.qartf.doseforreddit.mvp.data.model.SubredditParent;
+import com.qartf.doseforreddit.mvp.data.entity.AboutMe;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.CommentParent;
+import com.qartf.doseforreddit.mvp.data.entity.PostParent;
+import com.qartf.doseforreddit.mvp.data.entity.SubredditParent;
 import com.qartf.doseforreddit.mvp.presenter.utility.Constants;
 
 import java.util.Map;

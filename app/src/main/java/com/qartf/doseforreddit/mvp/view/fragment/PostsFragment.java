@@ -7,10 +7,9 @@ import android.widget.Toast;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
-import com.qartf.doseforreddit.mvp.data.model.Post;
-import com.qartf.doseforreddit.mvp.data.model.PostParent;
-import com.qartf.doseforreddit.mvp.presenter.Navigator;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
+import com.qartf.doseforreddit.mvp.data.entity.PostParent;
 import com.qartf.doseforreddit.mvp.presenter.post.PostMVP;
 import com.qartf.doseforreddit.mvp.presenter.root.App;
 import com.qartf.doseforreddit.mvp.presenter.utility.Navigation;
@@ -30,8 +29,6 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
     @Inject
     PostMVP.Presenter presenter;
-    @Inject
-    Navigator navigator;
 
     @Override
     public int getContentLayout() {
@@ -41,10 +38,6 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     @Override
     public void initComponents() {
         ((App) getContext().getApplicationContext()).getComponent().inject(this);
-        this.navigator.setActivity(getActivity());
-
-
-
         swipyRefreshLayout.setOnRefreshListener(this);
         setAdapter(new ArrayList<Post>());
     }
@@ -98,7 +91,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
                     mCallback.setPost(post);
                     mCallback.loadDetailFragment();
                 } else {
-                    navigator.startDetailActivity(post);
+                    Navigation.startDetailActivity(getActivity(), post);
                 }
                 break;
             case R.id.shareAction:

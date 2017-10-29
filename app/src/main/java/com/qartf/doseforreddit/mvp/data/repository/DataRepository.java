@@ -1,9 +1,9 @@
 package com.qartf.doseforreddit.mvp.data.repository;
 
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
-import com.qartf.doseforreddit.mvp.data.model.CommentParent;
-import com.qartf.doseforreddit.mvp.data.model.PostParent;
-import com.qartf.doseforreddit.mvp.data.model.SubredditParent;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.CommentParent;
+import com.qartf.doseforreddit.mvp.data.entity.PostParent;
+import com.qartf.doseforreddit.mvp.data.entity.SubredditParent;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;

@@ -9,7 +9,7 @@ import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.qartf.doseforreddit.mvp.data.database.DatabaseContract.Accounts;
-import com.qartf.doseforreddit.mvp.data.model.AccessToken;
+import com.qartf.doseforreddit.mvp.data.entity.AccessToken;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "Doseforreddit.db";

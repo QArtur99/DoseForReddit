@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.mvp.view.activity.LinkActivity;
-import com.qartf.doseforreddit.mvp.data.model.Post;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 import com.qartf.doseforreddit.mvp.presenter.utility.Utility;
 
 import java.util.List;

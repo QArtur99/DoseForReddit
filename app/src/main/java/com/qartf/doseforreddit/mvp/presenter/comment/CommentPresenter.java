@@ -2,8 +2,8 @@ package com.qartf.doseforreddit.mvp.presenter.comment;
 
 import android.support.annotation.Nullable;
 
-import com.qartf.doseforreddit.mvp.data.model.CommentParent;
-import com.qartf.doseforreddit.mvp.data.model.Post;
+import com.qartf.doseforreddit.mvp.data.entity.CommentParent;
+import com.qartf.doseforreddit.mvp.data.entity.Post;
 import com.qartf.doseforreddit.mvp.presenter.utility.Utility;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -86,16 +86,6 @@ public class CommentPresenter implements CommentMVP.Presenter {
     }
 
     @Override
-    public String getPostId() {
-        return post.id;
-    }
-
-    @Override
-    public String getPostSubreddit() {
-        return post.subreddit;
-    }
-
-    @Override
     public void setView(CommentMVP.View view) {
         this.view = view;
     }
@@ -103,6 +93,11 @@ public class CommentPresenter implements CommentMVP.Presenter {
     @Override
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    @Override
+    public Post getPost() {
+        return post;
     }
 
     @Override

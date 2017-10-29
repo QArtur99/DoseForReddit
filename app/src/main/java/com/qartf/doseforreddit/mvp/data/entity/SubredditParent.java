@@ -1,8 +1,8 @@
-package com.qartf.doseforreddit.mvp.data.model;
+package com.qartf.doseforreddit.mvp.data.entity;
 
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-import com.qartf.doseforreddit.mvp.data.model.deserializer.SubredditParentDeserializer;
+import com.qartf.doseforreddit.mvp.data.entity.deserializer.SubredditParentDeserializer;
 
 import java.util.List;
 
