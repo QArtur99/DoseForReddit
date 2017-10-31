@@ -31,7 +31,7 @@ public class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onDataSetChanged() {
-        data = new Gson().fromJson(intent.getStringExtra("link"), new TypeToken<List<Post>>() {}.getType());
+        data = new Gson().fromJson(intent.getStringExtra("postList"), new TypeToken<List<Post>>() {}.getType());
     }
 
     @Override

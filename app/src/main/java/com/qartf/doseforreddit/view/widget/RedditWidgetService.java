@@ -31,6 +31,13 @@ public class RedditWidgetService extends IntentService {
         super("RedditWidgetService");
     }
 
+
+    public static void startActionUpdatePlantWidgets(Context context) {
+        Intent intent = new Intent(context, RedditWidgetService.class);
+        intent.setAction(ACTION_UPDATE_PLANT_WIDGETS);
+        context.startService(intent);
+    }
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent != null) {
@@ -39,13 +46,6 @@ public class RedditWidgetService extends IntentService {
                 handleActionUpdateWidgets();
             }
         }
-
-    }
-
-    public static void startActionUpdatePlantWidgets(Context context) {
-        Intent intent = new Intent(context, RedditWidgetService.class);
-        intent.setAction(ACTION_UPDATE_PLANT_WIDGETS);
-        context.startService(intent);
     }
 
     private void handleActionUpdateWidgets() {
