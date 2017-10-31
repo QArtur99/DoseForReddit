@@ -7,35 +7,31 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.data.entity.Post;
-import com.qartf.doseforreddit.data.repository.DataRepository;
-import com.qartf.doseforreddit.presenter.root.App;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 
 public class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    @Inject
-    DataRepository.Retrofit repository;
+
     private Context mContext;
     private List<Post> data;
+    private Intent intent;
 
-    public GridRemoteViewsFactory(Context applicationContext) {
+    public GridRemoteViewsFactory(Context applicationContext, Intent intent) {
+        this.intent = intent;
         mContext = applicationContext;
     }
 
     @Override
-    public void onCreate() {
-        ((App) mContext.getApplicationContext()).getComponent().inject(this);
-    }
+    public void onCreate() { }
 
 
     @Override
     public void onDataSetChanged() {
-        data = repository.getPosts().blockingSingle().postList;
+        data = new Gson().fromJson(intent.getStringExtra("link"), new TypeToken<List<Post>>() {}.getType());
     }
 
     @Override
@@ -59,7 +55,7 @@ public class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         String jsonString = new Gson().toJson(data.get(position));
         Bundle extras = new Bundle();
-        extras.putString("link", jsonString);
+        extras.putString("postList", jsonString);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         remoteViews.setOnClickFillInIntent(R.id.row, fillInIntent);

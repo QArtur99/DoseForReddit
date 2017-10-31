@@ -62,7 +62,7 @@
             android:authorities="com.qartf.doseforreddit"
             android:exported="true"/>
 
-        <receiver android:name=".view.widget.RedditAppWidget">
+        <receiver android:name=".view.widget.RedditWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
@@ -71,6 +71,8 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/reddit_app_widget_info"/>
         </receiver>
+
+        <service android:name=".view.widget.RedditWidgetService" />
 
         <service android:name=".view.widget.GridWidgetService"
                  android:permission="android.permission.BIND_REMOTEVIEWS"

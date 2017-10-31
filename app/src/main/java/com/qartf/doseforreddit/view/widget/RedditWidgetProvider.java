@@ -7,16 +7,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+import com.google.gson.Gson;
 import com.qartf.doseforreddit.R;
+import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.view.activity.CommentsActivity;
 
 
-public class RedditAppWidget extends AppWidgetProvider {
+public class RedditWidgetProvider extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId, PostParent postParent) {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_grid_view);
+
+        String postParentString = new Gson().toJson(postParent.postList);
         Intent intent = new Intent(context, GridWidgetService.class);
+        intent.putExtra("postList", postParentString);
         views.setRemoteAdapter(R.id.widget_grid_view, intent);
 
         Intent appIntent = new Intent(context, CommentsActivity.class);
@@ -35,8 +40,12 @@ public class RedditAppWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        RedditWidgetService.startActionUpdatePlantWidgets(context);
+    }
+
+    public static void updateWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, PostParent postParent) {
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+            updateAppWidget(context, appWidgetManager, appWidgetId, postParent);
         }
     }
 
