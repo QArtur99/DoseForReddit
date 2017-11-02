@@ -25,6 +25,10 @@
             android:label="@string/app_name"
             android:parentActivityName=".view.activity.MainActivity"/>
         <activity
+            android:name=".view.activity.SubmitActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".view.activity.MainActivity"/>
+        <activity
             android:name=".view.activity.LinkActivity"
             android:label="@string/app_name"
             android:parentActivityName=".view.activity.MainActivity"

@@ -98,15 +98,15 @@ public class TokenRepository implements DataRepository.Token {
 
     public Observable<AccessToken> accessTokenRX() {
         String loginCode = sharedPreferences.getString(context.getResources().getString(R.string.pref_access_code), "");
-        return retrofitRedditAPI.accessTokenRX(basicToken(Constants.Auth.CLIENT_ID), "authorization_code", loginCode, Constants.Auth.REDIRECT_URI);
+        return retrofitRedditAPI.accessToken(basicToken(Constants.Auth.CLIENT_ID), "authorization_code", loginCode, Constants.Auth.REDIRECT_URI);
     }
 
     public Observable<AccessToken> refreshTokenRX(AccessToken accessToken) {
-        return retrofitRedditAPI.refreshTokenRX(basicToken(Constants.Auth.CLIENT_ID), "refresh_token", accessToken.getRefreshToken());
+        return retrofitRedditAPI.refreshToken(basicToken(Constants.Auth.CLIENT_ID), "refresh_token", accessToken.getRefreshToken());
     }
 
     public Observable<AccessToken> getAccessTokenGuest() {
         String uuid = UUID.randomUUID().toString();
-        return retrofitRedditAPI.guestTokenRX(basicToken(Constants.Auth.CLIENT_ID), Constants.Auth.NO_NAME_GRAND_TYPE, uuid);
+        return retrofitRedditAPI.guestToken(basicToken(Constants.Auth.CLIENT_ID), Constants.Auth.NO_NAME_GRAND_TYPE, uuid);
     }
 }

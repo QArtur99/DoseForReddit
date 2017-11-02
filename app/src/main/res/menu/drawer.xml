@@ -16,6 +16,11 @@
 
     <group android:checkableBehavior="single" android:id="@+id/g2">
         <item
+            android:id="@+id/submit"
+            android:checked="false"
+            android:icon="@drawable/ic_star_border"
+            android:title="@string/submit" />
+        <item
             android:id="@+id/mySubreddits"
             android:checked="false"
             android:icon="@drawable/ic_star_border"

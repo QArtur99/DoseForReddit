@@ -15,6 +15,7 @@ import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.view.activity.ImageActivity;
 import com.qartf.doseforreddit.view.activity.LinkActivity;
 import com.qartf.doseforreddit.view.activity.SelfActivity;
+import com.qartf.doseforreddit.view.activity.SubmitActivity;
 import com.qartf.doseforreddit.view.activity.VideoActivity;
 import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.view.activity.CommentsActivity;
@@ -51,6 +52,11 @@ public class Navigation {
     public static void startCommentsActivity(Activity activity, String postObject){
         Intent intent = new Intent(activity, CommentsActivity.class);
         intent.putExtra("link", postObject);
+        initActivity(activity, intent);
+    }
+
+    public static void startSubmitActivity(Activity activity){
+        Intent intent = new Intent(activity, SubmitActivity.class);
         initActivity(activity, intent);
     }
 

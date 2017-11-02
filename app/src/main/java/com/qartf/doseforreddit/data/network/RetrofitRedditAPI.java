@@ -23,33 +23,10 @@ import retrofit2.http.QueryMap;
 public interface RetrofitRedditAPI {
 
 
-//    @FormUrlEncoded
-//    @POST(Constants.Auth.ACCESS_TOKEN_URL)
-//    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-//    Call<AccessToken> accessToken(@Header("Authorization") String authorization,
-//                                  @Field("grant_type") String grant_type,
-//                                  @Field("code") String code,
-//                                  @Field("redirect_uri") String redirectUti);
-//
-//    @FormUrlEncoded
-//    @POST(Constants.Auth.ACCESS_TOKEN_URL)
-//    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-//    Call<AccessToken> refreshToken(@Header("Authorization") String authorization,
-//                                   @Field("grant_type") String grant_type,
-//                                   @Field("refresh_token") String refresh_token);
-//
-//    @FormUrlEncoded
-//    @POST(Constants.Auth.ACCESS_TOKEN_URL)
-//    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-//    Call<AccessToken> guestToken(@Header("Authorization") String authorization,
-//                                 @Field("grant_type") String grant_type,
-//                                 @Field("device_id") String deviceId);
-
-
     @FormUrlEncoded
     @POST(Constants.Auth.ACCESS_TOKEN_URL)
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Observable<AccessToken> accessTokenRX(@Header("Authorization") String authorization,
+    Observable<AccessToken> accessToken(@Header("Authorization") String authorization,
                                         @Field("grant_type") String grant_type,
                                         @Field("code") String code,
                                         @Field("redirect_uri") String redirectUti);
@@ -57,16 +34,16 @@ public interface RetrofitRedditAPI {
     @FormUrlEncoded
     @POST(Constants.Auth.ACCESS_TOKEN_URL)
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Observable<AccessToken> refreshTokenRX(@Header("Authorization") String authorization,
-                                   @Field("grant_type") String grant_type,
-                                   @Field("refresh_token") String refresh_token);
+    Observable<AccessToken> refreshToken(@Header("Authorization") String authorization,
+                                         @Field("grant_type") String grant_type,
+                                         @Field("refresh_token") String refresh_token);
 
     @FormUrlEncoded
     @POST(Constants.Auth.ACCESS_TOKEN_URL)
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Observable<AccessToken> guestTokenRX(@Header("Authorization") String authorization,
-                                 @Field("grant_type") String grant_type,
-                                 @Field("device_id") String deviceId);
+    Observable<AccessToken> guestToken(@Header("Authorization") String authorization,
+                                       @Field("grant_type") String grant_type,
+                                       @Field("device_id") String deviceId);
 
     @GET(Constants.Auth.BASE_URL_OAUTH + "/api/v1/me")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
@@ -120,5 +97,14 @@ public interface RetrofitRedditAPI {
     Observable<ResponseBody> postVote(@Header("Authorization") String authorization,
                                 @Field("dir") String dir,
                                 @Field("id") String fullname);
+
+    @FormUrlEncoded
+    @POST(Constants.Auth.BASE_URL_OAUTH + "/api/submit")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<ResponseBody> postSubmit(@Header("Authorization") String authorization,
+                                      @Field("sr") String subredditName,
+                                      @Field("title") String title,
+                                      @Field("kind ") String kind ,
+                                      @Field("text") String text);
 
 }

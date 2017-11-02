@@ -2,12 +2,10 @@ package com.qartf.doseforreddit.view.activity;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -15,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
@@ -65,7 +62,7 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
     @Override
     public void initNavigation() {
         ((App) getApplication()).getComponent().inject(this);
-        setTabLayoutDivider();
+        Utility.setTabLayoutDivider(this, tabLayout);
         addTabLayoutTabs();
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -91,15 +88,6 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
         initHeaderView();
     }
 
-
-    private void setTabLayoutDivider() {
-        LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
-        linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        drawable.setSize(4, 1);
-        linearLayout.setDividerDrawable(drawable);
-    }
 
     private void addTabLayoutTabs() {
         tabLayout.addTab(tabLayout.newTab().setText("HOT"), 0);
@@ -180,6 +168,11 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
                 posioton = 1;
                 setPostFragment();
+                break;
+            case R.id.submit:
+                Navigation.startSubmitActivity(this);
+
+                posioton = 2;
                 break;
             case R.id.mySubreddits:
                 setMySubreddits();

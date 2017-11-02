@@ -51,10 +51,4 @@ public class CommentsActivity extends BaseActivityChild implements DetailFragmen
                 .add(R.id.detailsViewFrame, detailFragment)
                 .commit();
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
 }

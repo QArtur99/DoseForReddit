@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,6 +32,10 @@ public abstract class BaseFragmentMvp<T> extends Fragment {
     protected View rootView;
     protected T mCallback;
     protected SharedPreferences sharedPreferences;
+
+    @Nullable
+    @BindView(R.id.tabLayout)
+    TabLayout tabLayout;
 
     @Override
     public void onAttach(Context context) {

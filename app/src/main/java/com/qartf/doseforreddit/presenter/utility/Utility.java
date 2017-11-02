@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -63,6 +67,15 @@ public class Utility {
             dateString = DOT + String.valueOf(secAgo) + "sec";
         }
         return dateString;
+    }
+
+    public static void setTabLayoutDivider(Context context, TabLayout tabLayout) {
+        LinearLayout linearLayout = (LinearLayout) tabLayout.getChildAt(0);
+        linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+        drawable.setSize(4, 1);
+        linearLayout.setDividerDrawable(drawable);
     }
 
     public static int getTabLayoutIndex(String[] array, String value) {
@@ -186,14 +199,6 @@ public class Utility {
             textView.setText(linkFlairText);
         } else {
             textView.setVisibility(View.GONE);
-        }
-    }
-
-    public static void sleepOneSec() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
