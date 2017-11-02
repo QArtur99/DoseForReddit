@@ -26,6 +26,7 @@ import com.qartf.doseforreddit.presenter.sharedPreferences.SharedPreferencesMVP;
 import com.qartf.doseforreddit.presenter.subreddit.SubredditMVP;
 import com.qartf.doseforreddit.presenter.token.TokenMVP;
 import com.qartf.doseforreddit.presenter.utility.Constants;
+import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.dialog.LoginDialog;
 
@@ -38,6 +39,7 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
 
     @BindString(R.string.pref_post_subreddit) public String prefPostSubreddit;
     @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
+    @BindString(R.string.pref_my_subreddit) public String prefMySubreddits;
     protected ActionBarDrawerToggle drawerToggle;
     protected TextView headerUsername;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -84,7 +86,6 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
             }
         });
         setTabLayoutPosition();
-
 
         setNavigationDrawer();
         initHeaderView();
@@ -137,6 +138,7 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
             }
 
         };
+        navigationView.getMenu().getItem(0).setChecked(true);
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
     }
@@ -171,14 +173,29 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 sharedPreferences.edit().putString(prefPostSubreddit, "popular").apply();
                 sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
                 posioton = 0;
+                setPostFragment();
+                break;
+            case R.id.allPage:
+                sharedPreferences.edit().putString(prefPostSubreddit, "all").apply();
+                sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
+                posioton = 1;
+                setPostFragment();
+                break;
+            case R.id.mySubreddits:
+                setMySubreddits();
+                posioton = 2;
                 break;
             case R.id.searchPosts:
-                posioton = 1;
+                posioton = 3;
                 searchDialog(Constants.Id.SEARCH_POSTS);
                 break;
             case R.id.searchSubreddits:
-                posioton = 2;
+                posioton = 4;
                 searchDialog(Constants.Id.SEARCH_SUBREDDITS);
+                break;
+            case R.id.helpAndFeedback:
+                posioton = 5;
+                Navigation.goToMail(this);
                 break;
         }
         navigationView.getMenu().getItem(posioton).setChecked(true);
@@ -214,6 +231,10 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
     }
 
     public abstract void loginReddit();
+
+    public abstract void setMySubreddits();
+
+    public abstract void setPostFragment();
 
     public abstract void searchDialog(int id);
 

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -24,27 +23,27 @@ import retrofit2.http.QueryMap;
 public interface RetrofitRedditAPI {
 
 
-    @FormUrlEncoded
-    @POST(Constants.Auth.ACCESS_TOKEN_URL)
-    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Call<AccessToken> accessToken(@Header("Authorization") String authorization,
-                                  @Field("grant_type") String grant_type,
-                                  @Field("code") String code,
-                                  @Field("redirect_uri") String redirectUti);
-
-    @FormUrlEncoded
-    @POST(Constants.Auth.ACCESS_TOKEN_URL)
-    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Call<AccessToken> refreshToken(@Header("Authorization") String authorization,
-                                   @Field("grant_type") String grant_type,
-                                   @Field("refresh_token") String refresh_token);
-
-    @FormUrlEncoded
-    @POST(Constants.Auth.ACCESS_TOKEN_URL)
-    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Call<AccessToken> guestToken(@Header("Authorization") String authorization,
-                                 @Field("grant_type") String grant_type,
-                                 @Field("device_id") String deviceId);
+//    @FormUrlEncoded
+//    @POST(Constants.Auth.ACCESS_TOKEN_URL)
+//    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+//    Call<AccessToken> accessToken(@Header("Authorization") String authorization,
+//                                  @Field("grant_type") String grant_type,
+//                                  @Field("code") String code,
+//                                  @Field("redirect_uri") String redirectUti);
+//
+//    @FormUrlEncoded
+//    @POST(Constants.Auth.ACCESS_TOKEN_URL)
+//    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+//    Call<AccessToken> refreshToken(@Header("Authorization") String authorization,
+//                                   @Field("grant_type") String grant_type,
+//                                   @Field("refresh_token") String refresh_token);
+//
+//    @FormUrlEncoded
+//    @POST(Constants.Auth.ACCESS_TOKEN_URL)
+//    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+//    Call<AccessToken> guestToken(@Header("Authorization") String authorization,
+//                                 @Field("grant_type") String grant_type,
+//                                 @Field("device_id") String deviceId);
 
 
     @FormUrlEncoded
@@ -100,6 +99,12 @@ public interface RetrofitRedditAPI {
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<SubredditParent> getSubreddits(@Header("Authorization") String authorization,
                                            @QueryMap Map<String, String> options);
+
+    @GET(Constants.Auth.BASE_URL_OAUTH + "/subreddits/mine/{where}")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<SubredditParent> getMineSubreddits(@Header("Authorization") String authorization,
+                                              @Path(value = "where", encoded = true) String where,
+                                              @QueryMap Map<String, String> options);
 
 
     @FormUrlEncoded

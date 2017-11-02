@@ -282,6 +282,27 @@ public class RetrofitRepository implements DataRepository.Retrofit {
         });
     }
 
+
+    @Override
+    public Observable<SubredditParent> getMineSubreddits() {
+
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubredditParent>>() {
+            @Override
+            public ObservableSource<SubredditParent> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
+                HashMap<String, String> args = new HashMap<>();
+                args.put("limit", "30");
+                return retrofitRedditAPI.getMineSubreddits(getBearerToken(accessToken), "subscriber", args);
+            }
+        });
+    }
+
     @Override
     public Observable<ResponseBody> postSubscribe(final String subscribe, final String fullname) {
 

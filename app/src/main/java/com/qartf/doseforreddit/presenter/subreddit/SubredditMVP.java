@@ -31,11 +31,15 @@ public interface SubredditMVP {
 
         void loadSubreddits();
 
+        void loadMineSubreddits();
+
         void postSubscribe(String subscribe, String subredditName);
     }
 
     interface Model {
         Observable<SubredditParent> getSubreddits();
+
+        Observable<SubredditParent> getMineSubreddits();
 
         Observable<ResponseBody> postSubscribe(String subscribe, String fullname);
 

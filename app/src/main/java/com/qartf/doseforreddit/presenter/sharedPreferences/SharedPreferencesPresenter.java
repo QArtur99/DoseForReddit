@@ -12,6 +12,7 @@ SharedPreferencesMVP.Presenter{
     private SharedPreferencesMVP.View view;
     private String prefPostSubreddit;
     private String prefPostSortBy;
+    private String prefMySubreddits;
     private Context context;
     private SharedPreferences sharedPreferences;
 
@@ -25,6 +26,7 @@ SharedPreferencesMVP.Presenter{
     private void loadString() {
         prefPostSubreddit = context.getResources().getString(R.string.pref_post_subreddit);
         prefPostSortBy = context.getResources().getString(R.string.pref_post_sort_by);
+        prefMySubreddits = context.getResources().getString(R.string.pref_my_subreddit);
     }
 
 
@@ -41,6 +43,9 @@ SharedPreferencesMVP.Presenter{
             String userName = sharedPreferences.getString(context.getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
             view.setUserName(userName);
             view.loadUser();
+        } else if(key.equals(prefMySubreddits)){
+            view.setMySubreddits();
+
         }
     }
 

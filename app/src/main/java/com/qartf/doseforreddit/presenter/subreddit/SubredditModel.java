@@ -27,6 +27,11 @@ public class SubredditModel implements SubredditMVP.Model {
     }
 
     @Override
+    public Observable<SubredditParent> getMineSubreddits() {
+        return repositoryRetrofit.getMineSubreddits();
+    }
+
+    @Override
     public Observable<ResponseBody> postSubscribe(String subscribe, String fullname) {
         return repositoryRetrofit.postSubscribe(subscribe, fullname);
     }

@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single" android:id="@+id/g1">
         <item
             android:id="@+id/frontPage"
             android:checked="false"
             android:icon="@drawable/ic_home"
             android:title="@string/drawerFrontPage" />
+        <item
+            android:id="@+id/allPage"
+            android:checked="false"
+            android:icon="@drawable/ic_action_globe"
+            android:title="@string/drawerAllPage" />
+    </group>
+
+    <group android:checkableBehavior="single" android:id="@+id/g2">
+        <item
+            android:id="@+id/mySubreddits"
+            android:checked="false"
+            android:icon="@drawable/ic_star_border"
+            android:title="@string/mySubreddits" />
+    </group>
+
+    <group android:checkableBehavior="single" android:id="@+id/g3">
         <item
             android:id="@+id/searchPosts"
             android:checked="false"
@@ -19,4 +35,11 @@
             android:title="@string/search_subreddits" />
     </group>
 
+    <group android:checkableBehavior="single" android:id="@+id/g4">
+        <item
+            android:id="@+id/helpAndFeedback"
+            android:checked="false"
+            android:icon="@drawable/ic_help"
+            android:title="@string/helpAndFeedback" />
+    </group>
 </menu>
