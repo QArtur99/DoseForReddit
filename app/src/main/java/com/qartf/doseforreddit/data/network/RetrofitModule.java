@@ -1,5 +1,7 @@
 package com.qartf.doseforreddit.data.network;
 
+import java.util.concurrent.TimeUnit;
+
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
@@ -19,7 +21,11 @@ public class RetrofitModule {
     public OkHttpClient provideClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
-        return new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        return new OkHttpClient.Builder().addInterceptor(interceptor)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
     @Provides

@@ -31,7 +31,7 @@ public class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onDataSetChanged() {
-        data = new Gson().fromJson(intent.getStringExtra("link"), new TypeToken<List<Post>>() {}.getType());
+        data = new Gson().fromJson(intent.getStringExtra("postList"), new TypeToken<List<Post>>() {}.getType());
     }
 
     @Override
@@ -55,7 +55,7 @@ public class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         String jsonString = new Gson().toJson(data.get(position));
         Bundle extras = new Bundle();
-        extras.putString("postList", jsonString);
+        extras.putString("link", jsonString);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         remoteViews.setOnClickFillInIntent(R.id.row, fillInIntent);
