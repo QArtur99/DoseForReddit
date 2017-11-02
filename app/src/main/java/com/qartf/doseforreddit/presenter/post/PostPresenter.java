@@ -82,7 +82,7 @@ public class PostPresenter implements PostMVP.Presenter {
             @Override
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
-                    view.error("Success");
+//                    view.error("Success");
                 }
             }
 

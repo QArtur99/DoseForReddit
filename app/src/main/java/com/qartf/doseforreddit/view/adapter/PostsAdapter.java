@@ -3,6 +3,7 @@ package com.qartf.doseforreddit.view.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.transition.TransitionManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.view.activity.LinkActivity;
 import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.presenter.utility.Utility;
+import com.qartf.doseforreddit.view.activity.LinkActivity;
 
 import java.util.List;
 
@@ -93,7 +94,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         @BindView(R.id.expandArea) LinearLayout expandArea;
 
         @BindView(R.id.upContainer) RelativeLayout upContainer;
+        @BindView(R.id.upArrow) ImageView upArrow;
         @BindView(R.id.downContainer) RelativeLayout downContainer;
+        @BindView(R.id.downArrow) ImageView downArrow;
         @BindView(R.id.detailContainer) RelativeLayout detailContainer;
         @BindView(R.id.imageContainer) RelativeLayout imageContainer;
 
@@ -121,6 +124,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
         private void loadData(Post post) {
             Utility.upsFormat(ups, Integer.valueOf(post.ups));
+            if(post.likes.equals("true")){
+                upArrow.setColorFilter(ContextCompat.getColor(context, R.color.upArrow));
+
+            }else if(post.likes.equals("false")){
+                downArrow.setColorFilter(ContextCompat.getColor(context, R.color.downArrow));
+            }
             title.setText(post.title);
             Utility.loadLinkFlairText(linkFlairText, post.linkFlairText);
             domain.setText("(" + post.domain + ")");
@@ -136,6 +145,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             switch (v.getId()) {
                 case R.id.detailContainer:
                     actionDetail();
+                    break;
+                case R.id.upContainer:
+                    upArrow.setColorFilter(ContextCompat.getColor(context, R.color.upArrow));
+                    downArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
+                    mOnClickListener.onListItemClick(clickedPosition, v);
+                    break;
+                case R.id.downContainer:
+                    upArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
+                    downArrow.setColorFilter(ContextCompat.getColor(context, R.color.downArrow));
+                    mOnClickListener.onListItemClick(clickedPosition, v);
                     break;
                 default:
                     mOnClickListener.onListItemClick(clickedPosition, v);

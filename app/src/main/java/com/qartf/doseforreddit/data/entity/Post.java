@@ -10,6 +10,7 @@ public class Post {
     public String domain;
     public String subreddit;
     public String selftext;
+    public String likes;
     public String linkFlairText;
     public String id;
     public String title;
@@ -31,11 +32,12 @@ public class Post {
     public String numComents;
 
 
-    public Post(String kind, String domain, String subreddit, String selftext, String linkFlairText, String id, String title, String previewUrl, String previewGif, String thumbnail, String subRedditId, String postHint, String parentWhiteListStatus, String name, String permaLink, String subRedditType, String url, String whiteListStatus, String author, String createdUTC, String subredditNamePrefixed, String ups, String numComents) {
+    public Post(String kind, String domain, String subreddit, String selftext, String likes, String linkFlairText, String id, String title, String previewUrl, String previewGif, String thumbnail, String subRedditId, String postHint, String parentWhiteListStatus, String name, String permaLink, String subRedditType, String url, String whiteListStatus, String author, String createdUTC, String subredditNamePrefixed, String ups, String numComents) {
         this.kind = kind;
         this.domain = domain;
         this.subreddit = subreddit;
         this.selftext = selftext;
+        this.likes = likes;
         this.linkFlairText = linkFlairText;
         this.id = id;
         this.title = title;

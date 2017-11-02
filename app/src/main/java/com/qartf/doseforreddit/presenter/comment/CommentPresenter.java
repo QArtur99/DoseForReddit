@@ -62,7 +62,7 @@ public class CommentPresenter implements CommentMVP.Presenter {
             @Override
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
-                    view.error("Success");
+//                    view.error("Success");
                 }
             }
 
@@ -104,6 +104,7 @@ public class CommentPresenter implements CommentMVP.Presenter {
     public void loadPostData() {
         if (view != null) {
             view.setUps(Utility.upsFormatS(Integer.valueOf(post.ups)));
+            view.setLikes(post.likes);
             view.setTitle(post.title);
             view.setLinkFlairText(post.linkFlairText);
             view.setDomain("(" + post.domain + ")");

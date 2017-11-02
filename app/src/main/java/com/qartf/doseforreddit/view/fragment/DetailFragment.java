@@ -1,6 +1,7 @@
 package com.qartf.doseforreddit.view.fragment;
 
 import android.support.transition.TransitionManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -50,7 +51,9 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @BindView(R.id.comments) TextView comments;
     @BindView(R.id.time) TextView time;
     @BindView(R.id.upContainer) RelativeLayout upContainer;
+    @BindView(R.id.upArrow) ImageView upArrow;
     @BindView(R.id.downContainer) RelativeLayout downContainer;
+    @BindView(R.id.downArrow) ImageView downArrow;
     @BindView(R.id.detailContainer) RelativeLayout detailContainer;
     @BindView(R.id.imageContainer) RelativeLayout imageContainer;
     @BindView(R.id.selftext) TextView selftext;
@@ -107,6 +110,15 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     public void setUps(String upsString){
         ups.setText(upsString);
+    }
+
+    @Override
+    public void setLikes(String postLikes) {
+        if(postLikes.equals("true")){
+            upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
+        }else if(postLikes.equals("false")){
+            downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
+        }
     }
 
     public void setTitle(String titleString){
@@ -198,9 +210,13 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.upContainer:
+                upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
+                downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
                 presenter.postVote("1", presenter.getPost().name);
                 break;
             case R.id.downContainer:
+                upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
                 presenter.postVote("-1", presenter.getPost().name);
                 break;
             case R.id.detailContainer:

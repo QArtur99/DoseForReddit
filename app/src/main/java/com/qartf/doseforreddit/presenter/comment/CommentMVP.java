@@ -21,6 +21,8 @@ public interface CommentMVP {
 
         void setUps(String upsString);
 
+        void setLikes(String postLikes);
+
         void setTitle(String titleString);
 
         void setLinkFlairText(String linkFlairTextString);
