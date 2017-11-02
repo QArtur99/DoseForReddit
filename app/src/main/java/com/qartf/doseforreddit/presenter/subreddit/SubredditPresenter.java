@@ -55,6 +55,31 @@ public class SubredditPresenter implements SubredditMVP.Presenter {
     }
 
     @Override
+    public void loadMineSubreddits() {
+        DisposableObserver<SubredditParent> disposableObserver = model.getMineSubreddits().observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<SubredditParent>() {
+
+            @Override
+            public void onNext(@NonNull SubredditParent postParent) {
+                if (view != null) {
+                    view.setSubredditParent(postParent);
+                    view.setLoadIndicatorOff();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() { }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+    @Override
     public void postSubscribe(String subscribe, String subredditName) {
         DisposableObserver<ResponseBody> disposableObserver = model.postSubscribe(subscribe, subredditName).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {

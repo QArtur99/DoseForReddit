@@ -188,6 +188,19 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     @Override
+    public void setMySubreddits() {
+        loadFragment(Constants.Id.SEARCH_SUBREDDITS);
+        subredditPresenter.loadMineSubreddits();
+    }
+
+    @Override
+    public void setPostFragment() {
+        if(!postsFragment.isVisible()) {
+            loadFragment(Constants.Id.SEARCH_POSTS);
+        }
+    }
+
+    @Override
     public void loadUser() {
         tokenPresenter.resetToken();
     }

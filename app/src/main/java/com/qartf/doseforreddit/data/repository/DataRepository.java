@@ -26,6 +26,8 @@ public interface DataRepository {
 
         Observable<SubredditParent> getSubreddits();
 
+        Observable<SubredditParent> getMineSubreddits();
+
         Observable<ResponseBody> postSubscribe(String subscribe, String fullname);
 
     }

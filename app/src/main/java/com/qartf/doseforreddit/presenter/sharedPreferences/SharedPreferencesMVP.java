@@ -14,6 +14,8 @@ public interface SharedPreferencesMVP {
 
         void setUserName(String userName);
 
+        void setMySubreddits();
+
         void loadUser();
     }
 

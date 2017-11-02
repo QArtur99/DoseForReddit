@@ -103,4 +103,16 @@ public class Navigation {
             initActivity(fragmentActivity, intent);
         }
     }
+
+    public static void goToMail(Activity activity) {
+        String email = "mailto:artur21133@gmail.com";
+
+        Uri addressUri = Uri.parse(email);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, addressUri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Reddit Dose Feedback");
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.startActivity(intent);
+        }
+    }
+
 }
