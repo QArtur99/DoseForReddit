@@ -126,8 +126,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             Utility.upsFormat(ups, Integer.valueOf(post.ups));
             if(post.likes.equals("true")){
                 upArrow.setColorFilter(ContextCompat.getColor(context, R.color.upArrow));
+                downArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
 
             }else if(post.likes.equals("false")){
+                upArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
                 downArrow.setColorFilter(ContextCompat.getColor(context, R.color.downArrow));
             }
             title.setText(post.title);

@@ -4,10 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-/**
- * Created by ART_F on 2017-10-29.
- */
-
 public class Utility implements DataRepository.Utility{
 
     private Context context;

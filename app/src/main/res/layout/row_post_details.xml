@@ -28,11 +28,21 @@
             android:layout_above="@id/ups">
 
             <ImageView
-                android:id="@+id/upArrow"
+                android:id="@+id/upArrowB"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
+                android:src="@drawable/up"
+                android:tint="@color/colorBlack"
+                android:contentDescription="@string/post_vote_up"/>
+
+            <ImageView
+                android:layout_margin="1dp"
+                android:id="@+id/upArrow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/upArrowB"
                 android:src="@drawable/up"
                 android:tint="@color/arrowColor"
                 android:contentDescription="@string/post_vote_up"/>
@@ -45,11 +55,21 @@
             android:layout_below="@id/ups">
 
             <ImageView
-                android:id="@+id/downArrow"
+                android:id="@+id/downArrowB"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
+                android:src="@drawable/down"
+                android:tint="@color/colorBlack"
+                android:contentDescription="@string/post_vote_down"/>
+
+            <ImageView
+                android:layout_margin="1dp"
+                android:id="@+id/downArrow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/downArrowB"
                 android:src="@drawable/down"
                 android:tint="@color/arrowColor"
                 android:contentDescription="@string/post_vote_down"/>

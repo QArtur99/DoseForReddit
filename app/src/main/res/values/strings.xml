@@ -21,6 +21,8 @@
     <string name="pref_post_subreddit" translatable="false">subreddit</string>
     <string name="pref_post_subreddit_default" translatable="false">popular</string>
 
+    <string name="pref_post_subreddit_rule" translatable="false">subreddit rule</string>
+
     <string name="pref_my_subreddit" translatable="false">my_subreddit</string>
     <string name="pref_my_subreddit_default" translatable="false">subscriber</string>
 

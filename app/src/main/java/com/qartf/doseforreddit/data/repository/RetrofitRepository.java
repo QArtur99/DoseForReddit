@@ -6,14 +6,15 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.data.network.RetrofitRedditAPI;
 import com.qartf.doseforreddit.data.database.DatabaseHelper;
 import com.qartf.doseforreddit.data.entity.AboutMe;
 import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
+import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
 import com.qartf.doseforreddit.data.exception.ResetTokenException;
+import com.qartf.doseforreddit.data.network.RetrofitRedditAPI;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
     private static final int CALL_PER_MINUTE = 60;
 
     private String prefPostSubreddit;
+    private String prefPostSubredditRule;
     private String prefPostSortBy;
     private String prefSearchPost;
     private String prefSearchSubreddit;
@@ -64,6 +66,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
     private void loadStrıngPref() {
         prefPostSubreddit = context.getResources().getString(R.string.pref_post_subreddit);
+        prefPostSubredditRule = context.getResources().getString(R.string.pref_post_subreddit_rule);
         prefPostSortBy = context.getResources().getString(R.string.pref_post_sort_by);
         prefSearchPost = context.getResources().getString(R.string.pref_search_post);
         prefSearchSubreddit = context.getResources().getString(R.string.pref_search_subreddit);
@@ -160,6 +163,25 @@ public class RetrofitRepository implements DataRepository.Retrofit {
                                 }
                             }
                         });
+            }
+        });
+    }
+
+    @Override
+    public Observable<RuleParent> getSubredditRules() {
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<RuleParent>>() {
+            @Override
+            public ObservableSource<RuleParent> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                String subreddit = sharedPreferences.getString(prefPostSubredditRule, prefEmptyTag);
+
+                HashMap<String, String> args = new HashMap<>();
+                return retrofitRedditAPI.getSubredditRules(getBearerToken(accessToken), subreddit, args);
             }
         });
     }

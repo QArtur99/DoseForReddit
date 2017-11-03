@@ -3,6 +3,7 @@ package com.qartf.doseforreddit.data.repository;
 import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
+import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
 
 import io.reactivex.Observable;
@@ -15,6 +16,8 @@ public interface DataRepository {
         Observable<String> resetToken();
 
         Observable<String> getAboutMe();
+
+        Observable<RuleParent> getSubredditRules();
 
         Observable<PostParent> getPosts();
 

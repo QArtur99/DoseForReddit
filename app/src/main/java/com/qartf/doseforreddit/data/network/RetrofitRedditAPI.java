@@ -4,6 +4,7 @@ import com.qartf.doseforreddit.data.entity.AboutMe;
 import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
+import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
 import com.qartf.doseforreddit.presenter.utility.Constants;
 
@@ -50,6 +51,11 @@ public interface RetrofitRedditAPI {
     Observable<AboutMe> getAboutMe(@Header("Authorization") String authorization);
 
 
+    @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/about/rules")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<RuleParent> getSubredditRules(@Header("Authorization") String authorization,
+                                             @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                             @QueryMap Map<String, String> options);
 
     @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/{sort}")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")

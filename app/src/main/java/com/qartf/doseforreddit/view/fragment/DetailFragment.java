@@ -84,6 +84,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @Override
     public void initComponents() {
         ((App) getContext().getApplicationContext()).getComponent().inject(this);
+        emptyView.setVisibility(View.GONE);
         swipyRefreshLayout.setOnRefreshListener(this);
 
         Utility.setThumbnailSize(getActivity(), fragmentFrame);

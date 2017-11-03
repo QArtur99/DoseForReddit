@@ -9,10 +9,10 @@
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout"
-        android:background="@color/colorPrimaryLight"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_alignParentTop="true"
+        android:background="@color/colorPrimaryLight"
         app:tabBackground="@drawable/selector_tab"
         app:tabGravity="fill"
         app:tabIndicatorHeight="4dp"
@@ -20,71 +20,187 @@
         app:tabSelectedTextColor="@color/colorWhite"
         app:tabTextColor="@color/colorWhite"/>
 
-    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_below="@+id/tabLayout"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srl_direction="both">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tabLayout">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:background="@color/background"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
+            android:layout_height="match_parent"
+            android:layout_margin="5dp">
 
-    <RelativeLayout
-        android:id="@+id/emptyView"
+            <TextView
+                android:id="@+id/textViewSubreddit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+                android:text="Subreddit"/>
+
+            <LinearLayout
+                android:id="@+id/subbredditFrame"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textViewSubreddit"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_weight="9"
+                android:id="@+id/editTextSubreddit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:layout_weight="0.1"
+                android:layout_margin="1dp"
+                android:id="@+id/subredditRule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_help"
+                android:tint="@color/arrowColor"
+                android:contentDescription="@string/post_vote_down"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/subbredditFrame"
+                android:text="Title"/>
+
+            <EditText
+                android:id="@+id/editTextTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textViewTitle"/>
+
+            <TextView
+                android:id="@+id/textViewTitleCounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/editTextTitle"/>
+
+            <CheckBox
+                android:id="@+id/sendReplies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textViewTitleCounter"
+                android:layout_margin="5dp"
+                android:text="Send replies to inbox"/>
+
+            <View
+                android:id="@+id/lineView"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/sendReplies"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/arrowColor"/>
+
+
+            <TextView
+                android:id="@+id/textViewUrl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/lineView"
+                android:text="Url"/>
+
+            <EditText
+                android:id="@+id/editTextUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textViewUrl"/>
+
+            <View
+                android:id="@+id/extraMarginUrl"
+                android:layout_below="@+id/editTextUrl"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"/>
+
+
+
+            <TextView
+                android:id="@+id/textViewText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/lineView"
+                android:text="Text"/>
+
+            <EditText
+                android:id="@+id/editTextText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textViewText"/>
+
+            <View
+                android:id="@+id/extraMarginLink"
+                android:layout_below="@+id/editTextText"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"/>
+
+
+
+            <TextView
+                android:id="@+id/textViewImageUrl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/lineView"
+                android:text="Image Url"/>
+
+            <EditText
+                android:id="@+id/editTextImageUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textViewImageUrl"/>
+
+            <View
+                android:id="@+id/extraMarginImageUrl"
+                android:layout_below="@+id/editTextImageUrl"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"/>
+
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_alignBottom="@id/nestedScrollView"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_send"
+        app:backgroundTint="@color/colorAccent"
+        app:elevation="6dp"
+        app:fabSize="normal"/>
 
-        <ImageView
-            android:id="@+id/empty_shelter_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_empty_inventory"
-            android:contentDescription="@string/error"/>
 
-        <TextView
-            android:id="@+id/empty_title_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/empty_shelter_image"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:paddingTop="16dp"
-            android:textAppearance="?android:textAppearanceMedium"/>
-
-        <TextView
-            android:id="@+id/empty_subtitle_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/empty_title_text"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="sans-serif"
-            android:gravity="center"
-            android:paddingTop="8dp"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#A2AAB0"/>
-    </RelativeLayout>
-
-    <ProgressBar
-        android:id="@+id/loading_indicator"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="?actionBarSize"
-        android:background="@drawable/shape_progress_bar"
-        android:elevation="8dp"/>
+    <!--<ProgressBar-->
+    <!--android:id="@+id/loading_indicator"-->
+    <!--style="@style/Widget.AppCompat.ProgressBar"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginTop="?actionBarSize"-->
+    <!--android:background="@drawable/shape_progress_bar"-->
+    <!--android:elevation="8dp"/>-->
 
 </RelativeLayout>

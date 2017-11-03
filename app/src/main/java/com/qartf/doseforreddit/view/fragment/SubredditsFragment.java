@@ -37,6 +37,7 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
     @Override
     public void initComponents() {
         ((App) getContext().getApplicationContext()).getComponent().inject(this);
+        emptyView.setVisibility(View.GONE);
         swipyRefreshLayout.setOnRefreshListener(this);
         setAdapter(new ArrayList<Subreddit>());
     }
