@@ -18,8 +18,8 @@ public class SubmitModule {
 
     @Provides
     @Singleton
-    public SubmitMVP.Model provideLoginActivityModel(DataRepository.Retrofit repositoryRetrofit){
-        return new SubmitModel(repositoryRetrofit);
+    public SubmitMVP.Model provideLoginActivityModel(DataRepository.Retrofit repositoryRetrofit, DataRepository.Utility repositoryUtility){
+        return new SubmitModel(repositoryRetrofit, repositoryUtility);
     }
 
 }

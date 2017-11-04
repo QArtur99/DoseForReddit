@@ -1,15 +1,22 @@
 package com.qartf.doseforreddit.view.activity;
 
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.presenter.root.App;
+import com.qartf.doseforreddit.presenter.utility.Constants.Pref;
+import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.fragment.SubmitFragment;
 
-public class SubmitActivity extends BaseActivityChild {
+import javax.inject.Inject;
+
+public class SubmitActivity extends BaseActivityChild implements SubmitFragment.SubmitFragmentInt {
 
     private SubmitFragment submitFragment;
+
+    @Inject
+    SharedPreferences sharedPreferences;
 
     @Override
     public int getContentLayout() {
@@ -19,10 +26,12 @@ public class SubmitActivity extends BaseActivityChild {
     @Override
     public void initComponents() {
         ((App) getApplication()).getComponent().inject(this);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        sharedPreferences.edit().putString(Pref.prefSecondFragment, Pref.prefSubmitFragment).apply();
+        if (Utility.isTablet(this)) {
             this.finish();
             return;
         }
+        getSupportActionBar().setTitle("Submit");
         loadFragment();
     }
 
@@ -32,5 +41,10 @@ public class SubmitActivity extends BaseActivityChild {
         fragmentManager.beginTransaction()
                 .add(R.id.detailsViewFrame, submitFragment)
                 .commit();
+    }
+
+    @Override
+    public void switchToPostFragment() {
+        onBackPressed();
     }
 }

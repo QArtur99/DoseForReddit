@@ -5,6 +5,7 @@ import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
+import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
 import com.qartf.doseforreddit.presenter.utility.Constants;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -107,10 +109,7 @@ public interface RetrofitRedditAPI {
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/submit")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Observable<ResponseBody> postSubmit(@Header("Authorization") String authorization,
-                                      @Field("sr") String subredditName,
-                                      @Field("title") String title,
-                                      @Field("kind ") String kind ,
-                                      @Field("text") String text);
+    Observable<SubmitParent> postSubmit(@Header("Authorization") String authorization,
+                                        @FieldMap Map<String, String> options);
 
 }

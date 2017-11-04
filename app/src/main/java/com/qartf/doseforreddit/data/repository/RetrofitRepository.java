@@ -12,6 +12,7 @@ import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
+import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
 import com.qartf.doseforreddit.data.exception.ResetTokenException;
 import com.qartf.doseforreddit.data.network.RetrofitRedditAPI;
@@ -182,6 +183,23 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
                 HashMap<String, String> args = new HashMap<>();
                 return retrofitRedditAPI.getSubredditRules(getBearerToken(accessToken), subreddit, args);
+            }
+        });
+    }
+
+    @Override
+    public Observable<SubmitParent> postSubmit(final HashMap<String, String> args) {
+
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubmitParent>>() {
+            @Override
+            public ObservableSource<SubmitParent> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                return retrofitRedditAPI.postSubmit(getBearerToken(accessToken), args);
             }
         });
     }

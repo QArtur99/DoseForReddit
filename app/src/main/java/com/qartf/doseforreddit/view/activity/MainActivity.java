@@ -11,22 +11,26 @@ import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.presenter.sharedPreferences.SharedPreferencesMVP;
 import com.qartf.doseforreddit.presenter.token.TokenMVP;
 import com.qartf.doseforreddit.presenter.utility.Constants;
+import com.qartf.doseforreddit.presenter.utility.Constants.Pref;
 import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.dialog.SearchDialog;
 import com.qartf.doseforreddit.view.fragment.DetailFragment;
 import com.qartf.doseforreddit.view.fragment.PostsFragment;
+import com.qartf.doseforreddit.view.fragment.SubmitFragment;
 import com.qartf.doseforreddit.view.fragment.SubredditsFragment;
 
 import butterknife.BindView;
 
 
-public class MainActivity extends BaseNavigationMainActivity implements PostsFragment.PostsFragmentInt,
-        SubredditsFragment.SubredditsFragmentInt, DetailFragment.DetailFragmentInt,
-        SearchDialog.SearchDialogInter, SharedPreferencesMVP.View, TokenMVP.View {
+public class MainActivity extends BaseNavigationMainActivity implements PostsFragment.PostsFragmentInt
+        , SubredditsFragment.SubredditsFragmentInt, DetailFragment.DetailFragmentInt
+        , SearchDialog.SearchDialogInter, SharedPreferencesMVP.View, TokenMVP.View
+        , SubmitFragment.SubmitFragmentInt {
 
     private PostsFragment postsFragment;
     private SubredditsFragment subredditsFragment;
+    private SubmitFragment submitFragment;
     private DetailFragment detailFragment;
     private boolean isLoginCode = false;
 
@@ -42,12 +46,24 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 //        MainActivity.this.deleteDatabase("Doseforreddit.db");
         setSupportActionBar(toolbar);
         loadStartFragment(savedInstanceState);
+        loadSecondFragment();
     }
 
     public void loadStartFragment(Bundle savedInstanceState) {
         postsFragment = new PostsFragment();
         postsFragment.setArguments(savedInstanceState);
         Navigation.setFragmentFrame(this, R.id.mainFrame, postsFragment);
+    }
+
+    public void loadSecondFragment() {
+        if(this.findViewById(R.id.detailsViewFrame) != null){
+            String secondFragmentString = sharedPreferences.getString(Pref.prefSecondFragment, Pref.prefDetailFragment);
+            if(secondFragmentString.equals(Pref.prefDetailFragment)){
+                loadDetailFragment();
+            }else if(secondFragmentString.equals(Pref.prefSubmitFragment)){
+                loadSubmitFragment();
+            }
+        }
     }
 
     @Override
@@ -63,8 +79,15 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void loadDetailFragment() {
+        sharedPreferences.edit().putString(Pref.prefSecondFragment, Pref.prefDetailFragment).apply();
         detailFragment = Utility.getFragmentInstance(DetailFragment.class, detailFragment);
         Navigation.setFragmentFrame(this, R.id.detailsViewFrame, detailFragment);
+    }
+
+    public void loadSubmitFragment() {
+        sharedPreferences.edit().putString(Pref.prefSecondFragment, Pref.prefSubmitFragment).apply();
+        submitFragment = Utility.getFragmentInstance(SubmitFragment.class, submitFragment);
+        Navigation.setFragmentFrame(this, R.id.detailsViewFrame, submitFragment);
     }
 
     @Override
@@ -201,6 +224,15 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     @Override
+    public void setSubmitFragment() {
+        if (this.findViewById(R.id.detailsViewFrame) != null) {
+            loadSubmitFragment();
+        } else {
+            Navigation.startSubmitActivity(this);
+        }
+    }
+
+    @Override
     public void loadUser() {
         tokenPresenter.resetToken();
     }
@@ -208,5 +240,10 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     @Override
     public void tokenInfo(String info) {
         Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void switchToPostFragment() {
+
     }
 }

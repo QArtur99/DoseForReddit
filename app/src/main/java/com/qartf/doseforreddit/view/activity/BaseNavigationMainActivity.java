@@ -170,8 +170,7 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 setPostFragment();
                 break;
             case R.id.submit:
-                Navigation.startSubmitActivity(this);
-
+                setSubmitFragment();
                 posioton = 2;
                 break;
             case R.id.mySubreddits:
@@ -228,6 +227,8 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
     public abstract void setMySubreddits();
 
     public abstract void setPostFragment();
+
+    public abstract void setSubmitFragment();
 
     public abstract void searchDialog(int id);
 

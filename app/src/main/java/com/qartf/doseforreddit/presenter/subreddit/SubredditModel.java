@@ -6,10 +6,6 @@ import com.qartf.doseforreddit.data.repository.DataRepository;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 
-/**
- * Created by ART_F on 2017-10-26.
- */
-
 public class SubredditModel implements SubredditMVP.Model {
 
     private DataRepository.Retrofit repositoryRetrofit;

@@ -1,8 +1,5 @@
 package com.qartf.doseforreddit.presenter.utility;
 
-/**
- * Created by ART_F on 2017-08-30.
- */
 
 public class Constants {
 
@@ -27,18 +24,15 @@ public class Constants {
     }
 
     public class Id {
-        public static final int LOAD_USERS = 5;
-        public static final int GUEST_AUTH = 6;
-        public static final int USER_AUTH = 7;
-        public static final int USER_REFRESH = 8;
-        public static final int ME = 9;
-        public static final int POSTS = 10;
-        public static final int COMMENTS = 11;
         public static final int SEARCH_POSTS = 12;
         public static final int SEARCH_SUBREDDITS = 13;
-        public static final int SUBREDDIT_SUBSCRIBE = 14;
-        public static final int VOTE = 15;
+        public static final int SUBMIT = 14;
+    }
 
+    public class Pref {
+        public static final String prefSecondFragment = "secondFragment";
+        public static final String prefDetailFragment = "detailFragment";
+        public static final String prefSubmitFragment = "submitFragment";
     }
 
     public class Utility{

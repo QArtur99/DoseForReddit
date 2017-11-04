@@ -4,7 +4,10 @@ import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
+import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
+
+import java.util.HashMap;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -18,6 +21,8 @@ public interface DataRepository {
         Observable<String> getAboutMe();
 
         Observable<RuleParent> getSubredditRules();
+
+        Observable<SubmitParent> postSubmit(HashMap<String, String> args);
 
         Observable<PostParent> getPosts();
 
@@ -47,7 +52,7 @@ public interface DataRepository {
         void setAccessToken(AccessToken accessToken);
     }
 
-    interface Utility{
+    interface Utility {
         boolean checkConnection();
     }
 }
