@@ -29,17 +29,17 @@ public interface SubredditMVP {
 
         void onStop();
 
-        void loadSubreddits();
+        void loadSubreddits(String after);
 
-        void loadMineSubreddits();
+        void loadMineSubreddits(String after);
 
         void postSubscribe(String subscribe, String subredditName);
     }
 
     interface Model {
-        Observable<SubredditParent> getSubreddits();
+        Observable<SubredditParent> getSubreddits(String after);
 
-        Observable<SubredditParent> getMineSubreddits();
+        Observable<SubredditParent> getMineSubreddits(String after);
 
         Observable<ResponseBody> postSubscribe(String subscribe, String fullname);
 

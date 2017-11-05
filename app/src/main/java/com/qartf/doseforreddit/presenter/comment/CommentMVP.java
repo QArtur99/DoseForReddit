@@ -1,8 +1,10 @@
 package com.qartf.doseforreddit.presenter.comment;
 
 import com.qartf.doseforreddit.data.entity.AccessToken;
+import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -46,6 +48,8 @@ public interface CommentMVP {
 
         void setCommentParent(CommentParent postParent);
 
+        void setChildCommentParent(ChildCommentParent postParent);
+
         void error(String errorString);
 
         void setLoadIndicatorOff();
@@ -65,11 +69,15 @@ public interface CommentMVP {
 
         void loadComments();
 
+        void loadChildComments(Comment comment);
+
         void postVote(String dir, String fullname);
     }
 
     interface Model {
         Observable<CommentParent> getComments();
+
+        Observable<ChildCommentParent> getMorechildren(Comment comment);
 
         Observable<ResponseBody> postVote(String dir, String fullname);
 

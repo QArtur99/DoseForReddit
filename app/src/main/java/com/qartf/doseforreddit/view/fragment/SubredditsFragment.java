@@ -1,6 +1,7 @@
 package com.qartf.doseforreddit.view.fragment;
 
 import android.support.v7.widget.GridLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,7 +25,9 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
         , SubredditAdapter.ListItemClickListener, SwipyRefreshLayout.OnRefreshListener {
 
     private GridLayoutManager layoutManager;
-    private SubredditAdapter postsAdapter;
+    private SubredditAdapter subredditAdapter;
+    private SubredditParent subredditParent;
+    private Boolean isMine = false;
 
     @Inject
     SubredditMVP.Presenter presenter;
@@ -47,8 +50,8 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
         layoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        postsAdapter = new SubredditAdapter(getContext(), movieList, this);
-        recyclerView.setAdapter(postsAdapter);
+        subredditAdapter = new SubredditAdapter(getContext(), movieList, this);
+        recyclerView.setAdapter(subredditAdapter);
     }
 
     @Override
@@ -65,9 +68,10 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
 
     @Override
     public void setSubredditParent(SubredditParent postParent) {
-        postsAdapter.clearMovies();
+        this.subredditParent = postParent;
         emptyView.setVisibility(View.GONE);
-        postsAdapter.setMovies(postParent.subredditList);
+        subredditAdapter.setMovies(postParent.subredditList);
+        swipyRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
 
     @Override
     public void onListItemClick(int clickedItemIndex, View view) {
-        Subreddit subreddit = (Subreddit) postsAdapter.getDataAtPosition(clickedItemIndex);
+        Subreddit subreddit = (Subreddit) subredditAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
             case R.id.isSubscribe:
                 String subscribe = subreddit.user_is_subscriber.equals("true") ? Constants.Subscribe.UN_SUB : Constants.Subscribe.SUB;
@@ -95,10 +99,40 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
         }
     }
 
+    public void clearAdapter(){
+        if(subredditAdapter != null) {
+            subredditAdapter.clearSubreddits();
+        }
+    }
+
+    public void setSubredditType(Boolean isMine){
+        this.isMine = isMine;
+    }
+
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        presenter.loadSubreddits();
-        swipyRefreshLayout.setRefreshing(false);
+        if(direction == SwipyRefreshLayoutDirection.BOTTOM) {
+
+            if(TextUtils.isEmpty(subredditParent.after)){
+                swipyRefreshLayout.setRefreshing(false);
+                error("There are no more subreddits to show right now.");
+                return;
+            }
+
+            loadSubreddits(subredditParent.after);
+
+        }else if(direction == SwipyRefreshLayoutDirection.TOP){
+            subredditAdapter.clearSubreddits();
+            loadSubreddits("");
+        }
+    }
+
+    private void loadSubreddits(String after) {
+        if(isMine){
+            presenter.loadMineSubreddits(after);
+        }else{
+            presenter.loadSubreddits(after);
+        }
     }
 
     public interface SubredditsFragmentInt {

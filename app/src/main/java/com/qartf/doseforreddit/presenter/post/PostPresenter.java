@@ -24,8 +24,8 @@ public class PostPresenter implements PostMVP.Presenter {
     }
 
     @Override
-    public void loadPosts() {
-        DisposableObserver<PostParent> disposableObserver = model.getPosts().observeOn(AndroidSchedulers.mainThread()).
+    public void loadPosts(String after) {
+        DisposableObserver<PostParent> disposableObserver = model.getPosts(after).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
 
             @Override
@@ -50,8 +50,8 @@ public class PostPresenter implements PostMVP.Presenter {
     }
 
     @Override
-    public void searchPosts() {
-        DisposableObserver<PostParent> disposableObserver = model.searchPosts().observeOn(AndroidSchedulers.mainThread()).
+    public void searchPosts(String after) {
+        DisposableObserver<PostParent> disposableObserver = model.searchPosts(after).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
 
             @Override

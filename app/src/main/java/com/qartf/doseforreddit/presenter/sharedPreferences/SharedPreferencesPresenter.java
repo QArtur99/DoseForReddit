@@ -35,7 +35,7 @@ SharedPreferencesMVP.Presenter{
         if (key.equals(prefPostSubreddit)) {
             String subreddit = sharedPreferences.getString(prefPostSubreddit, "");
             view.setTitle("/r/" + subreddit);
-            view.getPosts();
+            view.getSubredditPosts();
         } else if (key.equals(prefPostSortBy)) {
             view.setTabLayoutPos();
             view.getPosts();

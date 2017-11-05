@@ -24,8 +24,29 @@ public class CommentDeserializer implements JsonDeserializer<Comment> {
 
         JsonObject jsonObject = json.getAsJsonObject();
         JsonObject data = jsonObject.getAsJsonObject("data");
+
+
+        if (jsonObject.get("kind").getAsString().equals("more")) {
+
+            List<String> commentList = null;
+            if (data.get("children").isJsonArray()) {
+                JsonArray array = data.getAsJsonArray("children");
+                commentList = new Gson().fromJson(array.toString(), new TypeToken<List<String>>() {}.getType());
+            }
+
+            Comment comment = new Comment(
+
+                    getNullAsEmptyString(jsonObject.get("kind")),
+                    getNullAsEmptyString(data.get("parent_id")),
+                    getNullAsEmptyString(data.get("name")),
+                    commentList
+            );
+            return comment;
+        }
+
+
         List<Comment> commentList = null;
-        if(data.get("replies").isJsonObject()) {
+        if (data.get("replies").isJsonObject()) {
             JsonObject replies = data.getAsJsonObject("replies");
             JsonObject datax = replies.getAsJsonObject("data");
             JsonArray array = datax.getAsJsonArray("children");

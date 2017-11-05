@@ -1,11 +1,13 @@
 package com.qartf.doseforreddit.data.repository;
 
 import com.qartf.doseforreddit.data.entity.AccessToken;
+import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 
 import java.util.HashMap;
 
@@ -24,17 +26,19 @@ public interface DataRepository {
 
         Observable<SubmitParent> postSubmit(HashMap<String, String> args);
 
-        Observable<PostParent> getPosts();
+        Observable<PostParent> getPosts(String after);
 
-        Observable<PostParent> searchPosts();
+        Observable<PostParent> searchPosts(String after);
 
         Observable<CommentParent> getComments();
 
+        Observable<ChildCommentParent> getMorechildren(Comment comment);
+
         Observable<ResponseBody> postVote(String dir, String fullname);
 
-        Observable<SubredditParent> getSubreddits();
+        Observable<SubredditParent> getSubreddits(String after);
 
-        Observable<SubredditParent> getMineSubreddits();
+        Observable<SubredditParent> getMineSubreddits(String after);
 
         Observable<ResponseBody> postSubscribe(String subscribe, String fullname);
 

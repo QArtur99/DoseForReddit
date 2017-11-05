@@ -76,5 +76,6 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.5'
     //http logging
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.2'
+    implementation 'org.glassfish.main:javax.annotation:4.0-b33'
 }
 apply plugin: 'com.google.gms.google-services'

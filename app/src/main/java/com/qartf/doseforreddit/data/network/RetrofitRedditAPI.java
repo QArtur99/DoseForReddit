@@ -7,6 +7,7 @@ import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.presenter.utility.Constants;
 
 import java.util.Map;
@@ -79,6 +80,9 @@ public interface RetrofitRedditAPI {
                                     @Path(value = "id", encoded = true) String sort,
                                     @QueryMap Map<String, String> options);
 
+    @GET(Constants.Auth.BASE_URL_OAUTH + "/api/morechildren")
+    Observable<ChildCommentParent> getMorechildren(@Header("Authorization") String authorization,
+                                                   @QueryMap Map<String, String> options);
 
     @GET(Constants.Auth.BASE_URL_OAUTH + "/subreddits/search")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")

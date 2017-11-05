@@ -50,7 +50,7 @@ public class RedditWidgetService extends IntentService {
 
     private void handleActionUpdateWidgets() {
         ((App) getApplicationContext()).getComponent().inject(this);
-        repository.getPosts().observeOn(AndroidSchedulers.mainThread()).
+        repository.getPosts("").observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
 
             @Override

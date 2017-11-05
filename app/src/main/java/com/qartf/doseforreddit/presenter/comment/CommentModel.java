@@ -1,6 +1,8 @@
 package com.qartf.doseforreddit.presenter.comment;
 
+import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.data.repository.DataRepository;
 
 import io.reactivex.Observable;
@@ -18,6 +20,11 @@ public class CommentModel implements CommentMVP.Model {
     @Override
     public Observable<CommentParent> getComments() {
         return repositoryRetrofit.getComments();
+    }
+
+    @Override
+    public Observable<ChildCommentParent> getMorechildren(Comment comment) {
+        return repositoryRetrofit.getMorechildren(comment);
     }
 
     @Override

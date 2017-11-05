@@ -22,6 +22,7 @@ public class Comment {
     public String name;
     public String createdUtc;
     public String subredditNamePrefixed;
+    public List<String> childs;
 
     public Comment(String kind, String subredditId, String linkId, List<Comment> commentList, String author, String ups, String parentId, String score, String body, String subredditType, String name, String createdUtc, String subredditNamePrefixed) {
         this.kind = kind;
@@ -37,5 +38,12 @@ public class Comment {
         this.name = name;
         this.createdUtc = createdUtc;
         this.subredditNamePrefixed = subredditNamePrefixed;
+    }
+
+    public Comment(String kind, String parentId, String name, List<String> childs){
+        this.kind = kind;
+        this.parentId = parentId;
+        this.name = name;
+        this.childs = childs;
     }
 }

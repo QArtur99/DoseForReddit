@@ -29,8 +29,8 @@ public class SubredditPresenter implements SubredditMVP.Presenter {
     }
 
     @Override
-    public void loadSubreddits() {
-        DisposableObserver<SubredditParent> disposableObserver = model.getSubreddits().observeOn(AndroidSchedulers.mainThread()).
+    public void loadSubreddits(String after) {
+        DisposableObserver<SubredditParent> disposableObserver = model.getSubreddits(after).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<SubredditParent>() {
 
             @Override
@@ -55,8 +55,8 @@ public class SubredditPresenter implements SubredditMVP.Presenter {
     }
 
     @Override
-    public void loadMineSubreddits() {
-        DisposableObserver<SubredditParent> disposableObserver = model.getMineSubreddits().observeOn(AndroidSchedulers.mainThread()).
+    public void loadMineSubreddits(String after) {
+        DisposableObserver<SubredditParent> disposableObserver = model.getMineSubreddits(after).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<SubredditParent>() {
 
             @Override

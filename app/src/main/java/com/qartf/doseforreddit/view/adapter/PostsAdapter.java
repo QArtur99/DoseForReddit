@@ -64,12 +64,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         return data.size();
     }
 
-    public void clearMovies() {
+    public void clearPosts() {
         this.data.clear();
         notifyDataSetChanged();
     }
 
-    public void setMovies(List<Post> data) {
+    public void setPosts(List<Post> data) {
         this.data.addAll(data);
         notifyDataSetChanged();
     }

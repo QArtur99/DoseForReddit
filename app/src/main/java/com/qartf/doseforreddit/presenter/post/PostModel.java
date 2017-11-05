@@ -18,13 +18,13 @@ public class PostModel implements PostMVP.Model {
     }
 
     @Override
-    public Observable<PostParent> getPosts() {
-        return repositoryRetrofit.getPosts();
+    public Observable<PostParent> getPosts(String after) {
+        return repositoryRetrofit.getPosts(after);
     }
 
     @Override
-    public Observable<PostParent> searchPosts() {
-        return repositoryRetrofit.searchPosts();
+    public Observable<PostParent> searchPosts(String after) {
+        return repositoryRetrofit.searchPosts(after);
     }
 
     @Override

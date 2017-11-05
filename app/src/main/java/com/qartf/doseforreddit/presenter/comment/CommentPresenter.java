@@ -2,8 +2,10 @@ package com.qartf.doseforreddit.presenter.comment;
 
 import android.support.annotation.Nullable;
 
+import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -53,6 +55,34 @@ public class CommentPresenter implements CommentMVP.Presenter {
         disposable.add(disposableObserver);
 
     }
+
+    @Override
+    public void loadChildComments(Comment comment) {
+        DisposableObserver<ChildCommentParent> disposableObserver = model.getMorechildren(comment).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ChildCommentParent>() {
+
+            @Override
+            public void onNext(@NonNull ChildCommentParent postParent) {
+                if (view != null) {
+                    view.setChildCommentParent(postParent);
+                    view.setLoadIndicatorOff();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                String xx = e.toString();
+                String aa = xx;
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
 
     @Override
     public void postVote(String dir, String fullname) {

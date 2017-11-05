@@ -50,7 +50,7 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
         return data.size();
     }
 
-    public void clearMovies() {
+    public void clearSubreddits() {
         this.data.clear();
         notifyDataSetChanged();
     }

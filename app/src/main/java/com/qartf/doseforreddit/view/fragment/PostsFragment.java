@@ -1,6 +1,7 @@
 package com.qartf.doseforreddit.view.fragment;
 
 import android.support.v7.widget.GridLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
     public GridLayoutManager layoutManager;
     public PostsAdapter postsAdapter;
+    private PostParent postParent;
+    private Boolean isSearch = false;
 
     @Inject
     PostMVP.Presenter presenter;
@@ -55,7 +58,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     public void onStart() {
         super.onStart();
         presenter.setView(this);
-        presenter.loadPosts();
+        presenter.loadPosts("");
     }
 
     @Override
@@ -65,9 +68,10 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
     @Override
     public void setPostParent(PostParent postParent) {
-        postsAdapter.clearMovies();
+        this.postParent = postParent;
         emptyView.setVisibility(View.GONE);
-        postsAdapter.setMovies(postParent.postList);
+        postsAdapter.setPosts(postParent.postList);
+        swipyRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -107,10 +111,44 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
         }
     }
 
+    public void setPostType(Boolean isSearch){
+        this.isSearch = isSearch;
+    }
+
+    public Boolean getPostType(){
+        return isSearch;
+    }
+
+    public void clearAdapter(){
+        if(postsAdapter != null) {
+            postsAdapter.clearPosts();
+        }
+    }
+
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        presenter.loadPosts();
-        swipyRefreshLayout.setRefreshing(false);
+        if(direction == SwipyRefreshLayoutDirection.BOTTOM) {
+
+            if(TextUtils.isEmpty(postParent.after)){
+                swipyRefreshLayout.setRefreshing(false);
+                error("There are no more posts to show right now.");
+                return;
+            }
+
+            loadPosts(postParent.after);
+
+        }else if(direction == SwipyRefreshLayoutDirection.TOP) {
+            postsAdapter.clearPosts();
+            loadPosts("");
+        }
+    }
+
+    private void loadPosts(String after) {
+        if(isSearch){
+            presenter.searchPosts(after);
+        }else{
+            presenter.loadPosts(after);
+        }
     }
 
     public interface PostsFragmentInt {

@@ -25,17 +25,17 @@ public interface PostMVP {
 
         void onStop();
 
-        void loadPosts();
+        void loadPosts(String after);
 
-        void searchPosts();
+        void searchPosts(String after);
 
         void postVote(String dir, String fullname);
 
     }
 
     interface Model {
-        Observable<PostParent> getPosts();
-        Observable<PostParent> searchPosts();
+        Observable<PostParent> getPosts(String after);
+        Observable<PostParent> searchPosts(String after);
         Observable<ResponseBody> postVote(String dir, String fullname);
         boolean checkConnection();
 //        void createUser(String name, String lastName);

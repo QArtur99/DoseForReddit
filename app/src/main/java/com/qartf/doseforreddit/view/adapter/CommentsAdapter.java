@@ -43,8 +43,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.bind(position);
-
-
     }
 
     public Object getDataAtPosition(int position) {
@@ -70,7 +68,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         return data;
     }
 
+    public CommentsAdapter getCommentAdapter(){
+        return this;
+    }
+
     public interface OnListItemClickListener {
+        void loadMore(Comment comment, CommentsAdapter commentsAdapter);
         void onCommentListItemClick(int clickedItemIndex, View view);
         void onCommentSelected(int clickedItemIndex, View expandableView, View parent);
     }
@@ -83,6 +86,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         @BindView(R.id.recyclerView) RecyclerView recyclerView;
         @BindView(R.id.childrenCommentFrame) LinearLayout childrenCommentFrame;
         @BindView(R.id.expandArea) LinearLayout expandArea;
+        @BindView(R.id.loadMore) LinearLayout loadMore;
         @BindView(R.id.commentItemFrame) LinearLayout commentFrame;
         @BindView(R.id.commentVoteUp) ImageView commentVoteUp;
         @BindView(R.id.commentVoteDown) ImageView commentVoteDown;
@@ -90,14 +94,24 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         public MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            loadMore.setOnClickListener(this);
             commentFrame.setOnClickListener(this);
             commentVoteUp.setOnClickListener(this);
             commentVoteDown.setOnClickListener(this);
         }
 
         public void bind(int position) {
-            Comment post = (Comment) getDataAtPosition(position);
-            loadData(post);
+            Comment comment = (Comment) getDataAtPosition(position);
+            if(comment.kind.equals("more")){
+                if(comment.childs != null && comment.childs.size() > 0){
+                    loadMore.setVisibility(View.VISIBLE);
+                }
+                commentFrame.setVisibility(View.GONE);
+                return;
+            }
+            loadMore.setVisibility(View.GONE);
+            commentFrame.setVisibility(View.VISIBLE);
+            loadData(comment);
         }
 
         private void loadData(Comment comment) {
@@ -121,6 +135,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
             switch (v.getId()) {
+                case R.id.loadMore:
+                    Comment comment = (Comment) getDataAtPosition(clickedPosition);
+                    mOnClickListener.loadMore(comment, getCommentAdapter());
+                    break;
                 case R.id.commentVoteUp:
                     mOnClickListener.onCommentListItemClick(clickedPosition, v);
                     break;

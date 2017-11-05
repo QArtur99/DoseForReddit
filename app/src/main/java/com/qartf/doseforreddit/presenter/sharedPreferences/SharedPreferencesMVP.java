@@ -10,6 +10,8 @@ public interface SharedPreferencesMVP {
 
         void getPosts();
 
+        void getSubredditPosts();
+
         void setTabLayoutPos();
 
         void setUserName(String userName);

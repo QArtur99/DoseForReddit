@@ -9,11 +9,13 @@ import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.data.database.DatabaseHelper;
 import com.qartf.doseforreddit.data.entity.AboutMe;
 import com.qartf.doseforreddit.data.entity.AccessToken;
+import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.data.exception.ResetTokenException;
 import com.qartf.doseforreddit.data.network.RetrofitRedditAPI;
 
@@ -205,7 +207,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
     }
 
     @Override
-    public Observable<PostParent> getPosts() {
+    public Observable<PostParent> getPosts(final String after) {
 
         if (setCallCounter()) {
             return Observable.empty();
@@ -219,6 +221,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
                 String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
                 String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
                 HashMap<String, String> args = new HashMap<>();
+                args.put("after", after);
                 return retrofitRedditAPI.getPosts(getBearerToken(accessToken), subreddit, subredditSortBy, args);
             }
         });
@@ -226,7 +229,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
 
     @Override
-    public Observable<PostParent> searchPosts() {
+    public Observable<PostParent> searchPosts(final String after) {
 
         if (setCallCounter()) {
             return Observable.empty();
@@ -239,12 +242,14 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
                 String queryString = sharedPreferences.getString(prefSearchPost, prefEmptyTag);
                 String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
+                String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
 
                 HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "30");
+                args.put("limit", "25");
                 args.put("q", queryString);
                 args.put("restrict_sr", "true");
-
+                args.put("sort", subredditSortBy);
+                args.put("after", after);
                 return retrofitRedditAPI.searchPosts(getBearerToken(accessToken), subreddit, args);
             }
         });
@@ -269,12 +274,42 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
 
                 HashMap<String, String> args = new HashMap<>();
-                args.put("depth", "5");
-                args.put("limit", "30");
+                args.put("depth", "2");
+                args.put("limit", "5");
                 args.put("showedits", "false");
-                args.put("showmore", "false");
+                args.put("showmore", "true");
                 args.put("sort", sortBy);
+
                 return retrofitRedditAPI.getComments(getBearerToken(accessToken), postSub, postId, args);
+            }
+        });
+    }
+
+    @Override
+    public Observable<ChildCommentParent> getMorechildren(final Comment comment) {
+
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ChildCommentParent>>() {
+            @Override
+            public ObservableSource<ChildCommentParent> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                String postSub = sharedPreferences.getString(prefPostDetailSub, prefEmptyTag);
+                String postId = sharedPreferences.getString(prefPostDetailId, prefEmptyTag);
+                String sortBy = sharedPreferences.getString(prefPostDetailSortKey, prefEmptyTag);
+
+
+                HashMap<String, String> args = new HashMap<>();
+                args.put("api_type", "json");
+                args.put("children", comment.childs.toString().replace("[", "").replace("]", ""));
+                args.put("limit_children", "false");
+                args.put("link_id", comment.parentId);
+                args.put("sort", sortBy);
+
+                return retrofitRedditAPI.getMorechildren(getBearerToken(accessToken), args);
             }
         });
     }
@@ -294,7 +329,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
                 String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
                 HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "30");
+                args.put("limit", "25");
                 args.put("q", queryString);
                 return retrofitRedditAPI.postVote(getBearerToken(accessToken), dir, fullname);
             }
@@ -302,7 +337,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
     }
 
     @Override
-    public Observable<SubredditParent> getSubreddits() {
+    public Observable<SubredditParent> getSubreddits(final String after) {
 
         if (setCallCounter()) {
             return Observable.empty();
@@ -315,8 +350,9 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
                 String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
                 HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "30");
+                args.put("limit", "25");
                 args.put("q", queryString);
+                args.put("after", after);
                 return retrofitRedditAPI.getSubreddits(getBearerToken(accessToken), args);
             }
         });
@@ -324,7 +360,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
 
     @Override
-    public Observable<SubredditParent> getMineSubreddits() {
+    public Observable<SubredditParent> getMineSubreddits(final String after) {
 
         if (setCallCounter()) {
             return Observable.empty();
@@ -337,7 +373,8 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
                 String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
                 HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "30");
+                args.put("limit", "25");
+                args.put("after", after);
                 return retrofitRedditAPI.getMineSubreddits(getBearerToken(accessToken), "subscriber", args);
             }
         });

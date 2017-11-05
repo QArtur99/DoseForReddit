@@ -22,6 +22,7 @@ import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.presenter.comment.CommentMVP;
 import com.qartf.doseforreddit.presenter.root.App;
 import com.qartf.doseforreddit.presenter.utility.Navigation;
@@ -70,6 +71,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     private boolean isOpen = false;
 
     private CommentsAdapter commentsAdapter;
+    private CommentsAdapter commentsChildAdapter;
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
 
@@ -233,6 +235,13 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     }
 
     @Override
+    public void loadMore(Comment comment, CommentsAdapter commentsAdapter) {
+        this.commentsChildAdapter = commentsAdapter;
+        comment.parentId = presenter.getPost().name;
+        presenter.loadChildComments(comment);
+    }
+
+    @Override
     public void onCommentListItemClick(int clickedItemIndex, View view) {
         Comment comment = (Comment) commentsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
@@ -293,6 +302,12 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         commentsAdapter.clearMovies();
         emptyView.setVisibility(View.GONE);
         commentsAdapter.setMovies(postParent.commentList);
+    }
+
+    @Override
+    public void setChildCommentParent(ChildCommentParent postParent) {
+        commentsChildAdapter.clearMovies();
+        commentsChildAdapter.setMovies(postParent.json.data.commentList);
     }
 
     @Override

@@ -146,12 +146,16 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void searchPosts() {
-        postPresenter.searchPosts();
+        postsFragment.clearAdapter();
+        postsFragment.setPostType(true);
+        postPresenter.searchPosts("");
     }
 
     @Override
     public void searchSubreddits() {
-        subredditPresenter.loadSubreddits();
+        subredditsFragment.clearAdapter();
+        subredditsFragment.setSubredditType(false);
+        subredditPresenter.loadSubreddits("");
     }
 
     @Override
@@ -197,7 +201,19 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void getPosts() {
-        postPresenter.loadPosts();
+        postsFragment.clearAdapter();
+        if(postsFragment.getPostType()) {
+            postPresenter.searchPosts("");
+        }else{
+            postPresenter.loadPosts("");
+        }
+    }
+
+    @Override
+    public void getSubredditPosts() {
+        postsFragment.setPostType(false);
+        postsFragment.clearAdapter();
+        postPresenter.loadPosts("");
     }
 
     @Override
@@ -213,7 +229,9 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     @Override
     public void setMySubreddits() {
         loadFragment(Constants.Id.SEARCH_SUBREDDITS);
-        subredditPresenter.loadMineSubreddits();
+        subredditsFragment.clearAdapter();
+        subredditsFragment.setSubredditType(true);
+        subredditPresenter.loadMineSubreddits("");
     }
 
     @Override
