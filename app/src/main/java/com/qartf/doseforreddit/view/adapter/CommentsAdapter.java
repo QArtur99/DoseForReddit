@@ -68,13 +68,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         return data;
     }
 
-    public CommentsAdapter getCommentAdapter(){
+    public CommentsAdapter getCommentAdapter() {
         return this;
     }
 
     public interface OnListItemClickListener {
         void loadMore(Comment comment, CommentsAdapter commentsAdapter);
+
         void onCommentListItemClick(int clickedItemIndex, View view);
+
         void onCommentSelected(int clickedItemIndex, View expandableView, View parent);
     }
 
@@ -87,6 +89,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         @BindView(R.id.childrenCommentFrame) LinearLayout childrenCommentFrame;
         @BindView(R.id.expandArea) LinearLayout expandArea;
         @BindView(R.id.loadMore) LinearLayout loadMore;
+        @BindView(R.id.loadingChild) LinearLayout loadingChild;
         @BindView(R.id.commentItemFrame) LinearLayout commentFrame;
         @BindView(R.id.commentVoteUp) ImageView commentVoteUp;
         @BindView(R.id.commentVoteDown) ImageView commentVoteDown;
@@ -102,14 +105,20 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
 
         public void bind(int position) {
             Comment comment = (Comment) getDataAtPosition(position);
-            if(comment.kind.equals("more")){
-                if(comment.childs != null && comment.childs.size() > 0){
-                    loadMore.setVisibility(View.VISIBLE);
+            if (comment.kind.equals("more")) {
+                if (comment.childs != null && comment.childs.size() > 0) {
+                    if (getItemCount() > position + 1) {
+                        loadMore.setVisibility(View.GONE);
+
+                    } else {
+                        loadMore.setVisibility(View.VISIBLE);
+                    }
                 }
                 commentFrame.setVisibility(View.GONE);
                 return;
             }
             loadMore.setVisibility(View.GONE);
+            loadingChild.setVisibility(View.GONE);
             commentFrame.setVisibility(View.VISIBLE);
             loadData(comment);
         }
@@ -120,7 +129,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
             Utility.upsFormatPoints(score, Integer.valueOf(comment.ups));
             time.setText(Utility.timeFormat(comment.createdUtc));
             body.setText(comment.body);
-            if(comment.commentList != null){
+            if (comment.commentList != null) {
                 childrenCommentFrame.setVisibility(View.VISIBLE);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
                 layoutManager.setAutoMeasureEnabled(true);
@@ -136,6 +145,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
             int clickedPosition = getAdapterPosition();
             switch (v.getId()) {
                 case R.id.loadMore:
+                    loadMore.setVisibility(View.GONE);
+                    loadingChild.setVisibility(View.VISIBLE);
+                    loadingChild.setActivated(true);
                     Comment comment = (Comment) getDataAtPosition(clickedPosition);
                     mOnClickListener.loadMore(comment, getCommentAdapter());
                     break;

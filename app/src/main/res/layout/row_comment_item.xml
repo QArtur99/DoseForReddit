@@ -62,7 +62,11 @@
         android:visibility="gone"/>
 
     <include
-        layout="@layout/row_more_childs"
+        layout="@layout/row_comment_childs"
+        android:visibility="gone"/>
+
+    <include
+        layout="@layout/row_comment_child_load"
         android:visibility="gone"/>
 
     <LinearLayout

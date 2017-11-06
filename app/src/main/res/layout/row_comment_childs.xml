@@ -3,12 +3,13 @@
               android:id="@+id/loadMore"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@drawable/selector_bottom"
+              android:background="@color/commentSelector"
               android:gravity="center"
               android:orientation="horizontal"
               android:padding="2dp">
 
     <TextView
+        android:textColor="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"

@@ -32,7 +32,6 @@
     <color name="arrowColor">#757575</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
-    <color name="commentSelector">#E0E0E0</color>
     <color name="itemSelector">#bbdefb</color>
     <color name="upArrow">#4DD0E1</color>
     <color name="downArrow">#EF9A9A</color>
@@ -40,6 +39,7 @@
     //Comment
     <color name="backgroundActionComments">#bbdefb</color>
     <color name="pointsText">#757575</color>
+    <color name="commentSelector">#E0E0E0</color>
     <color name="authorText">#37474f</color>
 
     //Dialog

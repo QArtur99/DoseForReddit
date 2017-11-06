@@ -74,6 +74,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     private CommentsAdapter commentsChildAdapter;
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
+    private String depthChild;
 
     @Inject
     CommentMVP.Presenter presenter;
@@ -236,6 +237,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void loadMore(Comment comment, CommentsAdapter commentsAdapter) {
+        this.depthChild = comment.depth;
         this.commentsChildAdapter = commentsAdapter;
         comment.parentId = presenter.getPost().name;
         presenter.loadChildComments(comment);
@@ -306,7 +308,9 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void setChildCommentParent(ChildCommentParent postParent) {
-        commentsChildAdapter.clearMovies();
+        if(depthChild == null) {
+            commentsChildAdapter.clearMovies();
+        }
         commentsChildAdapter.setMovies(postParent.json.data.commentList);
     }
 
