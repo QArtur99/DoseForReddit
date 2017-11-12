@@ -4,4 +4,6 @@
 
     <corners android:radius="5dp"/>
     <solid android:color="@color/commentSelector"/>
+    <stroke android:color="@color/commentSelectorStroke"
+            android:width="1dp"/>
 </shape>

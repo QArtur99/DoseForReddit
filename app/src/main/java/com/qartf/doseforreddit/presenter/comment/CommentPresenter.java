@@ -83,6 +83,30 @@ public class CommentPresenter implements CommentMVP.Presenter {
         disposable.add(disposableObserver);
     }
 
+    @Override
+    public void postComment(String fullname, String text) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postComment(fullname, text).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+//                    view.error("Success");
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
 
     @Override
     public void postVote(String dir, String fullname) {
@@ -107,6 +131,56 @@ public class CommentPresenter implements CommentMVP.Presenter {
         });
         disposable.add(disposableObserver);
     }
+
+    @Override
+    public void postSave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postSave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+//                    view.error("Success");
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+
+    }
+
+    @Override
+    public void postUnsave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postUnsave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+//                    view.error("Success");
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
 
     @Override
     public void onStop() {

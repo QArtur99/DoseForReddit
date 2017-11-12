@@ -33,6 +33,21 @@ public class CommentModel implements CommentMVP.Model {
     }
 
     @Override
+    public Observable<ResponseBody> postComment(String fullname, String text) {
+        return repositoryRetrofit.postComment(fullname, text);
+    }
+
+    @Override
+    public Observable<ResponseBody> postSave(String fullname) {
+        return repositoryRetrofit.postSave(fullname);
+    }
+
+    @Override
+    public Observable<ResponseBody> postUnsave(String fullname) {
+        return repositoryRetrofit.postUnsave(fullname);
+    }
+
+    @Override
     public boolean checkConnection() {
         return repositoryUtility.checkConnection();
     }

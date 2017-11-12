@@ -274,13 +274,33 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
 
                 HashMap<String, String> args = new HashMap<>();
-                args.put("depth", "2");
-                args.put("limit", "5");
+                args.put("depth", "8");
+                args.put("limit", "25");
                 args.put("showedits", "false");
                 args.put("showmore", "true");
                 args.put("sort", sortBy);
 
                 return retrofitRedditAPI.getComments(getBearerToken(accessToken), postSub, postId, args);
+            }
+        });
+    }
+
+    @Override
+    public Observable<ResponseBody> postComment(final String fullname, final String text) {
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
+                HashMap<String, String> args = new HashMap<>();
+                args.put("text", text);
+                args.put("thing_id", fullname);
+                return retrofitRedditAPI.postComment(getBearerToken(accessToken), args);
             }
         });
     }
@@ -332,6 +352,44 @@ public class RetrofitRepository implements DataRepository.Retrofit {
                 args.put("limit", "25");
                 args.put("q", queryString);
                 return retrofitRedditAPI.postVote(getBearerToken(accessToken), dir, fullname);
+            }
+        });
+    }
+
+    @Override
+    public Observable<ResponseBody> postSave(final String fullname) {
+
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                HashMap<String, String> args = new HashMap<>();
+                args.put("id", fullname);
+                return retrofitRedditAPI.postSave(getBearerToken(accessToken), args);
+            }
+        });
+    }
+
+    @Override
+    public Observable<ResponseBody> postUnsave(final String fullname) {
+
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                HashMap<String, String> args = new HashMap<>();
+                args.put("id", fullname);
+                return retrofitRedditAPI.postUnsave(getBearerToken(accessToken), args);
             }
         });
     }

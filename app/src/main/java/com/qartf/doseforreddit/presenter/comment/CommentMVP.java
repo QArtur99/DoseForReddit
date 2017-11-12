@@ -71,7 +71,13 @@ public interface CommentMVP {
 
         void loadChildComments(Comment comment);
 
+        void postComment(String fullname, String text);
+
         void postVote(String dir, String fullname);
+
+        void postSave(String fullname);
+
+        void postUnsave(String fullname);
     }
 
     interface Model {
@@ -80,6 +86,12 @@ public interface CommentMVP {
         Observable<ChildCommentParent> getMorechildren(Comment comment);
 
         Observable<ResponseBody> postVote(String dir, String fullname);
+
+        Observable<ResponseBody> postComment(String fullname, String text);
+
+        Observable<ResponseBody> postSave(String fullname);
+
+        Observable<ResponseBody> postUnsave(String fullname);
 
         boolean checkConnection();
     }

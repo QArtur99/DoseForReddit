@@ -116,4 +116,24 @@ public interface RetrofitRedditAPI {
     Observable<SubmitParent> postSubmit(@Header("Authorization") String authorization,
                                         @FieldMap Map<String, String> options);
 
+    @FormUrlEncoded
+    @POST(Constants.Auth.BASE_URL_OAUTH + "/api/comment")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<ResponseBody> postComment(@Header("Authorization") String authorization,
+                                        @FieldMap Map<String, String> options);
+
+    @FormUrlEncoded
+    @POST(Constants.Auth.BASE_URL_OAUTH + "/api/save")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<ResponseBody> postSave(@Header("Authorization") String authorization,
+                                         @FieldMap Map<String, String> options);
+
+
+    @FormUrlEncoded
+    @POST(Constants.Auth.BASE_URL_OAUTH + "/api/unsave")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<ResponseBody> postUnsave(@Header("Authorization") String authorization,
+                                         @FieldMap Map<String, String> options);
+
+
 }

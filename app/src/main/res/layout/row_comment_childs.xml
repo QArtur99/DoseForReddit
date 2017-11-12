@@ -3,8 +3,9 @@
               android:id="@+id/loadMore"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@color/commentSelector"
+              android:background="@color/commentLoad"
               android:gravity="center"
+              android:layout_marginBottom="2dp"
               android:orientation="horizontal"
               android:padding="2dp">
 
@@ -12,7 +13,7 @@
         android:textColor="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="2dp"
         android:text="Load more ..."/>
 
 

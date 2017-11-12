@@ -74,7 +74,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     private CommentsAdapter commentsChildAdapter;
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
-    private String depthChild;
+
 
     @Inject
     CommentMVP.Presenter presenter;
@@ -235,18 +235,28 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         }
     }
 
-    @Override
-    public void loadMore(Comment comment, CommentsAdapter commentsAdapter) {
-        this.depthChild = comment.depth;
-        this.commentsChildAdapter = commentsAdapter;
-        comment.parentId = presenter.getPost().name;
-        presenter.loadChildComments(comment);
-    }
 
     @Override
-    public void onCommentListItemClick(int clickedItemIndex, View view) {
-        Comment comment = (Comment) commentsAdapter.getDataAtPosition(clickedItemIndex);
+    public void onCommentListItemClick(Comment comment, CommentsAdapter commentsAdapter, View view) {
         switch (view.getId()) {
+            case R.id.moreSettings:
+
+                break;
+
+            case R.id.reply:
+                presenter.postComment(comment.name, "bla bla bla");
+
+                break;
+            case R.id.save:
+                presenter.postSave(comment.name);
+
+
+                break;
+            case R.id.loadMore:
+                this.commentsChildAdapter = commentsAdapter;
+                comment.parentId = presenter.getPost().name;
+                presenter.loadChildComments(comment);
+                break;
             case R.id.commentVoteUp:
                 presenter.postVote("1", comment.name);
                 break;
@@ -308,9 +318,6 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void setChildCommentParent(ChildCommentParent postParent) {
-        if(depthChild == null) {
-            commentsChildAdapter.clearMovies();
-        }
         commentsChildAdapter.setMovies(postParent.json.data.commentList);
     }
 

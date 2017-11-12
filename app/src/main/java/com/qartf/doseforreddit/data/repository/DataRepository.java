@@ -32,9 +32,15 @@ public interface DataRepository {
 
         Observable<CommentParent> getComments();
 
+        Observable<ResponseBody> postComment(String fullname, String text);
+
         Observable<ChildCommentParent> getMorechildren(Comment comment);
 
         Observable<ResponseBody> postVote(String dir, String fullname);
+
+        Observable<ResponseBody> postSave(String fullname);
+
+        Observable<ResponseBody> postUnsave(String fullname);
 
         Observable<SubredditParent> getSubreddits(String after);
 

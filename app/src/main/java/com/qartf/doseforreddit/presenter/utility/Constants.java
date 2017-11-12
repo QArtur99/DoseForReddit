@@ -14,7 +14,7 @@ public class Constants {
         public static final String CLIENT_ID = "XX9hXAmumdov9Q";
         public static final String REDIRECT_URI = "http://www.example.com/unused/redirect/uri";
         public static final String STATE = "MY_RANDOM_STRING_1";
-        public static final String SCOPE = "identity edit flair mysubreddits read report submit subscribe vote";
+        public static final String SCOPE = "identity edit flair mysubreddits read report save submit subscribe vote";
         public static final String ACCESS_TOKEN_URL = "https://www.reddit.com/api/v1/access_token";
         public static final String REVOKE_TOKEN_URL = "https://www.reddit.com/api/v1/revoke_token";
 
