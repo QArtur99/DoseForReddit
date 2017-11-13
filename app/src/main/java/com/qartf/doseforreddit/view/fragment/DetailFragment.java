@@ -28,6 +28,9 @@ import com.qartf.doseforreddit.presenter.root.App;
 import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.adapter.CommentsAdapter;
+import com.qartf.doseforreddit.view.dialog.CommentSettingsDialog;
+import com.qartf.doseforreddit.view.dialog.PostDetailSettings;
+import com.qartf.doseforreddit.view.dialog.QuickReplyDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +42,8 @@ import butterknife.BindString;
 import butterknife.BindView;
 
 public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmentInt> implements CommentMVP.View, CommentsAdapter.OnListItemClickListener,
-        View.OnClickListener, SwipyRefreshLayout.OnRefreshListener {
+        View.OnClickListener, SwipyRefreshLayout.OnRefreshListener, QuickReplyDialog.QuickReplyInter, CommentSettingsDialog.CommentSettingsInter,
+        PostDetailSettings.PostDetailSettingsInter {
 
 
     @BindView(R.id.thumbnail) ImageView thumbnail;
@@ -230,7 +234,8 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
                 Navigation.startIntentPreview(getActivity(), presenter.getPost());
                 break;
             case R.id.shareAction:
-                Navigation.shareContent(getActivity(), presenter.getPost().url);
+                new PostDetailSettings(getActivity(), presenter.getPost(), this);
+//                Navigation.shareContent(getActivity(), presenter.getPost().url);
                 break;
         }
     }
@@ -240,17 +245,14 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     public void onCommentListItemClick(Comment comment, CommentsAdapter commentsAdapter, View view) {
         switch (view.getId()) {
             case R.id.moreSettings:
-
+                new CommentSettingsDialog(getActivity(), comment, this);
                 break;
 
             case R.id.reply:
-                presenter.postComment(comment.name, "bla bla bla");
-
+                new QuickReplyDialog(getContext(), comment,this);
                 break;
             case R.id.save:
                 presenter.postSave(comment.name);
-
-
                 break;
             case R.id.loadMore:
                 this.commentsChildAdapter = commentsAdapter;
@@ -329,6 +331,11 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @Override
     public void setLoadIndicatorOff() {
         loadingIndicator.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void submitComment(String fullname, String submitText) {
+        presenter.postComment(fullname, submitText);
     }
 
 

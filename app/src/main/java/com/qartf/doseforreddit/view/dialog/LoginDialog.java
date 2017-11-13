@@ -12,10 +12,6 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Created by ART_F on 2017-09-06.
- */
-
 public class LoginDialog {
     @BindString(R.string.pref_login_signed_in) String prefLoginSignedIn;
     private AlertDialog dialog;
