@@ -47,7 +47,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
 
     @BindView(R.id.thumbnail) ImageView thumbnail;
-    @BindView(R.id.shareAction) ImageView shareAction;
+    @BindView(R.id.postDetialsSettings) ImageView postDetialsSettings;
     @BindView(R.id.ups) TextView ups;
     @BindView(R.id.title) TextView title;
     @BindView(R.id.subreddit) TextView subreddit;
@@ -78,6 +78,8 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     private CommentsAdapter commentsChildAdapter;
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
+    private ImageView saveStar;
+    private Comment comment;
 
 
     @Inject
@@ -113,7 +115,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         downContainer.setOnClickListener(this);
         detailContainer.setOnClickListener(this);
         imageContainer.setOnClickListener(this);
-        shareAction.setOnClickListener(this);
+        postDetialsSettings.setOnClickListener(this);
     }
 
     public void setUps(String upsString){
@@ -166,6 +168,22 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     public void setCommentsNo(String commentsNoString){
         commentsNo.setText(commentsNoString);
+    }
+
+    @Override
+    public void setSaveStarActivated() {
+        if(saveStar != null){
+            comment.saved = "true";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.commentSave));
+        }
+    }
+
+    @Override
+    public void setSaveStarUnActivated() {
+        if(saveStar != null){
+            comment.saved = "false";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+        }
     }
 
     private void setSpinner() {
@@ -233,8 +251,8 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
             case R.id.imageContainer:
                 Navigation.startIntentPreview(getActivity(), presenter.getPost());
                 break;
-            case R.id.shareAction:
-                new PostDetailSettings(getActivity(), presenter.getPost(), this);
+            case R.id.postDetialsSettings:
+                new PostDetailSettings(getActivity(), presenter.getPost(), this, this);
 //                Navigation.shareContent(getActivity(), presenter.getPost().url);
                 break;
         }
@@ -249,10 +267,16 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
                 break;
 
             case R.id.reply:
-                new QuickReplyDialog(getContext(), comment,this);
+                new QuickReplyDialog(getContext(), comment.name,this);
                 break;
             case R.id.save:
-                presenter.postSave(comment.name);
+                this.comment = comment;
+                this.saveStar = (ImageView) view;
+                if(comment.saved.equals("true")){
+                    presenter.postUnsave(comment.name);
+                }else {
+                    presenter.postSave(comment.name);
+                }
                 break;
             case R.id.loadMore:
                 this.commentsChildAdapter = commentsAdapter;

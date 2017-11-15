@@ -43,6 +43,7 @@
     <color name="commentSelector">#E0E0E0</color>
     <color name="commentSelectorStroke">#9E9E9E</color>
     <color name="commentLoad">#CDCDCD</color>
+    <color name="commentSave">#FFC400</color>
     <color name="authorText">#37474f</color>
 
     //Dialog

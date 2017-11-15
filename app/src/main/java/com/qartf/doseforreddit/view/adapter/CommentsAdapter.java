@@ -1,6 +1,7 @@
 package com.qartf.doseforreddit.view.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -132,6 +133,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         }
 
         private void loadData(Comment comment) {
+            if(comment.saved.equals("true")){
+                save.setColorFilter(ContextCompat.getColor(context, R.color.commentSave));
+            }else{
+                save.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
+            }
             String authorString = comment.author + DOT;
             author.setText(authorString);
             Utility.upsFormatPoints(score, Integer.valueOf(comment.ups));

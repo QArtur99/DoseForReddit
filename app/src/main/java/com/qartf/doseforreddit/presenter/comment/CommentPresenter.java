@@ -140,7 +140,7 @@ public class CommentPresenter implements CommentMVP.Presenter {
             @Override
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
-//                    view.error("Success");
+                    view.setSaveStarActivated();
                 }
             }
 
@@ -165,7 +165,7 @@ public class CommentPresenter implements CommentMVP.Presenter {
             @Override
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
-//                    view.error("Success");
+                    view.setSaveStarUnActivated();
                 }
             }
 

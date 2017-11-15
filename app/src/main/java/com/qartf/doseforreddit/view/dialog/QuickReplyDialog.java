@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.qartf.doseforreddit.R;
-import com.qartf.doseforreddit.data.entity.Comment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,12 +20,12 @@ public class QuickReplyDialog {
     private AlertDialog dialog;
     private Context context;
     private QuickReplyInter quickReplyInter;
-    private Comment comment;
+    private String fullname;
 
 
-    public QuickReplyDialog(Context context, Comment comment, QuickReplyInter quickReplyInter) {
+    public QuickReplyDialog(Context context, String fullname, QuickReplyInter quickReplyInter) {
         this.context = context;
-        this.comment = comment;
+        this.fullname = fullname;
         this.quickReplyInter = quickReplyInter;
         dialog = new AlertDialog.Builder(context)
                 .setView(R.layout.dialog_quick_reply)
@@ -56,7 +55,7 @@ public class QuickReplyDialog {
             return;
         }
 
-        quickReplyInter.submitComment(comment.name, submitTextEditText.getText().toString());
+        quickReplyInter.submitComment(fullname, submitTextEditText.getText().toString());
     }
 
     public interface QuickReplyInter {

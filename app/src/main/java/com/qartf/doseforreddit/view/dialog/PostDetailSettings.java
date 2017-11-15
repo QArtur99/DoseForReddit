@@ -18,12 +18,14 @@ public class PostDetailSettings {
     private Activity context;
     private PostDetailSettingsInter postDetailSettingsInter;
     private Post post;
+    private QuickReplyDialog.QuickReplyInter quickReplyInter;
 
 
-    public PostDetailSettings(Activity context, Post post, PostDetailSettingsInter postDetailSettingsInter) {
+    public PostDetailSettings(Activity context, Post post, PostDetailSettingsInter postDetailSettingsInter, QuickReplyDialog.QuickReplyInter quickReplyInter) {
         this.context = context;
         this.post = post;
         this.postDetailSettingsInter = postDetailSettingsInter;
+        this.quickReplyInter = quickReplyInter;
         dialog = new AlertDialog.Builder(context)
                 .setView(R.layout.dialog_detial_settings)
                 .create();
@@ -47,6 +49,23 @@ public class PostDetailSettings {
             dialog.dismiss();
         }
         Navigation.shareContent(context, post.url);
+    }
+
+
+    @OnClick(R.id.submitComment)
+    public void submitCommentDialogOnClick() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+        new QuickReplyDialog(context, post.name , quickReplyInter);
+    }
+
+    @OnClick(R.id.goToUrl)
+    public void goToUrlDialogOnClick() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+        Navigation.startLinkActivity(context, post.url);
     }
 
     public interface PostDetailSettingsInter {

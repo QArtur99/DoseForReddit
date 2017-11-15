@@ -58,6 +58,7 @@ public class CommentDeserializer implements JsonDeserializer<Comment> {
                 getNullAsEmptyString(data.get("subreddit_id")),
                 getNullAsEmptyString(data.get("link_id")),
                 commentList,
+                getNullAsEmptyString(data.get("saved")),
                 getNullAsEmptyString(data.get("author")),
                 getNullAsEmptyString(data.get("ups")),
                 getNullAsEmptyString(data.get("parent_id")),

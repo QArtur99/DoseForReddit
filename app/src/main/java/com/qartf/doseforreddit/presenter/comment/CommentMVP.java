@@ -43,6 +43,10 @@ public interface CommentMVP {
 
         void setCommentsNo(String commentsNoString);
 
+        void setSaveStarActivated();
+
+        void setSaveStarUnActivated();
+
 
         void showToast(AccessToken accessToken);
 

@@ -29,15 +29,37 @@
         android:tint="@color/arrowColor"
         android:contentDescription="@string/comment_vote_down"/>
 
+    <RelativeLayout
+        android:id="@+id/upContainer"
+        android:layout_weight="1"
+        android:layout_margin="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/saveStroke"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_star"
+            android:tint="@color/colorBlack"
+            android:contentDescription="@string/comment_vote_down"/>
+
+
     <ImageView
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:layout_weight="1"
+        android:layout_margin="1dp"
+        android:layout_centerInParent="true"
+        android:layout_alignTop="@id/saveStroke"
         android:src="@drawable/ic_star"
-        android:tint="@color/arrowColor"
+        android:tint="@color/commentSave"
         android:contentDescription="@string/comment_vote_down"/>
+
+
+
+    </RelativeLayout>
 
 
     <ImageView

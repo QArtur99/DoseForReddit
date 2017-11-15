@@ -13,6 +13,7 @@ public class Comment {
     public String subredditId;
     public String linkId;
     public List<Comment> commentList;
+    public String saved;
     public String author;
     public String ups;
     public String parentId;
@@ -25,11 +26,12 @@ public class Comment {
     public String subredditNamePrefixed;
     public List<String> childs;
 
-    public Comment(String kind, String subredditId, String linkId, List<Comment> commentList, String author, String ups, String parentId, String score, String body, String subredditType, String name, String depth, String createdUtc, String subredditNamePrefixed) {
+    public Comment(String kind, String subredditId, String linkId, List<Comment> commentList, String saved, String author, String ups, String parentId, String score, String body, String subredditType, String name, String depth, String createdUtc, String subredditNamePrefixed) {
         this.kind = kind;
         this.subredditId = subredditId;
         this.linkId = linkId;
         this.commentList = commentList;
+        this.saved = saved;
         this.author = author;
         this.ups = ups;
         this.parentId = parentId;
