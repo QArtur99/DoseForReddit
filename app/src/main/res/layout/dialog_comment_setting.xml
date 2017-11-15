@@ -31,6 +31,20 @@
         <TextView
             android:id="@+id/share"
             android:text="Share"
+            android:background="@drawable/ripple_list_item"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/arrowColor"/>
+
+        <TextView
+            android:id="@+id/delete"
+            android:text="Delete"
+            android:background="@drawable/ripple_list_item"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

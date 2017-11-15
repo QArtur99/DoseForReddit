@@ -13,9 +13,6 @@ import com.qartf.doseforreddit.data.entity.Comment;
 import java.lang.reflect.Type;
 import java.util.List;
 
-/**
- * Created by ART_F on 2017-09-03.
- */
 
 public class CommentDeserializer implements JsonDeserializer<Comment> {
 

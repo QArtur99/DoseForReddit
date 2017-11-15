@@ -47,6 +47,8 @@ public interface CommentMVP {
 
         void setSaveStarUnActivated();
 
+        void loadComments();
+
 
         void showToast(AccessToken accessToken);
 
@@ -82,6 +84,8 @@ public interface CommentMVP {
         void postSave(String fullname);
 
         void postUnsave(String fullname);
+
+        void postDel(String fullname);
     }
 
     interface Model {
@@ -96,6 +100,8 @@ public interface CommentMVP {
         Observable<ResponseBody> postSave(String fullname);
 
         Observable<ResponseBody> postUnsave(String fullname);
+
+        Observable<ResponseBody> postDel(String fullname);
 
         boolean checkConnection();
     }

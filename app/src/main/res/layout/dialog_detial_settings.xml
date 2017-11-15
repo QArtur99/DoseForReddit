@@ -32,6 +32,7 @@
             android:id="@+id/share"
             android:text="Share"
             android:padding="10dp"
+            android:background="@drawable/ripple_list_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -43,6 +44,7 @@
         <TextView
             android:id="@+id/submitComment"
             android:text="Submit Comment"
+            android:background="@drawable/ripple_list_item"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -55,6 +57,7 @@
         <TextView
             android:id="@+id/goToUrl"
             android:text="Go To URL"
+            android:background="@drawable/ripple_list_item"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

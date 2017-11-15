@@ -2,7 +2,6 @@ package com.qartf.doseforreddit.view.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,8 +29,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     final private ListItemClickListener mOnClickListener;
 
     private List<Post> data;
-    private LinearLayout previousView;
-    private boolean isOpen = false;
     private Context context;
 
 
@@ -79,7 +76,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
     }
 
     public interface ListItemClickListener {
+        void onPostSelected(int clickedItemIndex, View expandableView, View parent);
         void onListItemClick(int clickedItemIndex, View view);
+        int getSelectedPosition();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -99,7 +98,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         @BindView(R.id.downArrow) ImageView downArrow;
         @BindView(R.id.detailContainer) RelativeLayout detailContainer;
         @BindView(R.id.imageContainer) RelativeLayout imageContainer;
-
+        @BindView(R.id.commentItemFrame) LinearLayout commentFrame;
         @BindView(R.id.commentsAction) ImageView commentsAction;
         @BindView(R.id.shareAction) ImageView shareAction;
 
@@ -119,6 +118,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
 
         public void bind(int position) {
             Post post = (Post) getDataAtPosition(position);
+            if(position != mOnClickListener.getSelectedPosition()){
+                expandArea.setActivated(false);
+                expandArea.setVisibility(View.GONE);
+            }
             loadData(post);
         }
 
@@ -146,7 +149,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             int clickedPosition = getAdapterPosition();
             switch (v.getId()) {
                 case R.id.detailContainer:
-                    actionDetail();
+                    mOnClickListener.onPostSelected(clickedPosition, expandArea, commentFrame);
                     break;
                 case R.id.upContainer:
                     upArrow.setColorFilter(ContextCompat.getColor(context, R.color.upArrow));
@@ -161,29 +164,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
                 default:
                     mOnClickListener.onListItemClick(clickedPosition, v);
             }
-        }
-
-        private void actionDetail() {
-            if (previousView != null) {
-                previousView.setVisibility(View.GONE);
-                previousView.setActivated(false);
-            }
-
-            if (previousView == null || !previousView.equals(expandArea) || isOpen) {
-                expandArea.setVisibility(View.VISIBLE);
-                expandArea.setActivated(true);
-                expandArea.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        TransitionManager.beginDelayedTransition(expandArea);
-//                    notifyDataSetChanged();
-                    }
-                });
-                isOpen = false;
-            } else {
-                isOpen = true;
-            }
-            previousView = expandArea;
         }
 
         @Override

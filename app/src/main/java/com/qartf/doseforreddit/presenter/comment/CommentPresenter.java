@@ -91,7 +91,7 @@ public class CommentPresenter implements CommentMVP.Presenter {
             @Override
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
-//                    view.error("Success");
+                    view.loadComments();
                 }
             }
 
@@ -181,6 +181,29 @@ public class CommentPresenter implements CommentMVP.Presenter {
         disposable.add(disposableObserver);
     }
 
+    @Override
+    public void postDel(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postDel(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.loadComments();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
 
     @Override
     public void onStop() {

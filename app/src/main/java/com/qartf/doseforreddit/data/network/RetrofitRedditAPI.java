@@ -135,5 +135,10 @@ public interface RetrofitRedditAPI {
     Observable<ResponseBody> postUnsave(@Header("Authorization") String authorization,
                                          @FieldMap Map<String, String> options);
 
+    @FormUrlEncoded
+    @POST(Constants.Auth.BASE_URL_OAUTH + "/api/del")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<ResponseBody> postDel(@Header("Authorization") String authorization,
+                                        @FieldMap Map<String, String> options);
 
 }

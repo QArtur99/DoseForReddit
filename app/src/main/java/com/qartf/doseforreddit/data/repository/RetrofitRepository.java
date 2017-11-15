@@ -395,6 +395,25 @@ public class RetrofitRepository implements DataRepository.Retrofit {
     }
 
     @Override
+    public Observable<ResponseBody> postDel(final String fullname) {
+
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                HashMap<String, String> args = new HashMap<>();
+                args.put("id", fullname);
+                return retrofitRedditAPI.postDel(getBearerToken(accessToken), args);
+            }
+        });
+    }
+
+    @Override
     public Observable<SubredditParent> getSubreddits(final String after) {
 
         if (setCallCounter()) {

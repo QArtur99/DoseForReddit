@@ -48,6 +48,11 @@ public class CommentModel implements CommentMVP.Model {
     }
 
     @Override
+    public Observable<ResponseBody> postDel(String fullname) {
+        return repositoryRetrofit.postDel(fullname);
+    }
+
+    @Override
     public boolean checkConnection() {
         return repositoryUtility.checkConnection();
     }

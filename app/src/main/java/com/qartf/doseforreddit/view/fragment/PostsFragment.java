@@ -1,8 +1,10 @@
 package com.qartf.doseforreddit.view.fragment;
 
+import android.support.transition.TransitionManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
@@ -29,6 +31,10 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     public PostsAdapter postsAdapter;
     private PostParent postParent;
     private Boolean isSearch = false;
+    private LinearLayout previousViewSelected;
+    private LinearLayout previousViewExpanded;
+    private boolean isOpen = false;
+    private int selectedPosition;
 
     @Inject
     PostMVP.Presenter presenter;
@@ -142,6 +148,45 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
             loadPosts("");
         }
     }
+
+    @Override
+    public void onPostSelected(int clickedItemIndex, View expandableView, View parent) {
+        selectedPosition = clickedItemIndex;
+        if (previousViewSelected != null) {
+            previousViewSelected.setActivated(false);
+        }
+        previousViewSelected = (LinearLayout) parent;
+        parent.setActivated(true);
+        actionDetail((LinearLayout) expandableView);
+    }
+
+    @Override
+    public int getSelectedPosition(){
+        return selectedPosition;
+    }
+
+    private void actionDetail(final LinearLayout expandArea) {
+        if (previousViewExpanded != null) {
+            previousViewExpanded.setVisibility(View.GONE);
+            previousViewExpanded.setActivated(false);
+        }
+
+        if (previousViewExpanded == null || !previousViewExpanded.equals(expandArea) || isOpen) {
+            expandArea.setVisibility(View.VISIBLE);
+            expandArea.setActivated(true);
+            expandArea.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TransitionManager.beginDelayedTransition(expandArea);
+                }
+            });
+            isOpen = false;
+        } else {
+            isOpen = true;
+        }
+        previousViewExpanded = expandArea;
+    }
+
 
     private void loadPosts(String after) {
         if(isSearch){

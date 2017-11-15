@@ -217,6 +217,8 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         });
     }
 
+
+    @Override
     public void loadComments() {
         sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
         sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
@@ -361,6 +363,14 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     public void submitComment(String fullname, String submitText) {
         presenter.postComment(fullname, submitText);
     }
+
+    @Override
+    public void removeComment(String fullname) {
+        presenter.postDel(fullname);
+//        presenter.postApprove(fullname);
+    }
+
+
 
 
     public interface DetailFragmentInt {

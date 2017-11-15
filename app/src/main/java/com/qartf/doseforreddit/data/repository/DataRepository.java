@@ -42,6 +42,8 @@ public interface DataRepository {
 
         Observable<ResponseBody> postUnsave(String fullname);
 
+        Observable<ResponseBody> postDel(String fullname);
+
         Observable<SubredditParent> getSubreddits(String after);
 
         Observable<SubredditParent> getMineSubreddits(String after);
