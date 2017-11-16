@@ -29,10 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/center"
         android:layout_centerHorizontal="true"
-        android:paddingTop="10dp"
+        android:fontFamily="@font/gunplay"
+        android:padding="10dp"
         android:text="@string/app_name"
         android:textColor="@color/subredditButtonBackgroundPrivate"
-        android:textSize="34sp"
+        android:textSize="42sp"
         android:textStyle="bold"/>
 
 </RelativeLayout>
