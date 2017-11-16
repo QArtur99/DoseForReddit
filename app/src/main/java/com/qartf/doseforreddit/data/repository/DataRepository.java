@@ -32,7 +32,7 @@ public interface DataRepository {
 
         Observable<CommentParent> getComments();
 
-        Observable<ResponseBody> postComment(String fullname, String text);
+        Observable<SubmitParent> postComment(String fullname, String text);
 
         Observable<ChildCommentParent> getMorechildren(Comment comment);
 

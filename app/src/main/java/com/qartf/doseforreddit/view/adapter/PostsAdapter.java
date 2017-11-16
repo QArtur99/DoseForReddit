@@ -1,7 +1,6 @@
 package com.qartf.doseforreddit.view.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.presenter.utility.Utility;
-import com.qartf.doseforreddit.view.activity.LinkActivity;
 
 import java.util.List;
 
@@ -81,7 +79,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         int getSelectedPosition();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.thumbnail) ImageView thumbnail;
         @BindView(R.id.ups) TextView ups;
         @BindView(R.id.title) TextView title;
@@ -101,8 +99,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         @BindView(R.id.commentItemFrame) LinearLayout commentFrame;
         @BindView(R.id.commentsAction) ImageView commentsAction;
         @BindView(R.id.shareAction) ImageView shareAction;
+        @BindView(R.id.save) ImageView save;
+        @BindView(R.id.goToUrl) ImageView goToUrl;
 
         @BindString(R.string.comments) String commentsString;
+
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -111,9 +112,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             downContainer.setOnClickListener(this);
             detailContainer.setOnClickListener(this);
             imageContainer.setOnClickListener(this);
-            imageContainer.setOnLongClickListener(this);
             commentsAction.setOnClickListener(this);
             shareAction.setOnClickListener(this);
+            save.setOnClickListener(this);
+            goToUrl.setOnClickListener(this);
         }
 
         public void bind(int position) {
@@ -126,6 +128,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
         }
 
         private void loadData(Post post) {
+            if(post.saved.equals("true")){
+                save.setColorFilter(ContextCompat.getColor(context, R.color.commentSave));
+            }else{
+                save.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
+            }
             Utility.upsFormat(ups, Integer.valueOf(post.ups));
             if(post.likes.equals("true")){
                 upArrow.setColorFilter(ContextCompat.getColor(context, R.color.upArrow));
@@ -166,15 +173,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.MyViewHolder
             }
         }
 
-        @Override
-        public boolean onLongClick(View view) {
-            int clickedPosition = getAdapterPosition();
-            Post post = (Post) getDataAtPosition(clickedPosition);
-            Intent intent = new Intent(context, LinkActivity.class);
-            intent.putExtra("link", post.url);
-            context.startActivity(intent);
-            return true;
-        }
     }
 
 }

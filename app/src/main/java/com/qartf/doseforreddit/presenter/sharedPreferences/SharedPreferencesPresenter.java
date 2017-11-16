@@ -33,9 +33,9 @@ SharedPreferencesMVP.Presenter{
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(prefPostSubreddit)) {
-            String subreddit = sharedPreferences.getString(prefPostSubreddit, "");
-            view.setTitle("/r/" + subreddit);
-            view.getSubredditPosts();
+//            String subreddit = sharedPreferences.getString(prefPostSubreddit, "");
+//            view.setTitle("/r/" + subreddit);
+//            view.getSubredditPosts();
         } else if (key.equals(prefPostSortBy)) {
             view.setTabLayoutPos();
             view.getPosts();
@@ -44,7 +44,7 @@ SharedPreferencesMVP.Presenter{
             view.setUserName(userName);
             view.loadUser();
         } else if(key.equals(prefMySubreddits)){
-            view.setMySubreddits();
+//            view.setMySubreddits();
 
         }
     }
@@ -64,8 +64,10 @@ SharedPreferencesMVP.Presenter{
 
     @Override
     public void loadTitle() {
-        String subreddit = sharedPreferences.getString(prefPostSubreddit, "");
-        view.setTitle("/r/" + subreddit);
+        if(view != null) {
+            String subreddit = sharedPreferences.getString(prefPostSubreddit, "");
+            view.setTitle("/r/" + subreddit);
+        }
     }
 
     @Override

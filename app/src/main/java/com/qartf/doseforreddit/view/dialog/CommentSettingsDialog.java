@@ -58,12 +58,6 @@ public class CommentSettingsDialog {
 
     }
 
-//    @OnClick(R.id.)
-//    public void cancelDialogOnClick() {
-//        if (dialog != null) {
-//            dialog.dismiss();
-//        }
-//    }
 
     @OnClick(R.id.share)
     public void searchDialogOnClick() {

@@ -11,12 +11,21 @@ public interface PostMVP {
 
     interface View {
         void showToast(AccessToken accessToken);
+
         void setPostParent(PostParent postParent);
+
         void setInfoServerIsBroken();
+
         void setInfoNoConnection();
 
         void error(String errorString);
+
         void setLoadIndicatorOff();
+
+        void setSaveStarActivated();
+
+        void setSaveStarUnActivated();
+
     }
 
     interface Presenter {
@@ -31,12 +40,23 @@ public interface PostMVP {
 
         void postVote(String dir, String fullname);
 
+        void postSave(String fullname);
+
+        void postUnsave(String fullname);
+
     }
 
     interface Model {
         Observable<PostParent> getPosts(String after);
+
         Observable<PostParent> searchPosts(String after);
+
         Observable<ResponseBody> postVote(String dir, String fullname);
+
+        Observable<ResponseBody> postSave(String fullname);
+
+        Observable<ResponseBody> postUnsave(String fullname);
+
         boolean checkConnection();
 //        void createUser(String name, String lastName);
 //

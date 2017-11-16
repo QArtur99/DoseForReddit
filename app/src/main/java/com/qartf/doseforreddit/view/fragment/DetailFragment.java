@@ -1,5 +1,6 @@
 package com.qartf.doseforreddit.view.fragment;
 
+import android.os.Handler;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -220,9 +221,19 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void loadComments() {
-        sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
-        sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
-        presenter.loadComments();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
+                sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
+                presenter.loadComments();
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void loadPosts() {
+                mCallback.loadPosts();
     }
 
     public void setAdapter(List<Comment> movieList) {
@@ -367,12 +378,17 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @Override
     public void removeComment(String fullname) {
         presenter.postDel(fullname);
-//        presenter.postApprove(fullname);
+    }
+
+    @Override
+    public void removePost(String fullname) {
+        presenter.postDelPost(fullname);
     }
 
 
 
 
     public interface DetailFragmentInt {
+        void loadPosts();
     }
 }

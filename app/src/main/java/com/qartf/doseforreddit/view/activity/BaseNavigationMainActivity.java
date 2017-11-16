@@ -158,16 +158,20 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
         else menuItem.setChecked(true);
         switch (menuItem.getItemId()) {
             case R.id.frontPage:
+                setTitle("/r/" + "popular");
                 sharedPreferences.edit().putString(prefPostSubreddit, "popular").apply();
                 sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
                 posioton = 0;
                 setPostFragment();
+                getSubredditPosts();
                 break;
             case R.id.allPage:
+                setTitle("/r/" + "all");
                 sharedPreferences.edit().putString(prefPostSubreddit, "all").apply();
                 sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
                 posioton = 1;
                 setPostFragment();
+                getSubredditPosts();
                 break;
             case R.id.submit:
                 setSubmitFragment();
@@ -221,6 +225,10 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
         }
         return true;
     }
+
+    public abstract void setTitle(String title);
+
+    public abstract void getSubredditPosts();
 
     public abstract void loginReddit();
 

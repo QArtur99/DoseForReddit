@@ -63,11 +63,19 @@
 
 
         <ImageView
+            android:id="@+id/goToUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_action_globe"
+            android:tint="@color/arrowColor"
+            android:contentDescription="@string/share"/>
+
+        <ImageView
             android:id="@+id/shareAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
             android:layout_margin="4dp"
             android:layout_weight="1"
             android:src="@drawable/ic_share"

@@ -12,6 +12,7 @@ import com.qartf.doseforreddit.view.activity.CommentsActivity;
 import com.qartf.doseforreddit.view.activity.MainActivity;
 import com.qartf.doseforreddit.view.activity.SubmitActivity;
 import com.qartf.doseforreddit.view.dialog.CommentSettingsDialog;
+import com.qartf.doseforreddit.view.dialog.PostDetailSettings;
 import com.qartf.doseforreddit.view.fragment.DetailFragment;
 import com.qartf.doseforreddit.view.fragment.PostsFragment;
 import com.qartf.doseforreddit.view.fragment.SubmitFragment;
@@ -37,6 +38,7 @@ public interface ApplicationComponent {
     void inject(DetailFragment detailFragment);
     void inject(SubmitFragment submitFragment);
     void inject(CommentSettingsDialog commentSettingsDialog);
+    void inject(PostDetailSettings postDetailSettings);
     void inject(RedditWidgetService redditWidgetService);
 
 

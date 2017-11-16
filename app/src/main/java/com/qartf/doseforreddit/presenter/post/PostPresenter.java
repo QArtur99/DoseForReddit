@@ -98,6 +98,57 @@ public class PostPresenter implements PostMVP.Presenter {
         disposable.add(disposableObserver);
     }
 
+
+    @Override
+    public void postSave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postSave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.setSaveStarActivated();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+
+    }
+
+    @Override
+    public void postUnsave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postUnsave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.setSaveStarUnActivated();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+
     @Override
     public void onStop() {
         if (disposable != null && !disposable.isDisposed()) {

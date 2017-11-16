@@ -4,6 +4,7 @@ import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 
 import io.reactivex.Observable;
@@ -49,6 +50,8 @@ public interface CommentMVP {
 
         void loadComments();
 
+        void loadPosts();
+
 
         void showToast(AccessToken accessToken);
 
@@ -86,6 +89,8 @@ public interface CommentMVP {
         void postUnsave(String fullname);
 
         void postDel(String fullname);
+
+        void postDelPost(String fullname);
     }
 
     interface Model {
@@ -95,7 +100,7 @@ public interface CommentMVP {
 
         Observable<ResponseBody> postVote(String dir, String fullname);
 
-        Observable<ResponseBody> postComment(String fullname, String text);
+        Observable<SubmitParent> postComment(String fullname, String text);
 
         Observable<ResponseBody> postSave(String fullname);
 

@@ -73,6 +73,8 @@ public class SearchDialog {
             searchDialogInter.searchSubreddits();
         }
 
+        searchDialogInter.setTitle("Search: " + queryString);
+
         if (dialog != null) {
             dialog.dismiss();
         }
@@ -84,6 +86,8 @@ public class SearchDialog {
             void searchSubreddits();
 
             void loadFragment(int fragmentId);
+
+            void setTitle(String title);
     }
 
 }

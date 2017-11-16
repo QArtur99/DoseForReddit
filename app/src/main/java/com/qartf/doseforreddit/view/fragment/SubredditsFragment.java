@@ -95,6 +95,7 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
             case R.id.subredditTitleFrame:
                 mCallback.loadFragment(Constants.Id.SEARCH_POSTS);
                 sharedPreferences.edit().putString(getString(R.string.pref_post_subreddit), subreddit.display_name).apply();
+                mCallback.setTitle("/r/" + subreddit.display_name);
                 break;
         }
     }
@@ -137,6 +138,7 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
 
     public interface SubredditsFragmentInt {
         void loadFragment(int fragmentId);
+        void setTitle(String title);
     }
 
 }

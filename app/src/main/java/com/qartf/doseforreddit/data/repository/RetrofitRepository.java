@@ -286,14 +286,14 @@ public class RetrofitRepository implements DataRepository.Retrofit {
     }
 
     @Override
-    public Observable<ResponseBody> postComment(final String fullname, final String text) {
+    public Observable<SubmitParent> postComment(final String fullname, final String text) {
         if (setCallCounter()) {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubmitParent>>() {
             @Override
-            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
+            public ObservableSource<SubmitParent> apply(AccessToken accessToken) throws Exception {
                 token.setAccessTokenValue(accessToken.getAccessToken());
 
                 String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);

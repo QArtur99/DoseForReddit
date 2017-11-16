@@ -1,9 +1,11 @@
 package com.qartf.doseforreddit.view.fragment;
 
 import android.support.transition.TransitionManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -29,15 +31,16 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
     public GridLayoutManager layoutManager;
     public PostsAdapter postsAdapter;
+    @Inject
+    PostMVP.Presenter presenter;
     private PostParent postParent;
     private Boolean isSearch = false;
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
     private boolean isOpen = false;
     private int selectedPosition;
-
-    @Inject
-    PostMVP.Presenter presenter;
+    private Post post;
+    private ImageView saveStar;
 
     @Override
     public int getContentLayout() {
@@ -64,6 +67,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     public void onStart() {
         super.onStart();
         presenter.setView(this);
+        postsAdapter.clearPosts();
         presenter.loadPosts("");
     }
 
@@ -91,6 +95,22 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     }
 
     @Override
+    public void setSaveStarActivated() {
+        if(saveStar != null){
+            post.saved = "true";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.commentSave));
+        }
+    }
+
+    @Override
+    public void setSaveStarUnActivated() {
+        if(saveStar != null){
+            post.saved = "false";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+        }
+    }
+
+    @Override
     public void onListItemClick(int clickedItemIndex, View view) {
         Post post = (Post) postsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
@@ -105,6 +125,18 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
                     Navigation.startDetailActivity(getActivity(), post);
                 }
                 break;
+            case R.id.save:
+                this.post = post;
+                this.saveStar = (ImageView) view;
+                if (post.saved.equals("true")) {
+                    presenter.postUnsave(post.name);
+                } else {
+                    presenter.postSave(post.name);
+                }
+                break;
+            case R.id.goToUrl:
+                Navigation.startLinkActivity(getActivity(), post.url);
+                break;
             case R.id.shareAction:
                 Navigation.shareContent(getActivity(), post.url);
                 break;
@@ -117,25 +149,25 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
         }
     }
 
-    public void setPostType(Boolean isSearch){
-        this.isSearch = isSearch;
-    }
-
-    public Boolean getPostType(){
+    public Boolean getPostType() {
         return isSearch;
     }
 
-    public void clearAdapter(){
-        if(postsAdapter != null) {
+    public void setPostType(Boolean isSearch) {
+        this.isSearch = isSearch;
+    }
+
+    public void clearAdapter() {
+        if (postsAdapter != null) {
             postsAdapter.clearPosts();
         }
     }
 
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        if(direction == SwipyRefreshLayoutDirection.BOTTOM) {
+        if (direction == SwipyRefreshLayoutDirection.BOTTOM) {
 
-            if(TextUtils.isEmpty(postParent.after)){
+            if (TextUtils.isEmpty(postParent.after)) {
                 swipyRefreshLayout.setRefreshing(false);
                 error("There are no more posts to show right now.");
                 return;
@@ -143,7 +175,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
             loadPosts(postParent.after);
 
-        }else if(direction == SwipyRefreshLayoutDirection.TOP) {
+        } else if (direction == SwipyRefreshLayoutDirection.TOP) {
             postsAdapter.clearPosts();
             loadPosts("");
         }
@@ -161,7 +193,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     }
 
     @Override
-    public int getSelectedPosition(){
+    public int getSelectedPosition() {
         return selectedPosition;
     }
 
@@ -189,9 +221,9 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
 
     private void loadPosts(String after) {
-        if(isSearch){
+        if (isSearch) {
             presenter.searchPosts(after);
-        }else{
+        } else {
             presenter.loadPosts(after);
         }
     }

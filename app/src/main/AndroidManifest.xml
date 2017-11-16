@@ -6,20 +6,31 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
+        android:name=".presenter.root.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".presenter.root.App"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.activity.MainActivity">
+        <activity android:name=".view.activity.StartActivity"
+                  android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".view.activity.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".view.activity.CommentsActivity"
             android:label="@string/app_name"
@@ -76,14 +87,16 @@
                 android:resource="@xml/reddit_app_widget_info"/>
         </receiver>
 
-        <service android:name=".view.widget.RedditWidgetService" />
+        <service android:name=".view.widget.RedditWidgetService"/>
 
-        <service android:name=".view.widget.GridWidgetService"
-                 android:permission="android.permission.BIND_REMOTEVIEWS"
-                 android:exported="false"/>
-        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver" >
+        <service
+            android:name=".view.widget.GridWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </receiver>
 

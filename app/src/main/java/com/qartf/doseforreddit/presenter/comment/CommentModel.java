@@ -2,6 +2,7 @@ package com.qartf.doseforreddit.presenter.comment;
 
 import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
+import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.data.repository.DataRepository;
 
@@ -33,7 +34,7 @@ public class CommentModel implements CommentMVP.Model {
     }
 
     @Override
-    public Observable<ResponseBody> postComment(String fullname, String text) {
+    public Observable<SubmitParent> postComment(String fullname, String text) {
         return repositoryRetrofit.postComment(fullname, text);
     }
 

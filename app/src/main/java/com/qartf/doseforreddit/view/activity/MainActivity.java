@@ -47,6 +47,12 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
         setSupportActionBar(toolbar);
         loadStartFragment(savedInstanceState);
         loadSecondFragment();
+
+        if(presenterPref != null){
+            presenterPref.loadTitle();
+        }
+
+        super.setResult(0);
     }
 
     public void loadStartFragment(Bundle savedInstanceState) {
@@ -228,6 +234,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void setMySubreddits() {
+        setTitle("My Subreddits");
         loadFragment(Constants.Id.SEARCH_SUBREDDITS);
         subredditsFragment.clearAdapter();
         subredditsFragment.setSubredditType(true);
@@ -263,5 +270,10 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     @Override
     public void switchToPostFragment() {
 
+    }
+
+    @Override
+    public void loadPosts() {
+        loadStartFragment(null);
     }
 }

@@ -119,7 +119,7 @@ public interface RetrofitRedditAPI {
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/comment")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
-    Observable<ResponseBody> postComment(@Header("Authorization") String authorization,
+    Observable<SubmitParent> postComment(@Header("Authorization") String authorization,
                                         @FieldMap Map<String, String> options);
 
     @FormUrlEncoded

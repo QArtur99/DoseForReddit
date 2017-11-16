@@ -52,6 +52,7 @@ public class SubmitFragment extends BaseFragmentMvp<SubmitFragment.SubmitFragmen
     @BindView(R.id.fabBottom) FloatingActionButton fabBottom;
 
     @BindString(R.string.pref_post_subreddit_rule) String prefPostSubredditRule;
+    @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
 
     @Inject
     SubmitMVP.Presenter presenter;
@@ -285,6 +286,7 @@ public class SubmitFragment extends BaseFragmentMvp<SubmitFragment.SubmitFragmen
             @Override
             public void run() {
                 sharedPreferences.edit().putString(getString(R.string.pref_post_subreddit), subredditString).apply();
+                sharedPreferences.edit().putString(prefPostSortBy, "new").apply();
                 mCallback.switchToPostFragment();
             }
         }, 1000);

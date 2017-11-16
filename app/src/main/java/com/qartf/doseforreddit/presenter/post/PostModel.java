@@ -33,6 +33,16 @@ public class PostModel implements PostMVP.Model {
     }
 
     @Override
+    public Observable<ResponseBody> postSave(String fullname) {
+        return repositoryRetrofit.postSave(fullname);
+    }
+
+    @Override
+    public Observable<ResponseBody> postUnsave(String fullname) {
+        return repositoryRetrofit.postUnsave(fullname);
+    }
+
+    @Override
     public boolean checkConnection() {
         return repositoryUtility.checkConnection();
     }

@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 
@@ -85,13 +86,17 @@ public class CommentPresenter implements CommentMVP.Presenter {
 
     @Override
     public void postComment(String fullname, String text) {
-        DisposableObserver<ResponseBody> disposableObserver = model.postComment(fullname, text).observeOn(AndroidSchedulers.mainThread()).
-                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+        DisposableObserver<SubmitParent> disposableObserver = model.postComment(fullname, text).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<SubmitParent>() {
 
             @Override
-            public void onNext(@NonNull ResponseBody postParent) {
+            public void onNext(@NonNull SubmitParent postParent) {
                 if (view != null) {
-                    view.loadComments();
+                    if(postParent.success){
+                        view.loadComments();
+                    }else{
+                        view.error("You are doing that too much. try again in 5 minute");
+                    }
                 }
             }
 
@@ -190,6 +195,30 @@ public class CommentPresenter implements CommentMVP.Presenter {
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
                     view.loadComments();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+    @Override
+    public void postDelPost(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postDel(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.loadPosts();
                 }
             }
 
