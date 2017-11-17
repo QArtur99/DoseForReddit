@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 
 import com.qartf.doseforreddit.R;
+import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.presenter.root.App;
 import com.qartf.doseforreddit.presenter.utility.Constants.Pref;
 import com.qartf.doseforreddit.presenter.utility.Utility;
@@ -41,6 +42,16 @@ public class SubmitActivity extends BaseActivityChild implements SubmitFragment.
         fragmentManager.beginTransaction()
                 .add(R.id.detailsViewFrame, submitFragment)
                 .commit();
+    }
+
+    @Override
+    public void loadDetailFragment() {
+
+    }
+
+    @Override
+    public void setPost(Post post) {
+
     }
 
     @Override

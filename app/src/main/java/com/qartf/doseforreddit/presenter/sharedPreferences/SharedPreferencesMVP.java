@@ -10,7 +10,7 @@ public interface SharedPreferencesMVP {
 
         void getPosts();
 
-        void getSubredditPosts();
+        void getSubredditPosts(int postLoaderId);
 
         void setTabLayoutPos();
 

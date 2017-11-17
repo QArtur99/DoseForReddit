@@ -23,6 +23,33 @@ public class PostPresenter implements PostMVP.Presenter {
         this.model = model;
     }
 
+
+    @Override
+    public void loadHome(String after) {
+        DisposableObserver<PostParent> disposableObserver = model.getHome(after).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
+
+            @Override
+            public void onNext(@NonNull PostParent postParent) {
+                if (view != null) {
+                    view.setPostParent(postParent);
+                    view.setLoadIndicatorOff();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() { }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+
     @Override
     public void loadPosts(String after) {
         DisposableObserver<PostParent> disposableObserver = model.getPosts(after).observeOn(AndroidSchedulers.mainThread()).
@@ -117,7 +144,7 @@ public class PostPresenter implements PostMVP.Presenter {
             }
 
             @Override
-            public void onComplete() {    }
+            public void onComplete() { }
 
         });
         disposable.add(disposableObserver);
@@ -142,7 +169,7 @@ public class PostPresenter implements PostMVP.Presenter {
             }
 
             @Override
-            public void onComplete() {    }
+            public void onComplete() { }
 
         });
         disposable.add(disposableObserver);
@@ -156,13 +183,14 @@ public class PostPresenter implements PostMVP.Presenter {
         }
     }
 
-
     public void checkConnection() {
         if (view != null) {
             if (model.checkConnection()) {
                 view.setInfoServerIsBroken();
+                view.setRefreshing();
             } else {
                 view.setInfoNoConnection();
+                view.setRefreshing();
             }
         }
     }

@@ -26,6 +26,8 @@ public interface PostMVP {
 
         void setSaveStarUnActivated();
 
+        void setRefreshing();
+
     }
 
     interface Presenter {
@@ -33,6 +35,8 @@ public interface PostMVP {
         void setView(PostMVP.View view);
 
         void onStop();
+
+        void loadHome(String after);
 
         void loadPosts(String after);
 
@@ -43,10 +47,11 @@ public interface PostMVP {
         void postSave(String fullname);
 
         void postUnsave(String fullname);
-
     }
 
     interface Model {
+        Observable<PostParent> getHome(String after);
+
         Observable<PostParent> getPosts(String after);
 
         Observable<PostParent> searchPosts(String after);

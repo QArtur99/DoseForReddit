@@ -258,7 +258,7 @@ public class CommentPresenter implements CommentMVP.Presenter {
 
     @Override
     public void loadPostData() {
-        if (view != null) {
+        if (view != null && post != null) {
             view.setUps(Utility.upsFormatS(Integer.valueOf(post.ups)));
             view.setLikes(post.likes);
             view.setTitle(post.title);

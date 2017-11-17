@@ -16,6 +16,11 @@ import okhttp3.ResponseBody;
 
 public interface DataRepository {
     interface Retrofit {
+
+        Observable<PostParent> getPost(String url);
+
+        Observable<PostParent> getHome(String after);
+
         Observable<Object> tokenInfo();
 
         Observable<String> resetToken();

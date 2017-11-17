@@ -14,14 +14,15 @@ import com.qartf.doseforreddit.data.entity.Post;
 import java.lang.reflect.Type;
 import java.util.List;
 
-/**
- * Created by ART_F on 2017-09-20.
- */
-
 public class PostParentDeserialize implements JsonDeserializer<PostParent> {
 
     @Override
     public PostParent deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if(json.isJsonArray()){
+            json = json.getAsJsonArray().get(0);
+
+        }
+
         JsonObject jsonObject = json.getAsJsonObject();
         JsonObject data = jsonObject.getAsJsonObject("data");
         JsonArray array = data.getAsJsonArray("children");

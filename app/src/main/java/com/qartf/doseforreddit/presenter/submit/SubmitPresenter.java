@@ -2,6 +2,7 @@ package com.qartf.doseforreddit.presenter.submit;
 
 import android.support.annotation.Nullable;
 
+import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubmitParent;
 
@@ -88,9 +89,11 @@ public class SubmitPresenter implements SubmitMVP.Presenter {
             public void onNext(@NonNull SubmitParent ruleParent) {
                 if (view != null) {
                     if(ruleParent.success){
-                        view.setSubmitted();
+                        view.setSubmitted(ruleParent.jquery.get(10).get(3));
                     }else{
-                        view.error("You are doing that too much. try again in 5 minute");
+                        if(ruleParent.jquery.size() > 14) {
+                            view.error(ruleParent.jquery.get(14).get(3));
+                        }
                     }
                 }
             }
@@ -100,6 +103,34 @@ public class SubmitPresenter implements SubmitMVP.Presenter {
                 if (view != null) {
                     view.error("Something went wrong: " + e.getMessage());
                 }
+            }
+
+            @Override
+            public void onComplete() { }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+    @Override
+    public void getPost(String url) {
+        DisposableObserver<PostParent> disposableObserver = model.getPost(url).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
+
+            @Override
+            public void onNext(@NonNull PostParent postParent) {
+                if (view != null) {
+                    if(postParent.postList.size() > 0) {
+                        view.setPost(postParent.postList.get(0));
+                    }else{
+                        view.error("Something wrong!");
+                    }
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+//                checkConnection();
             }
 
             @Override

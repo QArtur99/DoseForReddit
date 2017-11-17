@@ -37,6 +37,7 @@ public class CommentsActivity extends BaseActivityChild implements DetailFragmen
     @Override
     public void initComponents() {
         ((App) getApplication()).getComponent().inject(this);
+        getSupportActionBar().setTitle("Comments");
         sharedPreferences.edit().putString(Pref.prefSecondFragment, Pref.prefDetailFragment).apply();
         if (Utility.isTablet(this)) {
             this.finish();

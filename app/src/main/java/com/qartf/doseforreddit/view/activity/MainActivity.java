@@ -62,7 +62,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     public void loadSecondFragment() {
-        if(this.findViewById(R.id.detailsViewFrame) != null){
+        if(commentPresenter.getPost()!= null && this.findViewById(R.id.detailsViewFrame) != null){
             String secondFragmentString = sharedPreferences.getString(Pref.prefSecondFragment, Pref.prefDetailFragment);
             if(secondFragmentString.equals(Pref.prefDetailFragment)){
                 loadDetailFragment();
@@ -79,7 +79,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
         tokenPresenter.tokenInfo();
 
         presenterPref.setView(this);
-        presenterPref.loadTitle();
+        setTitle("Home");
         presenterPref.loadUserName();
     }
 
@@ -153,7 +153,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     @Override
     public void searchPosts() {
         postsFragment.clearAdapter();
-        postsFragment.setPostType(true);
+        postsFragment.setPostType(Constants.PostLoaderId.SEARCH_POSTS);
         postPresenter.searchPosts("");
     }
 
@@ -203,23 +203,35 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     protected void onDestroy() {
         super.onDestroy();
         presenterPref.onDestroy();
+
     }
 
     @Override
     public void getPosts() {
         postsFragment.clearAdapter();
-        if(postsFragment.getPostType()) {
-            postPresenter.searchPosts("");
-        }else{
-            postPresenter.loadPosts("");
-        }
+        getSubredditLoadPosts();
     }
 
     @Override
-    public void getSubredditPosts() {
-        postsFragment.setPostType(false);
+    public void getSubredditPosts(int postLoaderId) {
+        postsFragment.setPostType(postLoaderId);
         postsFragment.clearAdapter();
-        postPresenter.loadPosts("");
+        postsFragment.setRecyclerView();
+        getSubredditLoadPosts();
+    }
+
+    private void getSubredditLoadPosts() {
+        switch (postsFragment.getPostType()){
+            case Constants.PostLoaderId.POST_HOME:
+                postPresenter.loadHome("");
+                break;
+            case Constants.PostLoaderId.POST_VIEW:
+                postPresenter.loadPosts("");
+                break;
+            case Constants.PostLoaderId.SEARCH_POSTS:
+                postPresenter.searchPosts("");
+                break;
+        }
     }
 
     @Override
@@ -237,6 +249,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
         setTitle("My Subreddits");
         loadFragment(Constants.Id.SEARCH_SUBREDDITS);
         subredditsFragment.clearAdapter();
+        subredditsFragment.setRecyclerView();
         subredditsFragment.setSubredditType(true);
         subredditPresenter.loadMineSubreddits("");
     }

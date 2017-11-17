@@ -224,9 +224,11 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
-                sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
-                presenter.loadComments();
+                if(presenter.getPost() != null) {
+                    sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
+                    sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
+                    presenter.loadComments();
+                }
             }
         }, 1000);
     }
@@ -340,7 +342,6 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
         presenter.loadComments();
-        swipyRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -353,6 +354,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         commentsAdapter.clearMovies();
         emptyView.setVisibility(View.GONE);
         commentsAdapter.setMovies(postParent.commentList);
+        swipyRefreshLayout.setRefreshing(false);
     }
 
     @Override

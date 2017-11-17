@@ -17,6 +17,7 @@ import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.presenter.post.PostMVP;
 import com.qartf.doseforreddit.presenter.root.App;
+import com.qartf.doseforreddit.presenter.utility.Constants;
 import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.view.adapter.PostsAdapter;
 
@@ -34,7 +35,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     @Inject
     PostMVP.Presenter presenter;
     private PostParent postParent;
-    private Boolean isSearch = false;
+    private int postLoaderId;
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
     private boolean isOpen = false;
@@ -50,6 +51,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     @Override
     public void initComponents() {
         ((App) getContext().getApplicationContext()).getComponent().inject(this);
+        postLoaderId = sharedPreferences.getInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_HOME);
         emptyView.setVisibility(View.GONE);
         swipyRefreshLayout.setOnRefreshListener(this);
         setAdapter(new ArrayList<Post>());
@@ -68,7 +70,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
         super.onStart();
         presenter.setView(this);
         postsAdapter.clearPosts();
-        presenter.loadPosts("");
+        loadPosts("");
     }
 
     @Override
@@ -111,6 +113,13 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     }
 
     @Override
+    public void setRefreshing() {
+        if(swipyRefreshLayout != null) {
+            swipyRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
     public void onListItemClick(int clickedItemIndex, View view) {
         Post post = (Post) postsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
@@ -149,12 +158,12 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
         }
     }
 
-    public Boolean getPostType() {
-        return isSearch;
+    public int getPostType() {
+        return postLoaderId;
     }
 
-    public void setPostType(Boolean isSearch) {
-        this.isSearch = isSearch;
+    public void setPostType(int postLoaderId) {
+        this.postLoaderId = postLoaderId;
     }
 
     public void clearAdapter() {
@@ -221,10 +230,16 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
 
     private void loadPosts(String after) {
-        if (isSearch) {
-            presenter.searchPosts(after);
-        } else {
-            presenter.loadPosts(after);
+        switch (postLoaderId){
+            case Constants.PostLoaderId.POST_HOME:
+                presenter.loadHome(after);
+                break;
+            case Constants.PostLoaderId.POST_VIEW:
+                presenter.loadPosts(after);
+                break;
+            case Constants.PostLoaderId.SEARCH_POSTS:
+                presenter.searchPosts(after);
+                break;
         }
     }
 

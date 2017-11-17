@@ -99,6 +99,31 @@ public class RetrofitRepository implements DataRepository.Retrofit {
     }
 
 
+    @Override
+    public Observable<PostParent> getPost(String url) {
+        return retrofitRedditAPI.getPost(url);
+    }
+
+    @Override
+    public Observable<PostParent> getHome(final String after) {
+
+        if (setCallCounter()) {
+            return Observable.empty();
+        }
+
+        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<PostParent>>() {
+            @Override
+            public ObservableSource<PostParent> apply(AccessToken accessToken) throws Exception {
+                token.setAccessTokenValue(accessToken.getAccessToken());
+
+                String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
+                HashMap<String, String> args = new HashMap<>();
+                args.put("after", after);
+                return retrofitRedditAPI.getHome(getBearerToken(accessToken), subredditSortBy, args);
+            }
+        });
+    }
+
     public Observable<Object> tokenInfo() {
         return mObservable.map(new Function<String, Object>() {
             @Override

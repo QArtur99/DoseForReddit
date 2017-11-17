@@ -1,5 +1,6 @@
 package com.qartf.doseforreddit.presenter.submit;
 
+import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.repository.DataRepository;
@@ -32,5 +33,10 @@ public class SubmitModel implements SubmitMVP.Model {
     @Override
     public Observable<SubmitParent> postSubmit(HashMap<String, String> args) {
         return repositoryRetrofit.postSubmit(args);
+    }
+
+    @Override
+    public Observable<PostParent> getPost(String url) {
+        return repositoryRetrofit.getPost(url);
     }
 }

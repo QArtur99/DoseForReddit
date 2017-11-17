@@ -83,4 +83,12 @@ public abstract class BaseFragmentMvp<T> extends Fragment {
         emptySubtitleText.setText(getString(R.string.no_connection_sub_text));
     }
 
+    public void setRecyclerView() {
+        if (recyclerView != null && loadingIndicator != null && emptyView != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+            loadingIndicator.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+    }
+
 }

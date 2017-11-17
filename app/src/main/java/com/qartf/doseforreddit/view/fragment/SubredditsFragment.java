@@ -3,6 +3,7 @@ package com.qartf.doseforreddit.view.fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
@@ -21,13 +22,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindString;
+
 public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.SubredditsFragmentInt> implements SubredditMVP.View
         , SubredditAdapter.ListItemClickListener, SwipyRefreshLayout.OnRefreshListener {
 
     private GridLayoutManager layoutManager;
     private SubredditAdapter subredditAdapter;
     private SubredditParent subredditParent;
+    private Subreddit subreddit;
+    private TextView isSubscribe;
     private Boolean isMine = false;
+    @BindString(R.string.subsribe) String subsribe;
+    @BindString(R.string.unsubscribe) String unsubscribe;
 
     @Inject
     SubredditMVP.Presenter presenter;
@@ -40,6 +47,7 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
     @Override
     public void initComponents() {
         ((App) getContext().getApplicationContext()).getComponent().inject(this);
+        sharedPreferences.edit().putInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_VIEW).apply();
         emptyView.setVisibility(View.GONE);
         swipyRefreshLayout.setOnRefreshListener(this);
         setAdapter(new ArrayList<Subreddit>());
@@ -75,6 +83,26 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
     }
 
     @Override
+    public void setRefreshing(){
+        if(swipyRefreshLayout != null) {
+            swipyRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void setPostSubscribe() {
+        if (isSubscribe.isActivated()) {
+            isSubscribe.setActivated(false);
+            isSubscribe.setText(subsribe);
+            subreddit.user_is_subscriber = "false";
+        } else {
+            isSubscribe.setActivated(true);
+            isSubscribe.setText(unsubscribe);
+            subreddit.user_is_subscriber = "true";
+        }
+    }
+
+    @Override
     public void error(String errorString) {
         Toast.makeText(getContext(), errorString, Toast.LENGTH_SHORT).show();
     }
@@ -86,9 +114,10 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
 
     @Override
     public void onListItemClick(int clickedItemIndex, View view) {
-        Subreddit subreddit = (Subreddit) subredditAdapter.getDataAtPosition(clickedItemIndex);
+        subreddit = (Subreddit) subredditAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
             case R.id.isSubscribe:
+                this.isSubscribe = (TextView) view;
                 String subscribe = subreddit.user_is_subscriber.equals("true") ? Constants.Subscribe.UN_SUB : Constants.Subscribe.SUB;
                 presenter.postSubscribe(subscribe, subreddit.name);
                 break;

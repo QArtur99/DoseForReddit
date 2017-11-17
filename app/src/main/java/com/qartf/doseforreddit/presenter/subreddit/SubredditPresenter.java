@@ -87,7 +87,7 @@ public class SubredditPresenter implements SubredditMVP.Presenter {
             @Override
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
-                    view.error("Success");
+                    view.setPostSubscribe();
                 }
             }
 
@@ -121,8 +121,10 @@ public class SubredditPresenter implements SubredditMVP.Presenter {
         if (view != null) {
             if (model.checkConnection()) {
                 view.setInfoServerIsBroken();
+                view.setRefreshing();
             } else {
                 view.setInfoNoConnection();
+                view.setRefreshing();
             }
         }
     }

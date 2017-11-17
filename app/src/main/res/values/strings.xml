@@ -73,7 +73,7 @@
     //Search dialog
     <string name="search">Search</string>
     <string name="cancel">Cancel</string>
-    <string name="drawerFrontPage">Front page</string>
+    <string name="drawerFrontPage">Popular</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="action_refresh">Refresh</string>
@@ -100,6 +100,7 @@
     <string name="mySubreddits">My Subreddits</string>
     <string name="helpAndFeedback">Help \u0026 Feedback</string>
     <string name="submit">Submit</string>
+    <string name="homePage">Home</string>
 
 
 </resources>

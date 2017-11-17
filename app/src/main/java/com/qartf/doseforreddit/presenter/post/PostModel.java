@@ -18,6 +18,11 @@ public class PostModel implements PostMVP.Model {
     }
 
     @Override
+    public Observable<PostParent> getHome(String after) {
+        return repositoryRetrofit.getHome(after);
+    }
+
+    @Override
     public Observable<PostParent> getPosts(String after) {
         return repositoryRetrofit.getPosts(after);
     }

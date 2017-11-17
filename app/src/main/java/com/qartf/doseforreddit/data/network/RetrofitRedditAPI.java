@@ -27,6 +27,16 @@ import retrofit2.http.QueryMap;
 public interface RetrofitRedditAPI {
 
 
+    @GET("{url}" + ".json")
+    Observable<PostParent> getPost(@Path(value = "url", encoded = true) String sort);
+
+    @GET(Constants.Auth.BASE_URL_OAUTH + "/{sort}")
+    @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
+    Observable<PostParent> getHome(@Header("Authorization") String authorization,
+                                   @Path(value = "sort", encoded = true) String sort,
+                                   @QueryMap Map<String, String> options);
+
+
     @FormUrlEncoded
     @POST(Constants.Auth.ACCESS_TOKEN_URL)
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
@@ -63,22 +73,22 @@ public interface RetrofitRedditAPI {
     @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/{sort}")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<PostParent> getPosts(@Header("Authorization") String authorization,
-                                       @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
-                                       @Path(value = "sort", encoded = true) String sort,
-                                       @QueryMap Map<String, String> options);
+                                    @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                    @Path(value = "sort", encoded = true) String sort,
+                                    @QueryMap Map<String, String> options);
 
     @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/search")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<PostParent> searchPosts(@Header("Authorization") String authorization,
-                                 @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
-                                 @QueryMap Map<String, String> options);
+                                       @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                       @QueryMap Map<String, String> options);
 
     @GET(Constants.Auth.BASE_URL_OAUTH + "/r/{subbreddit_name}/comments/{id}")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<CommentParent> getComments(@Header("Authorization") String authorization,
-                                    @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
-                                    @Path(value = "id", encoded = true) String sort,
-                                    @QueryMap Map<String, String> options);
+                                          @Path(value = "subbreddit_name", encoded = true) String subreddit_name,
+                                          @Path(value = "id", encoded = true) String sort,
+                                          @QueryMap Map<String, String> options);
 
     @GET(Constants.Auth.BASE_URL_OAUTH + "/api/morechildren")
     Observable<ChildCommentParent> getMorechildren(@Header("Authorization") String authorization,
@@ -87,28 +97,28 @@ public interface RetrofitRedditAPI {
     @GET(Constants.Auth.BASE_URL_OAUTH + "/subreddits/search")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<SubredditParent> getSubreddits(@Header("Authorization") String authorization,
-                                           @QueryMap Map<String, String> options);
+                                              @QueryMap Map<String, String> options);
 
     @GET(Constants.Auth.BASE_URL_OAUTH + "/subreddits/mine/{where}")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<SubredditParent> getMineSubreddits(@Header("Authorization") String authorization,
-                                              @Path(value = "where", encoded = true) String where,
-                                              @QueryMap Map<String, String> options);
+                                                  @Path(value = "where", encoded = true) String where,
+                                                  @QueryMap Map<String, String> options);
 
 
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/subscribe")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<ResponseBody> postSubscribe(@Header("Authorization") String authorization,
-                                     @Field("action") String subscribe,
-                                     @Field("sr") String fullname);
+                                           @Field("action") String subscribe,
+                                           @Field("sr") String fullname);
 
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/vote")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<ResponseBody> postVote(@Header("Authorization") String authorization,
-                                @Field("dir") String dir,
-                                @Field("id") String fullname);
+                                      @Field("dir") String dir,
+                                      @Field("id") String fullname);
 
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/submit")
@@ -120,25 +130,25 @@ public interface RetrofitRedditAPI {
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/comment")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<SubmitParent> postComment(@Header("Authorization") String authorization,
-                                        @FieldMap Map<String, String> options);
+                                         @FieldMap Map<String, String> options);
 
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/save")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<ResponseBody> postSave(@Header("Authorization") String authorization,
-                                         @FieldMap Map<String, String> options);
+                                      @FieldMap Map<String, String> options);
 
 
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/unsave")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<ResponseBody> postUnsave(@Header("Authorization") String authorization,
-                                         @FieldMap Map<String, String> options);
+                                        @FieldMap Map<String, String> options);
 
     @FormUrlEncoded
     @POST(Constants.Auth.BASE_URL_OAUTH + "/api/del")
     @Headers("User-Agent: android:com.qartf.doseforreddit:v1.0 (by /u/Qart_f)")
     Observable<ResponseBody> postDel(@Header("Authorization") String authorization,
-                                        @FieldMap Map<String, String> options);
+                                     @FieldMap Map<String, String> options);
 
 }

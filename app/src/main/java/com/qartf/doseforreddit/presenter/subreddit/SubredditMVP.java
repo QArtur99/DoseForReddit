@@ -21,6 +21,10 @@ public interface SubredditMVP {
         void error(String errorString);
 
         void setLoadIndicatorOff();
+
+        void setRefreshing();
+
+        void setPostSubscribe();
     }
 
     interface Presenter {

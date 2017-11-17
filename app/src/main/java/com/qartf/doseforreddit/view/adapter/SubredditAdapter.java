@@ -136,13 +136,13 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
                 case R.id.isSubscribe:
                     Subreddit subreddit = (Subreddit) getDataAtPosition(clickedPosition);
                     if (!subreddit.user_is_subscriber.isEmpty()) {
-                        if (isSubscribe.isActivated()) {
-                            isSubscribe.setActivated(false);
-                            isSubscribe.setText(subsribe);
-                        } else {
-                            isSubscribe.setActivated(true);
-                            isSubscribe.setText(unsubscribe);
-                        }
+//                        if (isSubscribe.isActivated()) {
+//                            isSubscribe.setActivated(false);
+//                            isSubscribe.setText(subsribe);
+//                        } else {
+//                            isSubscribe.setActivated(true);
+//                            isSubscribe.setText(unsubscribe);
+//                        }
                         mOnClickListener.onListItemClick(clickedPosition, v);
                     }
                     break;
