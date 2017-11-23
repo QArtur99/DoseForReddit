@@ -1,11 +1,15 @@
 package com.qartf.doseforreddit.view.activity;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.presenter.sharedPreferences.SharedPreferencesMVP;
@@ -28,13 +32,15 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
         , SearchDialog.SearchDialogInter, SharedPreferencesMVP.View, TokenMVP.View
         , SubmitFragment.SubmitFragmentInt {
 
+    @Nullable
+    @BindView(R.id.adView)
+    AdView mAdView;
+    @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
     private PostsFragment postsFragment;
     private SubredditsFragment subredditsFragment;
     private SubmitFragment submitFragment;
     private DetailFragment detailFragment;
     private boolean isLoginCode = false;
-
-    @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
 
     @Override
     public int getContentLayout() {
@@ -43,16 +49,27 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void initComponents() {
+//        loadAd();
 //        MainActivity.this.deleteDatabase("Doseforreddit.db");
         setSupportActionBar(toolbar);
         loadStartFragment(savedInstanceState);
         loadSecondFragment();
 
-        if(presenterPref != null){
+        if (presenterPref != null) {
             presenterPref.loadTitle();
         }
 
         super.setResult(0);
+    }
+
+    private void loadAd() {
+        if(mAdView != null) {
+            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
+            mAdView.loadAd(adRequest);
+        }
     }
 
     public void loadStartFragment(Bundle savedInstanceState) {
@@ -62,11 +79,11 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     public void loadSecondFragment() {
-        if(commentPresenter.getPost()!= null && this.findViewById(R.id.detailsViewFrame) != null){
+        if (commentPresenter.getPost() != null && this.findViewById(R.id.detailsViewFrame) != null) {
             String secondFragmentString = sharedPreferences.getString(Pref.prefSecondFragment, Pref.prefDetailFragment);
-            if(secondFragmentString.equals(Pref.prefDetailFragment)){
+            if (secondFragmentString.equals(Pref.prefDetailFragment)) {
                 loadDetailFragment();
-            }else if(secondFragmentString.equals(Pref.prefSubmitFragment)){
+            } else if (secondFragmentString.equals(Pref.prefSubmitFragment)) {
                 loadSubmitFragment();
             }
         }
@@ -100,7 +117,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     public void setPost(Post post) {
         commentPresenter.setPost(post);
         commentPresenter.loadPostData();
-        if(detailFragment != null) {
+        if (detailFragment != null) {
             detailFragment.loadComments();
         }
     }
@@ -112,8 +129,19 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         checkLogin();
     }
 
@@ -202,6 +230,9 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
         presenterPref.onDestroy();
 
     }
@@ -221,7 +252,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     private void getSubredditLoadPosts() {
-        switch (postsFragment.getPostType()){
+        switch (postsFragment.getPostType()) {
             case Constants.PostLoaderId.POST_HOME:
                 postPresenter.loadHome("");
                 break;
@@ -256,7 +287,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void setPostFragment() {
-        if(!postsFragment.isVisible()) {
+        if (!postsFragment.isVisible()) {
             loadFragment(Constants.Id.SEARCH_POSTS);
         }
     }

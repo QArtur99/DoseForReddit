@@ -359,7 +359,9 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void setChildCommentParent(ChildCommentParent postParent) {
-        commentsChildAdapter.setMovies(postParent.json.data.commentList);
+        if(postParent.json != null) {
+            commentsChildAdapter.setMovies(postParent.json.data.commentList);
+        }
     }
 
     @Override

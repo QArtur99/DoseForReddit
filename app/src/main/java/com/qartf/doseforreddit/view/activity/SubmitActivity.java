@@ -21,7 +21,7 @@ public class SubmitActivity extends BaseActivityChild implements SubmitFragment.
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_comments;
+        return R.layout.activity_submit;
     }
 
     @Override

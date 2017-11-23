@@ -299,7 +299,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
 
 
                 HashMap<String, String> args = new HashMap<>();
-                args.put("depth", "8");
+                args.put("depth", "10");
                 args.put("limit", "25");
                 args.put("showedits", "false");
                 args.put("showmore", "true");
@@ -350,7 +350,7 @@ public class RetrofitRepository implements DataRepository.Retrofit {
                 HashMap<String, String> args = new HashMap<>();
                 args.put("api_type", "json");
                 args.put("children", comment.childs.toString().replace("[", "").replace("]", ""));
-                args.put("limit_children", "false");
+                args.put("limit_children", "true");
                 args.put("link_id", comment.parentId);
                 args.put("sort", sortBy);
 

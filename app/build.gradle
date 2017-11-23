@@ -4,6 +4,10 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
+def adPropertiesFile = file("C:\\Users\\USER\\AndroidStudioProjects\\.gradle\\gradle.properties")
+def adProperties = new Properties()
+adProperties.load(new FileInputStream(adPropertiesFile))
+
 android {
     signingConfigs {
         config {
@@ -29,6 +33,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildTypes.each {
+                it.buildConfigField 'String', 'BANNER_AD_UNIT_ID', adProperties['BANNER_AD_UNIT_ID']
+                it.buildConfigField 'String', 'ADMOB_APP_ID', adProperties['ADMOB_APP_ID']
+                it.buildConfigField 'String', 'ADMOB_AD_UNIT_ID', adProperties['ADMOB_AD_UNIT_ID']
+                it.resValue "string", "BANNER_AD_UNIT_ID", adProperties['BANNER_AD_UNIT_ID']
+            }
         }
     }
     productFlavors {

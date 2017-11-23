@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import static com.qartf.doseforreddit.view.adapter.PostsAdapter.AD_RATE;
 
 
 public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentInt> implements PostMVP.View
@@ -54,10 +57,10 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
         postLoaderId = sharedPreferences.getInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_HOME);
         emptyView.setVisibility(View.GONE);
         swipyRefreshLayout.setOnRefreshListener(this);
-        setAdapter(new ArrayList<Post>());
+        setAdapter(new ArrayList<>());
     }
 
-    public void setAdapter(List<Post> movieList) {
+    public void setAdapter(List<Object> movieList) {
         layoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -82,8 +85,27 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     public void setPostParent(PostParent postParent) {
         this.postParent = postParent;
         emptyView.setVisibility(View.GONE);
-        postsAdapter.setPosts(postParent.postList);
+//        postsAdapter.setPosts(postParent.postList);
+//        List<Object> newList = postsAdapter.getData();
+//        newList.addAll(postParent.postList);
+        postsAdapter.setPosts(addNativeAds(postParent));
         swipyRefreshLayout.setRefreshing(false);
+    }
+
+    private List<Object> addNativeAds(PostParent postParent) {
+        List<Object> mRecyclerViewItems = new ArrayList<>();
+        mRecyclerViewItems.addAll(postsAdapter.getData());
+        mRecyclerViewItems.addAll(postParent.postList);
+        postsAdapter.clearPosts();
+
+        for (int i = 0; i < mRecyclerViewItems.size(); i += AD_RATE) {
+            if (i != 0 && !(mRecyclerViewItems.get(i) instanceof NativeContentAdView)) {
+                final NativeContentAdView adView = new NativeContentAdView(getContext());
+                mRecyclerViewItems.add(i, adView);
+            }
+
+        }
+        return mRecyclerViewItems;
     }
 
     @Override

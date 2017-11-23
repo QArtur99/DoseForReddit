@@ -95,17 +95,17 @@ public class Utility {
             String new_string = post.previewUrl.replace(to_remove, "");
             Glide.with(context)
                     .load(new_string)
-                    .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
+                    .thumbnail(Glide.with(context).load(R.drawable.ic_action_picture))
                     .into(thumbnail);
         } else if (!post.thumbnail.isEmpty() && !checkThumbnail(post.thumbnail)) {
             String to_remove = "amp;";
             String new_string = post.thumbnail.replace(to_remove, "");
             Glide.with(context)
                     .load(new_string)
-                    .thumbnail(Glide.with(context).load(R.drawable.ic_ondemand_video))
+                    .thumbnail(Glide.with(context).load(R.drawable.ic_action_picture))
                     .into(thumbnail);
         } else {
-            thumbnail.setImageResource(R.drawable.ic_ondemand_video);
+            thumbnail.setImageResource(R.drawable.ic_action_picture);
         }
     }
 
