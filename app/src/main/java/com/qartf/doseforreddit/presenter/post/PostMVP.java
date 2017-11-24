@@ -28,6 +28,8 @@ public interface PostMVP {
 
         void setRefreshing();
 
+        void setVote();
+
     }
 
     interface Presenter {

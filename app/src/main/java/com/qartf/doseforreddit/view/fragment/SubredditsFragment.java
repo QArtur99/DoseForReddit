@@ -27,17 +27,16 @@ import butterknife.BindString;
 public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.SubredditsFragmentInt> implements SubredditMVP.View
         , SubredditAdapter.ListItemClickListener, SwipyRefreshLayout.OnRefreshListener {
 
+    @BindString(R.string.subsribe) String subsribe;
+    @BindString(R.string.unsubscribe) String unsubscribe;
+    @Inject
+    SubredditMVP.Presenter presenter;
     private GridLayoutManager layoutManager;
     private SubredditAdapter subredditAdapter;
     private SubredditParent subredditParent;
     private Subreddit subreddit;
     private TextView isSubscribe;
     private Boolean isMine = false;
-    @BindString(R.string.subsribe) String subsribe;
-    @BindString(R.string.unsubscribe) String unsubscribe;
-
-    @Inject
-    SubredditMVP.Presenter presenter;
 
     @Override
     public int getContentLayout() {
@@ -83,8 +82,8 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
     }
 
     @Override
-    public void setRefreshing(){
-        if(swipyRefreshLayout != null) {
+    public void setRefreshing() {
+        if (swipyRefreshLayout != null) {
             swipyRefreshLayout.setRefreshing(false);
         }
     }
@@ -117,9 +116,14 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
         subreddit = (Subreddit) subredditAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
             case R.id.isSubscribe:
-                this.isSubscribe = (TextView) view;
-                String subscribe = subreddit.user_is_subscriber.equals("true") ? Constants.Subscribe.UN_SUB : Constants.Subscribe.SUB;
-                presenter.postSubscribe(subscribe, subreddit.name);
+                String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+                if (logged.equals(Constants.Utility.ANONYMOUS)) {
+                    mCallback.loginSnackBar();
+                } else {
+                    this.isSubscribe = (TextView) view;
+                    String subscribe = subreddit.user_is_subscriber.equals("true") ? Constants.Subscribe.UN_SUB : Constants.Subscribe.SUB;
+                    presenter.postSubscribe(subscribe, subreddit.name);
+                }
                 break;
             case R.id.subredditTitleFrame:
                 mCallback.loadFragment(Constants.Id.SEARCH_POSTS);
@@ -129,21 +133,21 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
         }
     }
 
-    public void clearAdapter(){
-        if(subredditAdapter != null) {
+    public void clearAdapter() {
+        if (subredditAdapter != null) {
             subredditAdapter.clearSubreddits();
         }
     }
 
-    public void setSubredditType(Boolean isMine){
+    public void setSubredditType(Boolean isMine) {
         this.isMine = isMine;
     }
 
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        if(direction == SwipyRefreshLayoutDirection.BOTTOM) {
+        if (direction == SwipyRefreshLayoutDirection.BOTTOM) {
 
-            if(TextUtils.isEmpty(subredditParent.after)){
+            if (TextUtils.isEmpty(subredditParent.after)) {
                 swipyRefreshLayout.setRefreshing(false);
                 error("There are no more subreddits to show right now.");
                 return;
@@ -151,22 +155,25 @@ public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.Subre
 
             loadSubreddits(subredditParent.after);
 
-        }else if(direction == SwipyRefreshLayoutDirection.TOP){
+        } else if (direction == SwipyRefreshLayoutDirection.TOP) {
             subredditAdapter.clearSubreddits();
             loadSubreddits("");
         }
     }
 
     private void loadSubreddits(String after) {
-        if(isMine){
+        if (isMine) {
             presenter.loadMineSubreddits(after);
-        }else{
+        } else {
             presenter.loadSubreddits(after);
         }
     }
 
     public interface SubredditsFragmentInt {
+        void loginSnackBar();
+
         void loadFragment(int fragmentId);
+
         void setTitle(String title);
     }
 

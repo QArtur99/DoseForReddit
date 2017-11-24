@@ -2,6 +2,8 @@ package com.qartf.doseforreddit.view.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 
 import com.google.android.gms.ads.AdRequest;
@@ -25,6 +27,7 @@ import butterknife.BindView;
 public class CommentsActivity extends BaseActivityChild implements DetailFragment.DetailFragmentInt {
 
     @BindView(R.id.adView) AdView mAdView;
+    @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
     @Inject
     CommentMVP.Presenter commentPresenter;
     @Inject
@@ -32,8 +35,6 @@ public class CommentsActivity extends BaseActivityChild implements DetailFragmen
     private Post post;
     private DetailFragment detailFragment;
     private static final String ADMOB_APP_ID = BuildConfig.ADMOB_APP_ID;
-
-    CommentsActivity() {}
 
     @Override
     public int getContentLayout() {
@@ -61,9 +62,7 @@ public class CommentsActivity extends BaseActivityChild implements DetailFragmen
     private void loadAd() {
         if(mAdView != null) {
             MobileAds.initialize(this, ADMOB_APP_ID);
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build();
+            AdRequest adRequest = new AdRequest.Builder().build();
             mAdView.loadAd(adRequest);
         }
     }
@@ -76,6 +75,14 @@ public class CommentsActivity extends BaseActivityChild implements DetailFragmen
                 .add(R.id.detailsViewFrame, detailFragment)
                 .commit();
     }
+
+    @Override
+    public void loginSnackBar() {
+        Snackbar snackbar = Snackbar
+                .make(mainActivityFrame, "You must be logged in", Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
 
     @Override
     public void loadPosts() {

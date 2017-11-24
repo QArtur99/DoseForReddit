@@ -57,10 +57,10 @@
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:background="@color/adsBackGround"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         app:adSize="SMART_BANNER"
-        app:adUnitId="@string/banner_ad_unit_id"/>
+        app:adUnitId="@string/BANNER_AD_UNIT_ID"/>
 
 </RelativeLayout>

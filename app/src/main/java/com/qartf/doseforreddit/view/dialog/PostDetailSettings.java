@@ -89,10 +89,14 @@ public class PostDetailSettings {
         if (dialog != null) {
             dialog.dismiss();
         }
-        new QuickReplyDialog(context, post.name , quickReplyInter);
+        if(postDetailSettingsInter.checkUserIsLogged()){
+            new QuickReplyDialog(context, post.name, quickReplyInter);
+        }
     }
 
     public interface PostDetailSettingsInter {
+        boolean checkUserIsLogged();
+        void loginSnackBar();
         void removePost(String fullname);
     }
 }

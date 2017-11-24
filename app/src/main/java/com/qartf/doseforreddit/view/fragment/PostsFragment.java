@@ -7,9 +7,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.qartf.doseforreddit.R;
@@ -27,8 +27,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.qartf.doseforreddit.view.adapter.PostsAdapter.AD_RATE;
-
 
 public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentInt> implements PostMVP.View
         , PostsAdapter.ListItemClickListener, SwipyRefreshLayout.OnRefreshListener {
@@ -45,6 +43,8 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     private int selectedPosition;
     private Post post;
     private ImageView saveStar;
+    private String logged;
+    private View voteConteinerView;
 
     @Override
     public int getContentLayout() {
@@ -85,9 +85,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     public void setPostParent(PostParent postParent) {
         this.postParent = postParent;
         emptyView.setVisibility(View.GONE);
-//        postsAdapter.setPosts(postParent.postList);
-//        List<Object> newList = postsAdapter.getData();
-//        newList.addAll(postParent.postList);
+
         postsAdapter.setPosts(addNativeAds(postParent));
         swipyRefreshLayout.setRefreshing(false);
     }
@@ -98,14 +96,28 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
         mRecyclerViewItems.addAll(postParent.postList);
         postsAdapter.clearPosts();
 
-        for (int i = 0; i < mRecyclerViewItems.size(); i += AD_RATE) {
-            if (i != 0 && !(mRecyclerViewItems.get(i) instanceof NativeContentAdView)) {
-                final NativeContentAdView adView = new NativeContentAdView(getContext());
-                mRecyclerViewItems.add(i, adView);
-            }
-
-        }
+//        if(!Utility.isTablet(getContext())) {
+//            for (int i = 0; i < mRecyclerViewItems.size(); i += AD_RATE) {
+//                if (i != 0 && !(mRecyclerViewItems.get(i) instanceof NativeContentAdView)) {
+//                    final NativeContentAdView adView = new NativeContentAdView(getContext());
+//                    mRecyclerViewItems.add(i, adView);
+//                }
+//
+//            }
+//        }
         return mRecyclerViewItems;
+    }
+
+    public boolean checkUserIsLogged(){
+        boolean user = false;
+        logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+        if (logged.equals(Constants.Utility.ANONYMOUS)) {
+            mCallback.loginSnackBar();
+            user = false;
+        } else {
+            user = true;
+        }
+        return user;
     }
 
     @Override
@@ -143,6 +155,7 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
     @Override
     public void onListItemClick(int clickedItemIndex, View view) {
+        voteConteinerView = view;
         Post post = (Post) postsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
             case R.id.imageContainer:
@@ -157,12 +170,14 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
                 }
                 break;
             case R.id.save:
-                this.post = post;
-                this.saveStar = (ImageView) view;
-                if (post.saved.equals("true")) {
-                    presenter.postUnsave(post.name);
-                } else {
-                    presenter.postSave(post.name);
+                if(checkUserIsLogged()){
+                    this.post = post;
+                    this.saveStar = (ImageView) view;
+                    if (post.saved.equals("true")) {
+                        presenter.postUnsave(post.name);
+                    } else {
+                        presenter.postSave(post.name);
+                    }
                 }
                 break;
             case R.id.goToUrl:
@@ -172,12 +187,32 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
                 Navigation.shareContent(getActivity(), post.url);
                 break;
             case R.id.upContainer:
-                presenter.postVote("1", post.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("1", post.name);
+                }
                 break;
             case R.id.downContainer:
-                presenter.postVote("-1", post.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("-1", post.name);
+                }
                 break;
         }
+    }
+
+    @Override
+    public void setVote(){
+        RelativeLayout view = (RelativeLayout) voteConteinerView.getParent();
+        switch (voteConteinerView.getId()){
+            case R.id.upContainer:
+                ((ImageView)view.findViewById(R.id.upArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
+                ((ImageView)view.findViewById(R.id.downArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                break;
+            case R.id.downContainer:
+                ((ImageView)view.findViewById(R.id.upArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                ((ImageView)view.findViewById(R.id.downArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
+                break;
+        }
+
     }
 
     public int getPostType() {
@@ -266,6 +301,8 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     }
 
     public interface PostsFragmentInt {
+
+        void loginSnackBar();
 
         void loadDetailFragment();
 

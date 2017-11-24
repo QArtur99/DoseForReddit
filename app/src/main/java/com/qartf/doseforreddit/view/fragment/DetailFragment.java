@@ -26,6 +26,7 @@ import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.presenter.comment.CommentMVP;
 import com.qartf.doseforreddit.presenter.root.App;
+import com.qartf.doseforreddit.presenter.utility.Constants;
 import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.adapter.CommentsAdapter;
@@ -71,20 +72,17 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @BindString(R.string.pref_post_detail_sub) String prefPostDetailSub;
     @BindString(R.string.pref_post_detail_id) String prefPostDetailId;
     @BindString(R.string.pref_post_detail_sort_key) String prefPostDetailSortKey;
-
+    @Inject
+    CommentMVP.Presenter presenter;
     private HashMap<String, String> spinnerMap;
     private boolean isOpen = false;
-
     private CommentsAdapter commentsAdapter;
     private CommentsAdapter commentsChildAdapter;
     private LinearLayout previousViewSelected;
     private LinearLayout previousViewExpanded;
     private ImageView saveStar;
     private Comment comment;
-
-
-    @Inject
-    CommentMVP.Presenter presenter;
+    private String logged;
 
     @Override
     public int getContentLayout() {
@@ -119,61 +117,61 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         postDetialsSettings.setOnClickListener(this);
     }
 
-    public void setUps(String upsString){
+    public void setUps(String upsString) {
         ups.setText(upsString);
     }
 
     @Override
     public void setLikes(String postLikes) {
-        if(postLikes.equals("true")){
+        if (postLikes.equals("true")) {
             upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
-        }else if(postLikes.equals("false")){
+        } else if (postLikes.equals("false")) {
             downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
         }
     }
 
-    public void setTitle(String titleString){
+    public void setTitle(String titleString) {
         title.setText(titleString);
     }
 
-    public void setLinkFlairText(String linkFlairTextString){
+    public void setLinkFlairText(String linkFlairTextString) {
         Utility.loadLinkFlairText(linkFlairText, linkFlairTextString);
     }
 
-    public void setDomain(String domainString){
+    public void setDomain(String domainString) {
         domain.setText(domainString);
     }
 
-    public void setSubreddit(String subredditString){
+    public void setSubreddit(String subredditString) {
         subreddit.setText(subredditString);
     }
 
-    public void setComments(String commentsString){
+    public void setComments(String commentsString) {
         comments.setText(commentsString);
     }
 
-    public void setTime(String timeString){
+    public void setTime(String timeString) {
         time.setText(timeString);
     }
 
-    public void setThumbnail(Post post){
+    public void setThumbnail(Post post) {
         Utility.loadThumbnail(getContext(), post, thumbnail);
     }
 
-    public void setSelftext(String selftextString){
+    public void setSelftext(String selftextString) {
         if (selftextString != null && !selftextString.isEmpty()) {
             selftext.setVisibility(View.VISIBLE);
             selftext.setText(selftextString);
         }
     }
 
-    public void setCommentsNo(String commentsNoString){
+    public void setCommentsNo(String commentsNoString) {
         commentsNo.setText(commentsNoString);
     }
 
     @Override
     public void setSaveStarActivated() {
-        if(saveStar != null){
+        if (saveStar != null) {
             comment.saved = "true";
             saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.commentSave));
         }
@@ -181,7 +179,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void setSaveStarUnActivated() {
-        if(saveStar != null){
+        if (saveStar != null) {
             comment.saved = "false";
             saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
         }
@@ -224,7 +222,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(presenter.getPost() != null) {
+                if (presenter.getPost() != null) {
                     sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
                     sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
                     presenter.loadComments();
@@ -235,7 +233,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void loadPosts() {
-                mCallback.loadPosts();
+        mCallback.loadPosts();
     }
 
     public void setAdapter(List<Comment> movieList) {
@@ -251,14 +249,18 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.upContainer:
-                upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
-                downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
-                presenter.postVote("1", presenter.getPost().name);
+                if(checkUserIsLogged()){
+                    upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
+                    downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                    presenter.postVote("1", presenter.getPost().name);
+                }
                 break;
             case R.id.downContainer:
-                upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
-                downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
-                presenter.postVote("-1", presenter.getPost().name);
+                if(checkUserIsLogged()){
+                    upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                    downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
+                    presenter.postVote("-1", presenter.getPost().name);
+                }
                 break;
             case R.id.detailContainer:
                 Navigation.startLinkActivity(getActivity(), presenter.getPost().url);
@@ -273,6 +275,19 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         }
     }
 
+    @Override
+    public boolean checkUserIsLogged(){
+        boolean user = false;
+        logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+        if (logged.equals(Constants.Utility.ANONYMOUS)) {
+            mCallback.loginSnackBar();
+            user = false;
+        } else {
+            user = true;
+        }
+        return user;
+    }
+
 
     @Override
     public void onCommentListItemClick(Comment comment, CommentsAdapter commentsAdapter, View view) {
@@ -282,15 +297,19 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
                 break;
 
             case R.id.reply:
-                new QuickReplyDialog(getContext(), comment.name,this);
+                if(checkUserIsLogged()) {
+                    new QuickReplyDialog(getContext(), comment.name, this);
+                }
                 break;
             case R.id.save:
-                this.comment = comment;
-                this.saveStar = (ImageView) view;
-                if(comment.saved.equals("true")){
-                    presenter.postUnsave(comment.name);
-                }else {
-                    presenter.postSave(comment.name);
+                if(checkUserIsLogged()){
+                    this.comment = comment;
+                    this.saveStar = (ImageView) view;
+                    if (comment.saved.equals("true")) {
+                        presenter.postUnsave(comment.name);
+                    } else {
+                        presenter.postSave(comment.name);
+                    }
                 }
                 break;
             case R.id.loadMore:
@@ -299,10 +318,14 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
                 presenter.loadChildComments(comment);
                 break;
             case R.id.commentVoteUp:
-                presenter.postVote("1", comment.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("1", comment.name);
+                }
                 break;
             case R.id.commentVoteDown:
-                presenter.postVote("-1", comment.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("-1", comment.name);
+                }
                 break;
         }
     }
@@ -359,7 +382,7 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
 
     @Override
     public void setChildCommentParent(ChildCommentParent postParent) {
-        if(postParent.json != null) {
+        if (postParent.json != null) {
             commentsChildAdapter.setMovies(postParent.json.data.commentList);
         }
     }
@@ -385,14 +408,20 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     }
 
     @Override
+    public void loginSnackBar() {
+        mCallback.loginSnackBar();
+    }
+
+    @Override
     public void removePost(String fullname) {
         presenter.postDelPost(fullname);
     }
 
 
-
-
     public interface DetailFragmentInt {
+
+        void loginSnackBar();
+
         void loadPosts();
     }
 }

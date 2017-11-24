@@ -74,7 +74,8 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        return position !=0 && (position % AD_RATE == 0) ? AD_VIEW_TYPE : ITEM_VIEW_TYPE;
+//        return position !=0 && (position % AD_RATE == 0) && !Utility.isTablet(context) ? AD_VIEW_TYPE : ITEM_VIEW_TYPE;
+        return ITEM_VIEW_TYPE;
     }
 
 
@@ -207,13 +208,13 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     mOnClickListener.onPostSelected(clickedPosition, expandArea, commentFrame);
                     break;
                 case R.id.upContainer:
-                    upArrow.setColorFilter(ContextCompat.getColor(context, R.color.upArrow));
-                    downArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
+//                    upArrow.setColorFilter(ContextCompat.getColor(context, R.color.upArrow));
+//                    downArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
                     mOnClickListener.onListItemClick(clickedPosition, v);
                     break;
                 case R.id.downContainer:
-                    upArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
-                    downArrow.setColorFilter(ContextCompat.getColor(context, R.color.downArrow));
+//                    upArrow.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
+//                    downArrow.setColorFilter(ContextCompat.getColor(context, R.color.downArrow));
                     mOnClickListener.onListItemClick(clickedPosition, v);
                     break;
                 default:
