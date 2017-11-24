@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.presenter.utility.Utility;
 
 import java.lang.reflect.Type;
 
@@ -48,31 +49,31 @@ public class PostDeserializer implements JsonDeserializer<Post> {
             JsonObject preview = checkImages(data);
 
             date = new Post(
-                    getNullAsEmptyString(jsonObject.get("kind")),
-                    getNullAsEmptyString(data.get("domain")),
-                    getNullAsEmptyString(data.get("subreddit")),
-                    getNullAsEmptyString(data.get("selftext")),
-                    getNullAsEmptyString(data.get("likes")),
-                    getNullAsEmptyString(data.get("link_flair_text")),
-                    getNullAsEmptyString(data.get("id")),
-                    getNullAsEmptyString(data.get("title")),
-                    getNullAsEmptyString(data.get("saved")),
-                    getNullAsEmptyString(getImageSource(preview)),
-                    getNullAsEmptyString(getMp4(preview)),
-                    getNullAsEmptyString(data.get("thumbnail")),
-                    getNullAsEmptyString(data.get("subreddit_id")),
-                    getNullAsEmptyString(data.get("post_hint")),
-                    getNullAsEmptyString(data.get("parent_whitelist_status")),
-                    getNullAsEmptyString(data.get("name")),
-                    getNullAsEmptyString(data.get("permalink")),
-                    getNullAsEmptyString(data.get("subreddit_type")),
-                    getNullAsEmptyString(data.get("url")),
-                    getNullAsEmptyString(data.get("whitelist_status")),
-                    getNullAsEmptyString(data.get("author")),
-                    getNullAsEmptyString(data.get("created_utc")),
-                    getNullAsEmptyString(data.get("subreddit_name_prefixed")),
-                    getNullAsEmptyString(data.get("ups")),
-                    getNullAsEmptyString(data.get("num_comments"))
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(jsonObject.get("kind"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("domain"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("selftext"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("likes"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("link_flair_text"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("id"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("title"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("saved"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(getImageSource(preview))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(getMp4(preview))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("thumbnail"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit_id"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("post_hint"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("parent_whitelist_status"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("name"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("permalink"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit_type"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("url"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("whitelist_status"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("author"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("created_utc"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit_name_prefixed"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("ups"))),
+                    Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("num_comments")))
             );
         }
         return date;

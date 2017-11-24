@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.qartf.doseforreddit.data.entity.Comment;
+import com.qartf.doseforreddit.presenter.utility.Utility;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -51,21 +52,21 @@ public class CommentDeserializer implements JsonDeserializer<Comment> {
         }
 
         Comment comment = new Comment(
-                getNullAsEmptyString(jsonObject.get("kind")),
-                getNullAsEmptyString(data.get("subreddit_id")),
-                getNullAsEmptyString(data.get("link_id")),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(jsonObject.get("kind"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit_id"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("link_id"))),
                 commentList,
-                getNullAsEmptyString(data.get("saved")),
-                getNullAsEmptyString(data.get("author")),
-                getNullAsEmptyString(data.get("ups")),
-                getNullAsEmptyString(data.get("parent_id")),
-                getNullAsEmptyString(data.get("score")),
-                getNullAsEmptyString(data.get("body")),
-                getNullAsEmptyString(data.get("subreddit_type")),
-                getNullAsEmptyString(data.get("name")),
-                getNullAsEmptyString(data.get("depth")),
-                getNullAsEmptyString(data.get("created_utc")),
-                getNullAsEmptyString(data.get("subreddit_name_prefixed"))
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("saved"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("author"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("ups"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("parent_id"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("score"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("body"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit_type"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("name"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("depth"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("created_utc"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit_name_prefixed")))
 
         );
 

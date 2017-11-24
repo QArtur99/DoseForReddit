@@ -50,7 +50,7 @@
 
     //Subreddit
     <string name="subscribers">subscribers</string>
-    <string name="subsribe">subsribe</string>
+    <string name="subscribe">subscribe</string>
     <string name="unsubscribe">unsubscribe</string>
     <string name="privateSub">private</string>
     <string name="is18">18+</string>

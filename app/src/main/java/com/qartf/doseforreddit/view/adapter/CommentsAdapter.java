@@ -102,6 +102,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
             ButterKnife.bind(this, itemView);
             loadMore.setOnClickListener(this);
             commentFrame.setOnClickListener(this);
+            body.setOnClickListener(this);
             commentVoteUp.setOnClickListener(this);
             commentVoteDown.setOnClickListener(this);
 
@@ -179,6 +180,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
                     break;
                 case R.id.commentVoteDown:
                     mOnClickListener.onCommentListItemClick(comment, getCommentAdapter(), v);
+                    break;
+                case R.id.body:
+                    mOnClickListener.onCommentSelected(clickedPosition, expandArea, commentFrame);
                     break;
                 case R.id.commentItemFrame:
                     mOnClickListener.onCommentSelected(clickedPosition, expandArea, commentFrame);

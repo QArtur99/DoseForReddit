@@ -23,7 +23,6 @@ import com.qartf.doseforreddit.presenter.sharedPreferences.SharedPreferencesMVP;
 import com.qartf.doseforreddit.presenter.subreddit.SubredditMVP;
 import com.qartf.doseforreddit.presenter.token.TokenMVP;
 import com.qartf.doseforreddit.presenter.utility.Constants;
-import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.dialog.LoginDialog;
 
@@ -202,7 +201,12 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 break;
             case R.id.helpAndFeedback:
                 posioton = 7;
-                Navigation.goToMail(this);
+                setTitle("/r/" + "DoseForReddit");
+                sharedPreferences.edit().putInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_VIEW).apply();
+                sharedPreferences.edit().putString(prefPostSubreddit, "DoseForReddit").apply();
+                sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
+                setPostFragment();
+                getSubredditPosts(Constants.PostLoaderId.POST_VIEW);
                 break;
         }
         navigationView.getMenu().getItem(posioton).setChecked(true);

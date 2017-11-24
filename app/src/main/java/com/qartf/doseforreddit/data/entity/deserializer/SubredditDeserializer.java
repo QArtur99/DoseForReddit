@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.qartf.doseforreddit.data.entity.Subreddit;
+import com.qartf.doseforreddit.presenter.utility.Utility;
 
 import java.lang.reflect.Type;
 
@@ -21,31 +22,31 @@ public class SubredditDeserializer implements JsonDeserializer<Subreddit> {
         JsonObject data = jsonObject.getAsJsonObject("data");
 
         Subreddit comment = new Subreddit(
-                getNullAsEmptyString(jsonObject.get("kind")),
-                getNullAsEmptyString(data.get("banner_img")),
-                getNullAsEmptyString(data.get("user_is_banned")),
-                getNullAsEmptyString(data.get("wiki_enabled")),
-                getNullAsEmptyString(data.get("show_media")),
-                getNullAsEmptyString(data.get("id")),
-                getNullAsEmptyString(data.get("display_name_prefixed")),
-                getNullAsEmptyString(data.get("submit_text")),
-                getNullAsEmptyString(data.get("display_name")),
-                getNullAsEmptyString(data.get("title")),
-                getNullAsEmptyString(data.get("user_has_favorited")),
-                getNullAsEmptyString(data.get("over18")),
-                getNullAsEmptyString(data.get("description")),
-                getNullAsEmptyString(data.get("user_is_muted")),
-                getNullAsEmptyString(data.get("submit_link_label")),
-                getNullAsEmptyString(data.get("subscribers")),
-                getNullAsEmptyString(data.get("submit_text_label")),
-                getNullAsEmptyString(data.get("whitelist_status")),
-                getNullAsEmptyString(data.get("key_color")),
-                getNullAsEmptyString(data.get("name")),
-                getNullAsEmptyString(data.get("url")),
-                getNullAsEmptyString(data.get("created_utc")),
-                getNullAsEmptyString(data.get("user_is_contributor")),
-                getNullAsEmptyString(data.get("subreddit_type")),
-                getNullAsEmptyString(data.get("user_is_subscriber"))
+                Utility.handleEscapeCharacter(getNullAsEmptyString(jsonObject.get("kind"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("banner_img"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("user_is_banned"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("wiki_enabled"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("show_media"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("id"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("display_name_prefixed"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("submit_text"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("display_name"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("title"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("user_has_favorited"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("over18"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("description"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("user_is_muted"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("submit_link_label"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subscribers"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("submit_text_label"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("whitelist_status"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("key_color"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("name"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("url"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("created_utc"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("user_is_contributor"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("subreddit_type"))),
+                Utility.handleEscapeCharacter(getNullAsEmptyString(data.get("user_is_subscriber")))
         );
 
         return comment;

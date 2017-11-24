@@ -79,7 +79,7 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
         @BindView(R.id.subredditTitleFrame) RelativeLayout subredditTitleFrame;
 
         @BindString(R.string.subscribers) String subscribers;
-        @BindString(R.string.subsribe) String subsribe;
+        @BindString(R.string.subscribe) String subscribe;
         @BindString(R.string.unsubscribe) String unsubscribe;
         @BindString(R.string.privateSub) String privateSub;
         @BindString(R.string.is18) String is18;
@@ -119,7 +119,7 @@ public class SubredditAdapter extends RecyclerView.Adapter<SubredditAdapter.MyVi
             isSubscribe.setSelected(false);
             if (subreddit.user_is_subscriber.equals("false")) {
                 isSubscribe.setActivated(false);
-                isSubscribe.setText(subsribe);
+                isSubscribe.setText(subscribe);
             } else if (subreddit.user_is_subscriber.equals("true")) {
                 isSubscribe.setActivated(true);
                 isSubscribe.setText(unsubscribe);

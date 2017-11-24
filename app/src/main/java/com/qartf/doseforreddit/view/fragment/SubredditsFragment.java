@@ -27,7 +27,7 @@ import butterknife.BindString;
 public class SubredditsFragment extends BaseFragmentMvp<SubredditsFragment.SubredditsFragmentInt> implements SubredditMVP.View
         , SubredditAdapter.ListItemClickListener, SwipyRefreshLayout.OnRefreshListener {
 
-    @BindString(R.string.subsribe) String subsribe;
+    @BindString(R.string.subscribe) String subsribe;
     @BindString(R.string.unsubscribe) String unsubscribe;
     @Inject
     SubredditMVP.Presenter presenter;
