@@ -270,7 +270,6 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
                 break;
             case R.id.postDetialsSettings:
                 new PostDetailSettings(getActivity(), presenter.getPost(), this, this);
-//                Navigation.shareContent(getActivity(), presenter.getPost().url);
                 break;
         }
     }
