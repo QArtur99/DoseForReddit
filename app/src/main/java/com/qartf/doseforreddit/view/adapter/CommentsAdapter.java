@@ -1,6 +1,7 @@
 package com.qartf.doseforreddit.view.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,8 +44,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.bind(position);
-
-
     }
 
     public Object getDataAtPosition(int position) {
@@ -70,8 +69,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         return data;
     }
 
+    public CommentsAdapter getCommentAdapter() {
+        return this;
+    }
+
     public interface OnListItemClickListener {
-        void onCommentListItemClick(int clickedItemIndex, View view);
+        void onCommentListItemClick(Comment comment, CommentsAdapter commentsAdapter, View view);
+
         void onCommentSelected(int clickedItemIndex, View expandableView, View parent);
     }
 
@@ -83,30 +87,63 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         @BindView(R.id.recyclerView) RecyclerView recyclerView;
         @BindView(R.id.childrenCommentFrame) LinearLayout childrenCommentFrame;
         @BindView(R.id.expandArea) LinearLayout expandArea;
+        @BindView(R.id.loadMore) LinearLayout loadMore;
+        @BindView(R.id.loadingChild) LinearLayout loadingChild;
         @BindView(R.id.commentItemFrame) LinearLayout commentFrame;
         @BindView(R.id.commentVoteUp) ImageView commentVoteUp;
         @BindView(R.id.commentVoteDown) ImageView commentVoteDown;
 
+        @BindView(R.id.save) ImageView save;
+        @BindView(R.id.reply) ImageView reply;
+        @BindView(R.id.moreSettings) ImageView moreSettings;
+
         public MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            loadMore.setOnClickListener(this);
             commentFrame.setOnClickListener(this);
             commentVoteUp.setOnClickListener(this);
             commentVoteDown.setOnClickListener(this);
+
+            save.setOnClickListener(this);
+            reply.setOnClickListener(this);
+            moreSettings.setOnClickListener(this);
         }
 
         public void bind(int position) {
-            Comment post = (Comment) getDataAtPosition(position);
-            loadData(post);
+            Comment comment = (Comment) getDataAtPosition(position);
+            if (comment.kind.equals("more")) {
+                if (comment.childs != null && comment.childs.size() > 0) {
+                    if (getItemCount() > position + 1) {
+                        loadMore.setVisibility(View.GONE);
+                        loadingChild.setVisibility(View.GONE);
+
+                    } else {
+                        loadMore.setVisibility(View.VISIBLE);
+                        loadingChild.setVisibility(View.GONE);
+                    }
+                }
+                commentFrame.setVisibility(View.GONE);
+                return;
+            }
+            loadMore.setVisibility(View.GONE);
+            loadingChild.setVisibility(View.GONE);
+            commentFrame.setVisibility(View.VISIBLE);
+            loadData(comment);
         }
 
         private void loadData(Comment comment) {
+            if(comment.saved.equals("true")){
+                save.setColorFilter(ContextCompat.getColor(context, R.color.commentSave));
+            }else{
+                save.setColorFilter(ContextCompat.getColor(context, R.color.arrowColor));
+            }
             String authorString = comment.author + DOT;
             author.setText(authorString);
             Utility.upsFormatPoints(score, Integer.valueOf(comment.ups));
             time.setText(Utility.timeFormat(comment.createdUtc));
             body.setText(comment.body);
-            if(comment.commentList != null){
+            if (comment.commentList != null) {
                 childrenCommentFrame.setVisibility(View.VISIBLE);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
                 layoutManager.setAutoMeasureEnabled(true);
@@ -120,12 +157,28 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
+            Comment comment = (Comment) getDataAtPosition(clickedPosition);
             switch (v.getId()) {
+                case R.id.moreSettings:
+                    mOnClickListener.onCommentListItemClick(comment, getCommentAdapter(), v);
+                    break;
+                case R.id.reply:
+                    mOnClickListener.onCommentListItemClick(comment, getCommentAdapter(), v);
+                    break;
+                case R.id.save:
+                    mOnClickListener.onCommentListItemClick(comment, getCommentAdapter(), v);
+                    break;
+                case R.id.loadMore:
+                    loadMore.setVisibility(View.GONE);
+                    loadingChild.setVisibility(View.VISIBLE);
+                    loadingChild.setActivated(true);
+                    mOnClickListener.onCommentListItemClick(comment, getCommentAdapter(), v);
+                    break;
                 case R.id.commentVoteUp:
-                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
+                    mOnClickListener.onCommentListItemClick(comment, getCommentAdapter(), v);
                     break;
                 case R.id.commentVoteDown:
-                    mOnClickListener.onCommentListItemClick(clickedPosition, v);
+                    mOnClickListener.onCommentListItemClick(comment, getCommentAdapter(), v);
                     break;
                 case R.id.commentItemFrame:
                     mOnClickListener.onCommentSelected(clickedPosition, expandArea, commentFrame);

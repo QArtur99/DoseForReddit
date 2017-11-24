@@ -10,7 +10,10 @@ import com.qartf.doseforreddit.presenter.token.TokenModule;
 import com.qartf.doseforreddit.view.activity.BaseNavigationMainActivity;
 import com.qartf.doseforreddit.view.activity.CommentsActivity;
 import com.qartf.doseforreddit.view.activity.MainActivity;
+import com.qartf.doseforreddit.view.activity.StartActivity;
 import com.qartf.doseforreddit.view.activity.SubmitActivity;
+import com.qartf.doseforreddit.view.dialog.CommentSettingsDialog;
+import com.qartf.doseforreddit.view.dialog.PostDetailSettings;
 import com.qartf.doseforreddit.view.fragment.DetailFragment;
 import com.qartf.doseforreddit.view.fragment.PostsFragment;
 import com.qartf.doseforreddit.view.fragment.SubmitFragment;
@@ -27,6 +30,7 @@ import dagger.Component;
 public interface ApplicationComponent {
 
 
+    void inject(StartActivity startActivity);
     void inject(BaseNavigationMainActivity baseNavigationMainActivity);
     void inject(MainActivity mainActivity);
     void inject(CommentsActivity commentsActivity);
@@ -35,6 +39,8 @@ public interface ApplicationComponent {
     void inject(SubredditsFragment subredditsFragment);
     void inject(DetailFragment detailFragment);
     void inject(SubmitFragment submitFragment);
+    void inject(CommentSettingsDialog commentSettingsDialog);
+    void inject(PostDetailSettings postDetailSettings);
     void inject(RedditWidgetService redditWidgetService);
 
 

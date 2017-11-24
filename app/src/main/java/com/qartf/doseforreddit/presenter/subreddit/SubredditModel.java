@@ -18,13 +18,13 @@ public class SubredditModel implements SubredditMVP.Model {
 
 
     @Override
-    public Observable<SubredditParent> getSubreddits() {
-        return repositoryRetrofit.getSubreddits();
+    public Observable<SubredditParent> getSubreddits(String after) {
+        return repositoryRetrofit.getSubreddits(after);
     }
 
     @Override
-    public Observable<SubredditParent> getMineSubreddits() {
-        return repositoryRetrofit.getMineSubreddits();
+    public Observable<SubredditParent> getMineSubreddits(String after) {
+        return repositoryRetrofit.getMineSubreddits(after);
     }
 
     @Override

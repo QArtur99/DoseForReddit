@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/commentItemFrame"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal">
@@ -33,19 +35,19 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
+                android:contentDescription="@string/post_vote_up"
                 android:src="@drawable/up"
-                android:tint="@color/colorBlack"
-                android:contentDescription="@string/post_vote_up"/>
+                android:tint="@color/colorBlack"/>
 
             <ImageView
-                android:layout_margin="1dp"
                 android:id="@+id/upArrow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/upArrowB"
+                android:layout_margin="1dp"
+                android:contentDescription="@string/post_vote_up"
                 android:src="@drawable/up"
-                android:tint="@color/arrowColor"
-                android:contentDescription="@string/post_vote_up"/>
+                android:tint="@color/arrowColor"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -60,19 +62,19 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
+                android:contentDescription="@string/post_vote_down"
                 android:src="@drawable/down"
-                android:tint="@color/colorBlack"
-                android:contentDescription="@string/post_vote_down"/>
+                android:tint="@color/colorBlack"/>
 
             <ImageView
-                android:layout_margin="1dp"
                 android:id="@+id/downArrow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/downArrowB"
+                android:layout_margin="1dp"
+                android:contentDescription="@string/post_vote_down"
                 android:src="@drawable/down"
-                android:tint="@color/arrowColor"
-                android:contentDescription="@string/post_vote_down"/>
+                android:tint="@color/arrowColor"/>
         </RelativeLayout>
 
 
@@ -152,12 +154,19 @@
         android:layout_weight="4"
         android:padding="2dp">
 
-        <ImageView
-            android:id="@+id/thumbnail"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/thumbnail"/>
+            android:orientation="horizontal"
+            app:cardCornerRadius="5dp">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/thumbnail"
+                android:scaleType="centerCrop"/>
+        </android.support.v7.widget.CardView>
     </RelativeLayout>
 </LinearLayout>

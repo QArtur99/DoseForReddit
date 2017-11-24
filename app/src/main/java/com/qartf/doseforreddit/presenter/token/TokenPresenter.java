@@ -55,7 +55,7 @@ public class TokenPresenter implements TokenMVP.Presenter {
             @Override
             public void onNext(@NonNull String accessToken) {
                 if (view != null) {
-                    view.tokenInfo(accessToken);
+//                    view.tokenInfo(accessToken);
                     view.getPosts();
                 }
             }

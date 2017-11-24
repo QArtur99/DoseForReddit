@@ -14,7 +14,7 @@ public class Constants {
         public static final String CLIENT_ID = "XX9hXAmumdov9Q";
         public static final String REDIRECT_URI = "http://www.example.com/unused/redirect/uri";
         public static final String STATE = "MY_RANDOM_STRING_1";
-        public static final String SCOPE = "identity edit flair mysubreddits read report submit subscribe vote";
+        public static final String SCOPE = "identity edit flair modposts mysubreddits read report save submit subscribe vote";
         public static final String ACCESS_TOKEN_URL = "https://www.reddit.com/api/v1/access_token";
         public static final String REVOKE_TOKEN_URL = "https://www.reddit.com/api/v1/revoke_token";
 
@@ -29,10 +29,20 @@ public class Constants {
         public static final int SUBMIT = 14;
     }
 
+    public class PostLoaderId {
+        public static final int POST_VIEW = 0;
+        public static final int SEARCH_POSTS = 1;
+        public static final int POST_HOME = 2;
+    }
+
+
+
+
     public class Pref {
         public static final String prefSecondFragment = "secondFragment";
         public static final String prefDetailFragment = "detailFragment";
         public static final String prefSubmitFragment = "submitFragment";
+        public static final String prefPostLoaderId = "postLoaderId";
     }
 
     public class Utility{

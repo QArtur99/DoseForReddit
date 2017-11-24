@@ -7,6 +7,7 @@
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                      xmlns:app="http://schemas.android.com/apk/res-auto"
                                                      android:id="@+id/mainActivityFrame"
+                                                     android:layout_above="@+id/adView"
                                                      android:layout_width="match_parent"
                                                      android:layout_height="match_parent"
                                                      android:orientation="vertical">
@@ -58,7 +59,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@color/adsBackGround"
-        app:adSize="BANNER"
-        app:adUnitId="@string/banner_ad_unit_id"/>
+        app:adSize="SMART_BANNER"
+        app:adUnitId="@string/BANNER_AD_UNIT_ID"/>
 
 </RelativeLayout>

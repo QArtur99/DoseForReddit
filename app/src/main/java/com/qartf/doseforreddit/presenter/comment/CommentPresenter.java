@@ -2,8 +2,11 @@ package com.qartf.doseforreddit.presenter.comment;
 
 import android.support.annotation.Nullable;
 
+import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.data.entity.SubmitParent;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -55,6 +58,62 @@ public class CommentPresenter implements CommentMVP.Presenter {
     }
 
     @Override
+    public void loadChildComments(Comment comment) {
+        DisposableObserver<ChildCommentParent> disposableObserver = model.getMorechildren(comment).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ChildCommentParent>() {
+
+            @Override
+            public void onNext(@NonNull ChildCommentParent postParent) {
+                if (view != null) {
+                    view.setChildCommentParent(postParent);
+                    view.setLoadIndicatorOff();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                String xx = e.toString();
+                String aa = xx;
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+    @Override
+    public void postComment(String fullname, String text) {
+        DisposableObserver<SubmitParent> disposableObserver = model.postComment(fullname, text).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<SubmitParent>() {
+
+            @Override
+            public void onNext(@NonNull SubmitParent postParent) {
+                if (view != null) {
+                    if(postParent.success){
+                        view.loadComments();
+                    }else{
+                        view.error("You are doing that too much. try again in 5 minute");
+                    }
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+
+    @Override
     public void postVote(String dir, String fullname) {
         DisposableObserver<ResponseBody> disposableObserver = model.postVote(dir, fullname).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
@@ -63,6 +122,103 @@ public class CommentPresenter implements CommentMVP.Presenter {
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
 //                    view.error("Success");
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+    @Override
+    public void postSave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postSave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.setSaveStarActivated();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+
+    }
+
+    @Override
+    public void postUnsave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postUnsave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.setSaveStarUnActivated();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+    @Override
+    public void postDel(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postDel(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.loadComments();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() {    }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+    @Override
+    public void postDelPost(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postDel(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.loadPosts();
                 }
             }
 
@@ -102,7 +258,7 @@ public class CommentPresenter implements CommentMVP.Presenter {
 
     @Override
     public void loadPostData() {
-        if (view != null) {
+        if (view != null && post != null) {
             view.setUps(Utility.upsFormatS(Integer.valueOf(post.ups)));
             view.setLikes(post.likes);
             view.setTitle(post.title);

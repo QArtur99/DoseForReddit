@@ -1,5 +1,6 @@
 package com.qartf.doseforreddit.view.fragment;
 
+import android.os.Handler;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -22,11 +23,16 @@ import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.entity.Comment;
 import com.qartf.doseforreddit.data.entity.CommentParent;
 import com.qartf.doseforreddit.data.entity.Post;
+import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
 import com.qartf.doseforreddit.presenter.comment.CommentMVP;
 import com.qartf.doseforreddit.presenter.root.App;
+import com.qartf.doseforreddit.presenter.utility.Constants;
 import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.adapter.CommentsAdapter;
+import com.qartf.doseforreddit.view.dialog.CommentSettingsDialog;
+import com.qartf.doseforreddit.view.dialog.PostDetailSettings;
+import com.qartf.doseforreddit.view.dialog.QuickReplyDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,11 +44,12 @@ import butterknife.BindString;
 import butterknife.BindView;
 
 public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmentInt> implements CommentMVP.View, CommentsAdapter.OnListItemClickListener,
-        View.OnClickListener, SwipyRefreshLayout.OnRefreshListener {
+        View.OnClickListener, SwipyRefreshLayout.OnRefreshListener, QuickReplyDialog.QuickReplyInter, CommentSettingsDialog.CommentSettingsInter,
+        PostDetailSettings.PostDetailSettingsInter {
 
 
     @BindView(R.id.thumbnail) ImageView thumbnail;
-    @BindView(R.id.shareAction) ImageView shareAction;
+    @BindView(R.id.postDetialsSettings) ImageView postDetialsSettings;
     @BindView(R.id.ups) TextView ups;
     @BindView(R.id.title) TextView title;
     @BindView(R.id.subreddit) TextView subreddit;
@@ -65,16 +72,17 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @BindString(R.string.pref_post_detail_sub) String prefPostDetailSub;
     @BindString(R.string.pref_post_detail_id) String prefPostDetailId;
     @BindString(R.string.pref_post_detail_sort_key) String prefPostDetailSortKey;
-
-    private HashMap<String, String> spinnerMap;
-    private boolean isOpen = false;
-
-    private CommentsAdapter commentsAdapter;
-    private LinearLayout previousViewSelected;
-    private LinearLayout previousViewExpanded;
-
     @Inject
     CommentMVP.Presenter presenter;
+    private HashMap<String, String> spinnerMap;
+    private boolean isOpen = false;
+    private CommentsAdapter commentsAdapter;
+    private CommentsAdapter commentsChildAdapter;
+    private LinearLayout previousViewSelected;
+    private LinearLayout previousViewExpanded;
+    private ImageView saveStar;
+    private Comment comment;
+    private String logged;
 
     @Override
     public int getContentLayout() {
@@ -106,59 +114,75 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         downContainer.setOnClickListener(this);
         detailContainer.setOnClickListener(this);
         imageContainer.setOnClickListener(this);
-        shareAction.setOnClickListener(this);
+        postDetialsSettings.setOnClickListener(this);
     }
 
-    public void setUps(String upsString){
+    public void setUps(String upsString) {
         ups.setText(upsString);
     }
 
     @Override
     public void setLikes(String postLikes) {
-        if(postLikes.equals("true")){
+        if (postLikes.equals("true")) {
             upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
-        }else if(postLikes.equals("false")){
+        } else if (postLikes.equals("false")) {
             downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
         }
     }
 
-    public void setTitle(String titleString){
+    public void setTitle(String titleString) {
         title.setText(titleString);
     }
 
-    public void setLinkFlairText(String linkFlairTextString){
+    public void setLinkFlairText(String linkFlairTextString) {
         Utility.loadLinkFlairText(linkFlairText, linkFlairTextString);
     }
 
-    public void setDomain(String domainString){
+    public void setDomain(String domainString) {
         domain.setText(domainString);
     }
 
-    public void setSubreddit(String subredditString){
+    public void setSubreddit(String subredditString) {
         subreddit.setText(subredditString);
     }
 
-    public void setComments(String commentsString){
+    public void setComments(String commentsString) {
         comments.setText(commentsString);
     }
 
-    public void setTime(String timeString){
+    public void setTime(String timeString) {
         time.setText(timeString);
     }
 
-    public void setThumbnail(Post post){
+    public void setThumbnail(Post post) {
         Utility.loadThumbnail(getContext(), post, thumbnail);
     }
 
-    public void setSelftext(String selftextString){
+    public void setSelftext(String selftextString) {
         if (selftextString != null && !selftextString.isEmpty()) {
             selftext.setVisibility(View.VISIBLE);
             selftext.setText(selftextString);
         }
     }
 
-    public void setCommentsNo(String commentsNoString){
+    public void setCommentsNo(String commentsNoString) {
         commentsNo.setText(commentsNoString);
+    }
+
+    @Override
+    public void setSaveStarActivated() {
+        if (saveStar != null) {
+            comment.saved = "true";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.commentSave));
+        }
+    }
+
+    @Override
+    public void setSaveStarUnActivated() {
+        if (saveStar != null) {
+            comment.saved = "false";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+        }
     }
 
     private void setSpinner() {
@@ -192,10 +216,24 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         });
     }
 
+
+    @Override
     public void loadComments() {
-        sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
-        sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
-        presenter.loadComments();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (presenter.getPost() != null) {
+                    sharedPreferences.edit().putString(prefPostDetailId, presenter.getPost().id).apply();
+                    sharedPreferences.edit().putString(prefPostDetailSub, presenter.getPost().subreddit).apply();
+                    presenter.loadComments();
+                }
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void loadPosts() {
+        mCallback.loadPosts();
     }
 
     public void setAdapter(List<Comment> movieList) {
@@ -211,14 +249,18 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.upContainer:
-                upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
-                downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
-                presenter.postVote("1", presenter.getPost().name);
+                if(checkUserIsLogged()){
+                    upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
+                    downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                    presenter.postVote("1", presenter.getPost().name);
+                }
                 break;
             case R.id.downContainer:
-                upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
-                downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
-                presenter.postVote("-1", presenter.getPost().name);
+                if(checkUserIsLogged()){
+                    upArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                    downArrow.setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
+                    presenter.postVote("-1", presenter.getPost().name);
+                }
                 break;
             case R.id.detailContainer:
                 Navigation.startLinkActivity(getActivity(), presenter.getPost().url);
@@ -226,21 +268,64 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
             case R.id.imageContainer:
                 Navigation.startIntentPreview(getActivity(), presenter.getPost());
                 break;
-            case R.id.shareAction:
-                Navigation.shareContent(getActivity(), presenter.getPost().url);
+            case R.id.postDetialsSettings:
+                new PostDetailSettings(getActivity(), presenter.getPost(), this, this);
+//                Navigation.shareContent(getActivity(), presenter.getPost().url);
                 break;
         }
     }
 
     @Override
-    public void onCommentListItemClick(int clickedItemIndex, View view) {
-        Comment comment = (Comment) commentsAdapter.getDataAtPosition(clickedItemIndex);
+    public boolean checkUserIsLogged(){
+        boolean user = false;
+        logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+        if (logged.equals(Constants.Utility.ANONYMOUS)) {
+            mCallback.loginSnackBar();
+            user = false;
+        } else {
+            user = true;
+        }
+        return user;
+    }
+
+
+    @Override
+    public void onCommentListItemClick(Comment comment, CommentsAdapter commentsAdapter, View view) {
         switch (view.getId()) {
+            case R.id.moreSettings:
+                new CommentSettingsDialog(getActivity(), comment, this);
+                break;
+
+            case R.id.reply:
+                if(checkUserIsLogged()) {
+                    new QuickReplyDialog(getContext(), comment.name, this);
+                }
+                break;
+            case R.id.save:
+                if(checkUserIsLogged()){
+                    this.comment = comment;
+                    this.saveStar = (ImageView) view;
+                    if (comment.saved.equals("true")) {
+                        presenter.postUnsave(comment.name);
+                    } else {
+                        presenter.postSave(comment.name);
+                    }
+                }
+                break;
+            case R.id.loadMore:
+                this.commentsChildAdapter = commentsAdapter;
+                comment.parentId = presenter.getPost().name;
+                presenter.loadChildComments(comment);
+                break;
             case R.id.commentVoteUp:
-                presenter.postVote("1", comment.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("1", comment.name);
+                }
                 break;
             case R.id.commentVoteDown:
-                presenter.postVote("-1", comment.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("-1", comment.name);
+                }
                 break;
         }
     }
@@ -280,7 +365,6 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
         presenter.loadComments();
-        swipyRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -293,6 +377,14 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         commentsAdapter.clearMovies();
         emptyView.setVisibility(View.GONE);
         commentsAdapter.setMovies(postParent.commentList);
+        swipyRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void setChildCommentParent(ChildCommentParent postParent) {
+        if (postParent.json != null) {
+            commentsChildAdapter.setMovies(postParent.json.data.commentList);
+        }
     }
 
     @Override
@@ -305,7 +397,31 @@ public class DetailFragment extends BaseFragmentMvp<DetailFragment.DetailFragmen
         loadingIndicator.setVisibility(View.GONE);
     }
 
+    @Override
+    public void submitComment(String fullname, String submitText) {
+        presenter.postComment(fullname, submitText);
+    }
+
+    @Override
+    public void removeComment(String fullname) {
+        presenter.postDel(fullname);
+    }
+
+    @Override
+    public void loginSnackBar() {
+        mCallback.loginSnackBar();
+    }
+
+    @Override
+    public void removePost(String fullname) {
+        presenter.postDelPost(fullname);
+    }
+
 
     public interface DetailFragmentInt {
+
+        void loginSnackBar();
+
+        void loadPosts();
     }
 }

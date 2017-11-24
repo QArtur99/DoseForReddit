@@ -3,9 +3,14 @@
 
     <group android:checkableBehavior="single" android:id="@+id/g1">
         <item
-            android:id="@+id/frontPage"
+            android:id="@+id/homePage"
             android:checked="false"
             android:icon="@drawable/ic_home"
+            android:title="@string/homePage" />
+        <item
+            android:id="@+id/frontPage"
+            android:checked="false"
+            android:icon="@drawable/ic_show_chart"
             android:title="@string/drawerFrontPage" />
         <item
             android:id="@+id/allPage"

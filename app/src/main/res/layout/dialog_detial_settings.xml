@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:cardCornerRadius="5dp"
+                                    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleDialogSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dialogTitleBackground"
+            android:text="Options"
+            android:gravity="start"
+            android:padding="10dp"
+            android:textColor="@color/dialogTitleTextColor"
+            android:textSize="20sp"
+            android:textStyle="normal|bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/arrowColor"/>
+
+        <TextView
+            android:id="@+id/delete"
+            android:text="Delete"
+            android:background="@drawable/ripple_list_item"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/arrowColor"/>
+
+        <TextView
+            android:id="@+id/goToUrl"
+            android:text="Go To URL"
+            android:background="@drawable/ripple_list_item"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/arrowColor"/>
+
+        <TextView
+            android:id="@+id/share"
+            android:text="Share"
+            android:padding="10dp"
+            android:background="@drawable/ripple_list_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/arrowColor"/>
+
+        <TextView
+            android:id="@+id/submitComment"
+            android:text="Submit Comment"
+            android:background="@drawable/ripple_list_item"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

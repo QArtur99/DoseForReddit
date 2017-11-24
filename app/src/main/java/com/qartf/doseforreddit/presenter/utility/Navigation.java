@@ -102,6 +102,9 @@ public class Navigation {
         } else if (postHint.equals("self") || post.domain.contains("self") && !post.selftext.isEmpty()) {
             link = post.selftext;
             intent = new Intent(fragmentActivity, SelfActivity.class);
+        }else if(postHint.isEmpty() && !post.thumbnail.isEmpty()){
+            link = post.thumbnail;
+            intent = new Intent(fragmentActivity, ImageActivity.class);
         }
 
         if (intent != null) {

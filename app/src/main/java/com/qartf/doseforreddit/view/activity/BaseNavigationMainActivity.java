@@ -157,36 +157,51 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
         if (menuItem.isChecked()) menuItem.setChecked(false);
         else menuItem.setChecked(true);
         switch (menuItem.getItemId()) {
-            case R.id.frontPage:
-                sharedPreferences.edit().putString(prefPostSubreddit, "popular").apply();
+
+            case R.id.homePage:
+                setTitle("Home");
+                sharedPreferences.edit().putInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_HOME).apply();
                 sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
                 posioton = 0;
                 setPostFragment();
+                getSubredditPosts(Constants.PostLoaderId.POST_HOME);
                 break;
-            case R.id.allPage:
-                sharedPreferences.edit().putString(prefPostSubreddit, "all").apply();
+            case R.id.frontPage:
+                setTitle("/r/" + "popular");
+                sharedPreferences.edit().putInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_VIEW).apply();
+                sharedPreferences.edit().putString(prefPostSubreddit, "popular").apply();
                 sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
                 posioton = 1;
                 setPostFragment();
+                getSubredditPosts(Constants.PostLoaderId.POST_VIEW);
+                break;
+            case R.id.allPage:
+                setTitle("/r/" + "all");
+                sharedPreferences.edit().putInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_VIEW).apply();
+                sharedPreferences.edit().putString(prefPostSubreddit, "all").apply();
+                sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
+                posioton = 2;
+                setPostFragment();
+                getSubredditPosts(Constants.PostLoaderId.POST_VIEW);
                 break;
             case R.id.submit:
                 setSubmitFragment();
-                posioton = 2;
+                posioton = 3;
                 break;
             case R.id.mySubreddits:
                 setMySubreddits();
-                posioton = 2;
+                posioton = 4;
                 break;
             case R.id.searchPosts:
-                posioton = 3;
+                posioton = 5;
                 searchDialog(Constants.Id.SEARCH_POSTS);
                 break;
             case R.id.searchSubreddits:
-                posioton = 4;
+                posioton = 6;
                 searchDialog(Constants.Id.SEARCH_SUBREDDITS);
                 break;
             case R.id.helpAndFeedback:
-                posioton = 5;
+                posioton = 7;
                 Navigation.goToMail(this);
                 break;
         }
@@ -221,6 +236,10 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
         }
         return true;
     }
+
+    public abstract void setTitle(String title);
+
+    public abstract void getSubredditPosts(int postLoaderId);
 
     public abstract void loginReddit();
 

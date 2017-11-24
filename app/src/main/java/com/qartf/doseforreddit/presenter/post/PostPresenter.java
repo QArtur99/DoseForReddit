@@ -23,9 +23,36 @@ public class PostPresenter implements PostMVP.Presenter {
         this.model = model;
     }
 
+
     @Override
-    public void loadPosts() {
-        DisposableObserver<PostParent> disposableObserver = model.getPosts().observeOn(AndroidSchedulers.mainThread()).
+    public void loadHome(String after) {
+        DisposableObserver<PostParent> disposableObserver = model.getHome(after).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
+
+            @Override
+            public void onNext(@NonNull PostParent postParent) {
+                if (view != null) {
+                    view.setPostParent(postParent);
+                    view.setLoadIndicatorOff();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() { }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+
+    @Override
+    public void loadPosts(String after) {
+        DisposableObserver<PostParent> disposableObserver = model.getPosts(after).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
 
             @Override
@@ -50,8 +77,8 @@ public class PostPresenter implements PostMVP.Presenter {
     }
 
     @Override
-    public void searchPosts() {
-        DisposableObserver<PostParent> disposableObserver = model.searchPosts().observeOn(AndroidSchedulers.mainThread()).
+    public void searchPosts(String after) {
+        DisposableObserver<PostParent> disposableObserver = model.searchPosts(after).observeOn(AndroidSchedulers.mainThread()).
                 subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<PostParent>() {
 
             @Override
@@ -82,7 +109,7 @@ public class PostPresenter implements PostMVP.Presenter {
             @Override
             public void onNext(@NonNull ResponseBody postParent) {
                 if (view != null) {
-//                    view.error("Success");
+                    view.setVote();
                 }
             }
 
@@ -98,6 +125,57 @@ public class PostPresenter implements PostMVP.Presenter {
         disposable.add(disposableObserver);
     }
 
+
+    @Override
+    public void postSave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postSave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.setSaveStarActivated();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() { }
+
+        });
+        disposable.add(disposableObserver);
+
+    }
+
+    @Override
+    public void postUnsave(String fullname) {
+        DisposableObserver<ResponseBody> disposableObserver = model.postUnsave(fullname).observeOn(AndroidSchedulers.mainThread()).
+                subscribeOn(Schedulers.io()).subscribeWith(new DisposableObserver<ResponseBody>() {
+
+            @Override
+            public void onNext(@NonNull ResponseBody postParent) {
+                if (view != null) {
+                    view.setSaveStarUnActivated();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                checkConnection();
+            }
+
+            @Override
+            public void onComplete() { }
+
+        });
+        disposable.add(disposableObserver);
+    }
+
+
     @Override
     public void onStop() {
         if (disposable != null && !disposable.isDisposed()) {
@@ -105,13 +183,14 @@ public class PostPresenter implements PostMVP.Presenter {
         }
     }
 
-
     public void checkConnection() {
         if (view != null) {
             if (model.checkConnection()) {
                 view.setInfoServerIsBroken();
+                view.setRefreshing();
             } else {
                 view.setInfoNoConnection();
+                view.setRefreshing();
             }
         }
     }

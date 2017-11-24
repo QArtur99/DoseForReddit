@@ -1,7 +1,13 @@
 package com.qartf.doseforreddit.view.fragment;
 
+import android.support.transition.TransitionManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
@@ -12,6 +18,7 @@ import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.presenter.post.PostMVP;
 import com.qartf.doseforreddit.presenter.root.App;
+import com.qartf.doseforreddit.presenter.utility.Constants;
 import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.view.adapter.PostsAdapter;
 
@@ -26,9 +33,18 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
     public GridLayoutManager layoutManager;
     public PostsAdapter postsAdapter;
-
     @Inject
     PostMVP.Presenter presenter;
+    private PostParent postParent;
+    private int postLoaderId;
+    private LinearLayout previousViewSelected;
+    private LinearLayout previousViewExpanded;
+    private boolean isOpen = false;
+    private int selectedPosition;
+    private Post post;
+    private ImageView saveStar;
+    private String logged;
+    private View voteConteinerView;
 
     @Override
     public int getContentLayout() {
@@ -38,12 +54,13 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     @Override
     public void initComponents() {
         ((App) getContext().getApplicationContext()).getComponent().inject(this);
+        postLoaderId = sharedPreferences.getInt(Constants.Pref.prefPostLoaderId, Constants.PostLoaderId.POST_HOME);
         emptyView.setVisibility(View.GONE);
         swipyRefreshLayout.setOnRefreshListener(this);
-        setAdapter(new ArrayList<Post>());
+        setAdapter(new ArrayList<>());
     }
 
-    public void setAdapter(List<Post> movieList) {
+    public void setAdapter(List<Object> movieList) {
         layoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -55,7 +72,8 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     public void onStart() {
         super.onStart();
         presenter.setView(this);
-        presenter.loadPosts();
+        postsAdapter.clearPosts();
+        loadPosts("");
     }
 
     @Override
@@ -65,9 +83,41 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
 
     @Override
     public void setPostParent(PostParent postParent) {
-        postsAdapter.clearMovies();
+        this.postParent = postParent;
         emptyView.setVisibility(View.GONE);
-        postsAdapter.setMovies(postParent.postList);
+
+        postsAdapter.setPosts(addNativeAds(postParent));
+        swipyRefreshLayout.setRefreshing(false);
+    }
+
+    private List<Object> addNativeAds(PostParent postParent) {
+        List<Object> mRecyclerViewItems = new ArrayList<>();
+        mRecyclerViewItems.addAll(postsAdapter.getData());
+        mRecyclerViewItems.addAll(postParent.postList);
+        postsAdapter.clearPosts();
+
+//        if(!Utility.isTablet(getContext())) {
+//            for (int i = 0; i < mRecyclerViewItems.size(); i += AD_RATE) {
+//                if (i != 0 && !(mRecyclerViewItems.get(i) instanceof NativeContentAdView)) {
+//                    final NativeContentAdView adView = new NativeContentAdView(getContext());
+//                    mRecyclerViewItems.add(i, adView);
+//                }
+//
+//            }
+//        }
+        return mRecyclerViewItems;
+    }
+
+    public boolean checkUserIsLogged(){
+        boolean user = false;
+        logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+        if (logged.equals(Constants.Utility.ANONYMOUS)) {
+            mCallback.loginSnackBar();
+            user = false;
+        } else {
+            user = true;
+        }
+        return user;
     }
 
     @Override
@@ -81,7 +131,31 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
     }
 
     @Override
+    public void setSaveStarActivated() {
+        if(saveStar != null){
+            post.saved = "true";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.commentSave));
+        }
+    }
+
+    @Override
+    public void setSaveStarUnActivated() {
+        if(saveStar != null){
+            post.saved = "false";
+            saveStar.setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+        }
+    }
+
+    @Override
+    public void setRefreshing() {
+        if(swipyRefreshLayout != null) {
+            swipyRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
     public void onListItemClick(int clickedItemIndex, View view) {
+        voteConteinerView = view;
         Post post = (Post) postsAdapter.getDataAtPosition(clickedItemIndex);
         switch (view.getId()) {
             case R.id.imageContainer:
@@ -95,25 +169,140 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
                     Navigation.startDetailActivity(getActivity(), post);
                 }
                 break;
+            case R.id.save:
+                if(checkUserIsLogged()){
+                    this.post = post;
+                    this.saveStar = (ImageView) view;
+                    if (post.saved.equals("true")) {
+                        presenter.postUnsave(post.name);
+                    } else {
+                        presenter.postSave(post.name);
+                    }
+                }
+                break;
+            case R.id.goToUrl:
+                Navigation.startLinkActivity(getActivity(), post.url);
+                break;
             case R.id.shareAction:
                 Navigation.shareContent(getActivity(), post.url);
                 break;
             case R.id.upContainer:
-                presenter.postVote("1", post.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("1", post.name);
+                }
                 break;
             case R.id.downContainer:
-                presenter.postVote("-1", post.name);
+                if(checkUserIsLogged()){
+                    presenter.postVote("-1", post.name);
+                }
                 break;
         }
     }
 
     @Override
+    public void setVote(){
+        RelativeLayout view = (RelativeLayout) voteConteinerView.getParent();
+        switch (voteConteinerView.getId()){
+            case R.id.upContainer:
+                ((ImageView)view.findViewById(R.id.upArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.upArrow));
+                ((ImageView)view.findViewById(R.id.downArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                break;
+            case R.id.downContainer:
+                ((ImageView)view.findViewById(R.id.upArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.arrowColor));
+                ((ImageView)view.findViewById(R.id.downArrow)).setColorFilter(ContextCompat.getColor(getContext(), R.color.downArrow));
+                break;
+        }
+
+    }
+
+    public int getPostType() {
+        return postLoaderId;
+    }
+
+    public void setPostType(int postLoaderId) {
+        this.postLoaderId = postLoaderId;
+    }
+
+    public void clearAdapter() {
+        if (postsAdapter != null) {
+            postsAdapter.clearPosts();
+        }
+    }
+
+    @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        presenter.loadPosts();
-        swipyRefreshLayout.setRefreshing(false);
+        if (direction == SwipyRefreshLayoutDirection.BOTTOM) {
+
+            if (TextUtils.isEmpty(postParent.after)) {
+                swipyRefreshLayout.setRefreshing(false);
+                error("There are no more posts to show right now.");
+                return;
+            }
+
+            loadPosts(postParent.after);
+
+        } else if (direction == SwipyRefreshLayoutDirection.TOP) {
+            postsAdapter.clearPosts();
+            loadPosts("");
+        }
+    }
+
+    @Override
+    public void onPostSelected(int clickedItemIndex, View expandableView, View parent) {
+        selectedPosition = clickedItemIndex;
+        if (previousViewSelected != null) {
+            previousViewSelected.setActivated(false);
+        }
+        previousViewSelected = (LinearLayout) parent;
+        parent.setActivated(true);
+        actionDetail((LinearLayout) expandableView);
+    }
+
+    @Override
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
+
+    private void actionDetail(final LinearLayout expandArea) {
+        if (previousViewExpanded != null) {
+            previousViewExpanded.setVisibility(View.GONE);
+            previousViewExpanded.setActivated(false);
+        }
+
+        if (previousViewExpanded == null || !previousViewExpanded.equals(expandArea) || isOpen) {
+            expandArea.setVisibility(View.VISIBLE);
+            expandArea.setActivated(true);
+            expandArea.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TransitionManager.beginDelayedTransition(expandArea);
+                }
+            });
+            isOpen = false;
+        } else {
+            isOpen = true;
+        }
+        previousViewExpanded = expandArea;
+    }
+
+
+    private void loadPosts(String after) {
+        switch (postLoaderId){
+            case Constants.PostLoaderId.POST_HOME:
+                presenter.loadHome(after);
+                break;
+            case Constants.PostLoaderId.POST_VIEW:
+                presenter.loadPosts(after);
+                break;
+            case Constants.PostLoaderId.SEARCH_POSTS:
+                presenter.searchPosts(after);
+                break;
+        }
     }
 
     public interface PostsFragmentInt {
+
+        void loginSnackBar();
 
         void loadDetailFragment();
 

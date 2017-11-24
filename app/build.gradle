@@ -4,6 +4,10 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
+def adPropertiesFile = file("C:\\Users\\USER\\AndroidStudioProjects\\.gradle\\gradle.properties")
+def adProperties = new Properties()
+adProperties.load(new FileInputStream(adPropertiesFile))
+
 android {
     signingConfigs {
         config {
@@ -16,6 +20,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.qartf.doseforreddit"
         minSdkVersion 19
         targetSdkVersion 26
@@ -28,6 +33,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildTypes.each {
+                it.buildConfigField 'String', 'BANNER_AD_UNIT_ID', adProperties['BANNER_AD_UNIT_ID']
+                it.buildConfigField 'String', 'ADMOB_APP_ID', adProperties['ADMOB_APP_ID']
+                it.buildConfigField 'String', 'ADMOB_AD_UNIT_ID', adProperties['ADMOB_AD_UNIT_ID']
+                it.resValue "string", "BANNER_AD_UNIT_ID", adProperties['BANNER_AD_UNIT_ID']
+            }
         }
     }
     productFlavors {
@@ -43,11 +55,8 @@ dependencies {
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:cardview-v7:$supportLibVersion"
     //Services
-    compile 'com.google.android.gms:play-services-ads:11.0.4'
-    compile 'com.google.firebase:firebase-messaging:11.0.4'
-    compile('com.firebaseui:firebase-ui:2.2.0', {
-        exclude group: 'com.android.support'
-    })
+    compile 'com.google.firebase:firebase-messaging:11.6.0'
+    compile 'com.google.firebase:firebase-ads:11.6.0'
     //Butter knife
     compile 'com.jakewharton:butterknife:8.8.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
@@ -76,5 +85,6 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.5'
     //http logging
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.2'
+    implementation 'org.glassfish.main:javax.annotation:4.0-b33'
 }
 apply plugin: 'com.google.gms.google-services'

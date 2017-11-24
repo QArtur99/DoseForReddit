@@ -1,6 +1,5 @@
 package com.qartf.doseforreddit.view.fragment;
 
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.text.Editable;
@@ -15,9 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qartf.doseforreddit.R;
+import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.presenter.root.App;
 import com.qartf.doseforreddit.presenter.submit.SubmitMVP;
+import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.dialog.SubredditRulesDialog;
 
@@ -32,7 +33,7 @@ import butterknife.OnClick;
 public class SubmitFragment extends BaseFragmentMvp<SubmitFragment.SubmitFragmentInt> implements SubmitMVP.View {
 
 
-    private static final int MAX_SIGNS = 15;
+    private static final int MAX_SIGNS = 300;
     @BindView(R.id.tabLayout) TabLayout tabLayout;
 
     @BindView(R.id.editTextSubreddit) EditText editTextSubreddit;
@@ -52,6 +53,7 @@ public class SubmitFragment extends BaseFragmentMvp<SubmitFragment.SubmitFragmen
     @BindView(R.id.fabBottom) FloatingActionButton fabBottom;
 
     @BindString(R.string.pref_post_subreddit_rule) String prefPostSubredditRule;
+    @BindString(R.string.pref_post_sort_by) public String prefPostSortBy;
 
     @Inject
     SubmitMVP.Presenter presenter;
@@ -92,6 +94,7 @@ public class SubmitFragment extends BaseFragmentMvp<SubmitFragment.SubmitFragmen
 
     @OnClick(R.id.fabBottom)
     public void onClickFabBottom() {
+        Utility.hideKeyboardFrom(getActivity());
         int selected = tabLayout.getSelectedTabPosition();
         switch (selected) {
             case 0:
@@ -273,21 +276,33 @@ public class SubmitFragment extends BaseFragmentMvp<SubmitFragment.SubmitFragmen
 
 
     @Override
+    public void setPost(Post post) {
+        if (getActivity().findViewById(R.id.mainFrame) != null) {
+            mCallback.setPost(post);
+            mCallback.loadDetailFragment();
+        } else {
+            Navigation.startDetailActivity(getActivity(), post);
+            getActivity().finish();
+        }
+    }
+
+    @Override
     public void setSubredditRules(RuleParent ruleParent) {
         new SubredditRulesDialog(getContext(), ruleParent);
     }
 
     @Override
-    public void setSubmitted() {
-        Utility.hideKeyboardFrom(getActivity());
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                sharedPreferences.edit().putString(getString(R.string.pref_post_subreddit), subredditString).apply();
-                mCallback.switchToPostFragment();
-            }
-        }, 1000);
+    public void setSubmitted(String url) {
+        presenter.getPost(url);
+//        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                sharedPreferences.edit().putString(getString(R.string.pref_post_subreddit), subredditString).apply();
+//                sharedPreferences.edit().putString(prefPostSortBy, "new").apply();
+//                mCallback.switchToPostFragment();
+//            }
+//        }, 1000);
 
     }
 
@@ -297,6 +312,9 @@ public class SubmitFragment extends BaseFragmentMvp<SubmitFragment.SubmitFragmen
     }
 
     public interface SubmitFragmentInt {
+        void loadDetailFragment();
+
+        void setPost(Post post);
 
         void switchToPostFragment();
     }

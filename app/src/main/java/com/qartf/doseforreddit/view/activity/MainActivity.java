@@ -1,11 +1,16 @@
 package com.qartf.doseforreddit.view.activity;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.qartf.doseforreddit.BuildConfig;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.data.entity.Post;
 import com.qartf.doseforreddit.presenter.sharedPreferences.SharedPreferencesMVP;
@@ -28,13 +33,16 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
         , SearchDialog.SearchDialogInter, SharedPreferencesMVP.View, TokenMVP.View
         , SubmitFragment.SubmitFragmentInt {
 
+    private static final String ADMOB_APP_ID = BuildConfig.ADMOB_APP_ID;
+    @Nullable
+    @BindView(R.id.adView)
+    AdView mAdView;
+    @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
     private PostsFragment postsFragment;
     private SubredditsFragment subredditsFragment;
     private SubmitFragment submitFragment;
     private DetailFragment detailFragment;
     private boolean isLoginCode = false;
-
-    @BindView(R.id.mainActivityFrame) CoordinatorLayout mainActivityFrame;
 
     @Override
     public int getContentLayout() {
@@ -43,10 +51,25 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void initComponents() {
+        loadAd();
 //        MainActivity.this.deleteDatabase("Doseforreddit.db");
         setSupportActionBar(toolbar);
         loadStartFragment(savedInstanceState);
         loadSecondFragment();
+
+        if (presenterPref != null) {
+            presenterPref.loadTitle();
+        }
+
+        super.setResult(0);
+    }
+
+    private void loadAd() {
+        if (mAdView != null) {
+            MobileAds.initialize(this, ADMOB_APP_ID);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+        }
     }
 
     public void loadStartFragment(Bundle savedInstanceState) {
@@ -56,11 +79,11 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     public void loadSecondFragment() {
-        if(this.findViewById(R.id.detailsViewFrame) != null){
+        if (commentPresenter.getPost() != null && this.findViewById(R.id.detailsViewFrame) != null) {
             String secondFragmentString = sharedPreferences.getString(Pref.prefSecondFragment, Pref.prefDetailFragment);
-            if(secondFragmentString.equals(Pref.prefDetailFragment)){
+            if (secondFragmentString.equals(Pref.prefDetailFragment)) {
                 loadDetailFragment();
-            }else if(secondFragmentString.equals(Pref.prefSubmitFragment)){
+            } else if (secondFragmentString.equals(Pref.prefSubmitFragment)) {
                 loadSubmitFragment();
             }
         }
@@ -73,7 +96,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
         tokenPresenter.tokenInfo();
 
         presenterPref.setView(this);
-        presenterPref.loadTitle();
+        setTitle("Home");
         presenterPref.loadUserName();
     }
 
@@ -94,7 +117,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     public void setPost(Post post) {
         commentPresenter.setPost(post);
         commentPresenter.loadPostData();
-        if(detailFragment != null) {
+        if (detailFragment != null) {
             detailFragment.loadComments();
         }
     }
@@ -106,8 +129,19 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     }
 
     @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         checkLogin();
     }
 
@@ -127,7 +161,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     private void loginFailed() {
         Snackbar snackbar = Snackbar
                 .make(mainActivityFrame, "Login permission declined", Snackbar.LENGTH_LONG)
-                .setAction("Login", new View.OnClickListener() {
+                .setAction("Log in", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Utility.clearCookies(MainActivity.this);
@@ -146,12 +180,16 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void searchPosts() {
-        postPresenter.searchPosts();
+        postsFragment.clearAdapter();
+        postsFragment.setPostType(Constants.PostLoaderId.SEARCH_POSTS);
+        postPresenter.searchPosts("");
     }
 
     @Override
     public void searchSubreddits() {
-        subredditPresenter.loadSubreddits();
+        subredditsFragment.clearAdapter();
+        subredditsFragment.setSubredditType(false);
+        subredditPresenter.loadSubreddits("");
     }
 
     @Override
@@ -192,12 +230,39 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
         presenterPref.onDestroy();
+
     }
 
     @Override
     public void getPosts() {
-        postPresenter.loadPosts();
+        postsFragment.clearAdapter();
+        getSubredditLoadPosts();
+    }
+
+    @Override
+    public void getSubredditPosts(int postLoaderId) {
+        postsFragment.setPostType(postLoaderId);
+        postsFragment.clearAdapter();
+        postsFragment.setRecyclerView();
+        getSubredditLoadPosts();
+    }
+
+    private void getSubredditLoadPosts() {
+        switch (postsFragment.getPostType()) {
+            case Constants.PostLoaderId.POST_HOME:
+                postPresenter.loadHome("");
+                break;
+            case Constants.PostLoaderId.POST_VIEW:
+                postPresenter.loadPosts("");
+                break;
+            case Constants.PostLoaderId.SEARCH_POSTS:
+                postPresenter.searchPosts("");
+                break;
+        }
     }
 
     @Override
@@ -212,23 +277,51 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
 
     @Override
     public void setMySubreddits() {
-        loadFragment(Constants.Id.SEARCH_SUBREDDITS);
-        subredditPresenter.loadMineSubreddits();
+        String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+        if (logged.equals(Constants.Utility.ANONYMOUS)) {
+            loginSnackBar();
+        } else {
+            setTitle("My Subreddits");
+            loadFragment(Constants.Id.SEARCH_SUBREDDITS);
+            subredditsFragment.clearAdapter();
+            subredditsFragment.setRecyclerView();
+            subredditsFragment.setSubredditType(true);
+            subredditPresenter.loadMineSubreddits("");
+        }
+    }
+
+    @Override
+    public void loginSnackBar() {
+        Snackbar snackbar = Snackbar
+                .make(mainActivityFrame, "You must be logged in", Snackbar.LENGTH_LONG)
+                .setAction("Log in", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Utility.clearCookies(MainActivity.this);
+                        loginReddit();
+                    }
+                });
+        snackbar.show();
     }
 
     @Override
     public void setPostFragment() {
-        if(!postsFragment.isVisible()) {
+        if (!postsFragment.isVisible()) {
             loadFragment(Constants.Id.SEARCH_POSTS);
         }
     }
 
     @Override
     public void setSubmitFragment() {
-        if (this.findViewById(R.id.detailsViewFrame) != null) {
-            loadSubmitFragment();
+        String logged = sharedPreferences.getString(getResources().getString(R.string.pref_login_signed_in), Constants.Utility.ANONYMOUS);
+        if (logged.equals(Constants.Utility.ANONYMOUS)) {
+            loginSnackBar();
         } else {
-            Navigation.startSubmitActivity(this);
+            if (this.findViewById(R.id.detailsViewFrame) != null) {
+                loadSubmitFragment();
+            } else {
+                Navigation.startSubmitActivity(this);
+            }
         }
     }
 
@@ -245,5 +338,10 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     @Override
     public void switchToPostFragment() {
 
+    }
+
+    @Override
+    public void loadPosts() {
+        loadStartFragment(null);
     }
 }

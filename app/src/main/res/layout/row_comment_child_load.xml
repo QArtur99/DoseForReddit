@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/loadingChild"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/commentLoad"
+              android:gravity="center"
+              android:layout_marginBottom="2dp"
+              android:orientation="horizontal"
+              android:padding="2dp">
+
+    <TextView
+        android:layout_weight="1"
+        android:textColor="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="Comments loading ..."/>
+
+    <ProgressBar
+        android:layout_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

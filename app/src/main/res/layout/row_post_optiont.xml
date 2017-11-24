@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:id="@+id/expandArea"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -14,7 +15,7 @@
         android:layout_weight="2.5">
     </View>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="17.5">
@@ -24,21 +25,63 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:layout_alignParentStart="true"
+            android:layout_weight="1"
             android:src="@drawable/ic_comment"
             android:tint="@color/arrowColor"
-            android:contentDescription="@string/comment"/>
+            android:contentDescription="@string/comment"
+            tools:ignore="NestedWeights"/>
+
+        <RelativeLayout
+            android:id="@+id/upContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp">
+
+            <ImageView
+                android:id="@+id/saveStroke"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/comment_vote_down"
+                android:src="@drawable/ic_star"
+                android:tint="@color/colorBlack"/>
+
+
+            <ImageView
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/saveStroke"
+                android:layout_centerInParent="true"
+                android:layout_margin="1dp"
+                android:contentDescription="@string/comment_vote_down"
+                android:src="@drawable/ic_star"
+                android:tint="@color/commentSave"/>
+
+        </RelativeLayout>
+
+
+        <ImageView
+            android:id="@+id/goToUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_action_globe"
+            android:tint="@color/arrowColor"
+            android:contentDescription="@string/share"/>
 
         <ImageView
             android:id="@+id/shareAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:layout_alignParentEnd="true"
+            android:layout_weight="1"
             android:src="@drawable/ic_share"
             android:tint="@color/arrowColor"
             android:contentDescription="@string/share"/>
-    </RelativeLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

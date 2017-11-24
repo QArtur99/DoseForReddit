@@ -14,6 +14,7 @@ public class Post {
     public String linkFlairText;
     public String id;
     public String title;
+    public String saved;
     public String previewUrl;
     public String previewGif;
     public String thumbnail;
@@ -32,7 +33,7 @@ public class Post {
     public String numComents;
 
 
-    public Post(String kind, String domain, String subreddit, String selftext, String likes, String linkFlairText, String id, String title, String previewUrl, String previewGif, String thumbnail, String subRedditId, String postHint, String parentWhiteListStatus, String name, String permaLink, String subRedditType, String url, String whiteListStatus, String author, String createdUTC, String subredditNamePrefixed, String ups, String numComents) {
+    public Post(String kind, String domain, String subreddit, String selftext, String likes, String linkFlairText, String id, String title, String saved, String previewUrl, String previewGif, String thumbnail, String subRedditId, String postHint, String parentWhiteListStatus, String name, String permaLink, String subRedditType, String url, String whiteListStatus, String author, String createdUTC, String subredditNamePrefixed, String ups, String numComents) {
         this.kind = kind;
         this.domain = domain;
         this.subreddit = subreddit;
@@ -41,6 +42,7 @@ public class Post {
         this.linkFlairText = linkFlairText;
         this.id = id;
         this.title = title;
+        this.saved = saved;
         this.previewUrl = previewUrl;
         this.previewGif = previewGif;
         this.thumbnail = thumbnail;
