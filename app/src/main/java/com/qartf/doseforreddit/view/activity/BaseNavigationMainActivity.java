@@ -1,5 +1,6 @@
 package com.qartf.doseforreddit.view.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -207,6 +208,12 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 sharedPreferences.edit().putString(prefPostSortBy, "hot").apply();
                 setPostFragment();
                 getSubredditPosts(Constants.PostLoaderId.POST_VIEW);
+                break;
+            case R.id.privacyPolicy:
+                posioton = 8;
+                Intent intent = new Intent(this, LinkActivity.class);
+                intent.putExtra("link", );
+                initActivity(fragmentActivity, intent);
                 break;
         }
         navigationView.getMenu().getItem(posioton).setChecked(true);

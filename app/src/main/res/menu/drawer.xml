@@ -51,5 +51,10 @@
             android:checked="false"
             android:icon="@drawable/ic_help"
             android:title="@string/helpAndFeedback" />
+        <item
+            android:id="@+id/privacyPolicy"
+            android:checked="false"
+            android:icon="@drawable/ic_action_warning"
+            android:title="@string/privacyPolicy" />
     </group>
 </menu>
