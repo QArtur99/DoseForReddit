@@ -1,6 +1,5 @@
 package com.qartf.doseforreddit.view.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ import com.qartf.doseforreddit.presenter.sharedPreferences.SharedPreferencesMVP;
 import com.qartf.doseforreddit.presenter.subreddit.SubredditMVP;
 import com.qartf.doseforreddit.presenter.token.TokenMVP;
 import com.qartf.doseforreddit.presenter.utility.Constants;
+import com.qartf.doseforreddit.presenter.utility.Navigation;
 import com.qartf.doseforreddit.presenter.utility.Utility;
 import com.qartf.doseforreddit.view.dialog.LoginDialog;
 
@@ -211,9 +211,7 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 break;
             case R.id.privacyPolicy:
                 posioton = 8;
-                Intent intent = new Intent(this, LinkActivity.class);
-                intent.putExtra("link", );
-                initActivity(fragmentActivity, intent);
+                Navigation.startLinkActivity(this, "");
                 break;
         }
         navigationView.getMenu().getItem(posioton).setChecked(true);
