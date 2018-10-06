@@ -211,7 +211,7 @@ public abstract class BaseNavigationMainActivity extends BaseActivity implements
                 break;
             case R.id.privacyPolicy:
                 posioton = 8;
-                Navigation.startLinkActivity(this, "");
+                Navigation.startLinkActivity(this, "https://htmlpreview.github.io/?https://github.com/QArtur99/Capstone/blob/MVP/privacy_policy.html");
                 break;
         }
         navigationView.getMenu().getItem(posioton).setChecked(true);

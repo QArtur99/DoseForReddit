@@ -1,10 +1,12 @@
 package com.qartf.doseforreddit.view.widget;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.Nullable;
 
 import com.qartf.doseforreddit.R;
@@ -35,7 +37,20 @@ public class RedditWidgetService extends IntentService {
     public static void startActionUpdatePlantWidgets(Context context) {
         Intent intent = new Intent(context, RedditWidgetService.class);
         intent.setAction(ACTION_UPDATE_PLANT_WIDGETS);
-        context.startService(intent);
+        context.stopService(intent);
+        if (Build.VERSION.SDK_INT < 26) {
+            context.startService(intent);
+        } else {
+            context.startForegroundService(intent);
+        }
+    }
+
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForeground(-1, new Notification());
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
