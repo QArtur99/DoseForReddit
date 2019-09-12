@@ -1,5 +1,5 @@
 # Dose For Reddit
-Reddit client that presented a list view of posts, allowed users to search both subreddits and posts in subreddit, read comments on the post selected by the user.
+Reddit client that presented a list view of posts, allowed users to search both subreddits & posts in subreddit, read & write comments, vote and much more.
 
 <a href='https://play.google.com/store/apps/details?id=com.qartf.doseforreddit'>
 <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="auto" height="100"/></a>
