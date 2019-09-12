@@ -1,6 +1,6 @@
 package com.qartf.doseforreddit.presenter.token;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;

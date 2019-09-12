@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         app:srl_direction="both">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"

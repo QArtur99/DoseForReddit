@@ -94,7 +94,7 @@
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
-        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+        <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
@@ -106,7 +106,7 @@
             android:theme="@android:style/Theme.Translucent"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-9327717005325994~8818349099"/>
+            android:value="@string/google_admob_app_id"/>
     </application>
 
 </manifest>

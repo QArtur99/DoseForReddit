@@ -1,6 +1,6 @@
 package com.qartf.doseforreddit.presenter.subreddit;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.qartf.doseforreddit.data.entity.SubredditParent;
 

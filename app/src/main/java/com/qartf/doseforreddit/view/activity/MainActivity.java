@@ -1,15 +1,13 @@
 package com.qartf.doseforreddit.view.activity;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.material.snackbar.Snackbar;
 import com.qartf.doseforreddit.BuildConfig;
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.data.entity.Post;
@@ -25,6 +23,8 @@ import com.qartf.doseforreddit.view.fragment.PostsFragment;
 import com.qartf.doseforreddit.view.fragment.SubmitFragment;
 import com.qartf.doseforreddit.view.fragment.SubredditsFragment;
 
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import butterknife.BindView;
 
 
@@ -34,6 +34,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
         , SubmitFragment.SubmitFragmentInt {
 
     private static final String ADMOB_APP_ID = BuildConfig.ADMOB_APP_ID;
+    private static final String TEST_DEVICE = "44D4117369EADEFD23949802BA0B7DE6";
     @Nullable
     @BindView(R.id.adView)
     AdView mAdView;
@@ -67,7 +68,7 @@ public class MainActivity extends BaseNavigationMainActivity implements PostsFra
     private void loadAd() {
         if (mAdView != null) {
             MobileAds.initialize(this, ADMOB_APP_ID);
-            AdRequest adRequest = new AdRequest.Builder().build();
+            AdRequest adRequest = new AdRequest.Builder().addTestDevice(TEST_DEVICE).build();
             mAdView.loadAd(adRequest);
         }
     }

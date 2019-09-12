@@ -1,8 +1,8 @@
 package com.qartf.doseforreddit.view.fragment;
 
-import android.support.transition.TransitionManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
+import androidx.transition.TransitionManager;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;

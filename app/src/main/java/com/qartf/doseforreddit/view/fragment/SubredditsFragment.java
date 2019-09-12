@@ -1,6 +1,6 @@
 package com.qartf.doseforreddit.view.fragment;
 
-import android.support.v7.widget.GridLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;

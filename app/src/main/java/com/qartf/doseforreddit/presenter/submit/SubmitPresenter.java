@@ -1,6 +1,6 @@
 package com.qartf.doseforreddit.presenter.submit;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.qartf.doseforreddit.data.entity.PostParent;
 import com.qartf.doseforreddit.data.entity.RuleParent;

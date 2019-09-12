@@ -1,11 +1,11 @@
 package com.qartf.doseforreddit.view.activity;
 
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.qartf.doseforreddit.R;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 
 public abstract class BaseActivityChild extends BaseActivity {

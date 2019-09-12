@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 
-public class StrokeTextView extends android.support.v7.widget.AppCompatTextView {
+import androidx.core.content.ContextCompat;
+
+public class StrokeTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     public StrokeTextView(Context context, AttributeSet attrs) {
         super(context, attrs);

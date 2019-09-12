@@ -3,7 +3,7 @@ package com.qartf.doseforreddit.view.dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Toast;

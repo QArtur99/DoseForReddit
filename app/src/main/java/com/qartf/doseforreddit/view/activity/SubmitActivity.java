@@ -1,7 +1,7 @@
 package com.qartf.doseforreddit.view.activity;
 
 import android.content.SharedPreferences;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.FragmentManager;
 
 import com.qartf.doseforreddit.R;
 import com.qartf.doseforreddit.data.entity.Post;

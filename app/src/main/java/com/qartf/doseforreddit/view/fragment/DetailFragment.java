@@ -1,10 +1,10 @@
 package com.qartf.doseforreddit.view.fragment;
 
 import android.os.Handler;
-import android.support.transition.TransitionManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.transition.TransitionManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
