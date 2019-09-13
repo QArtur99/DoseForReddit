@@ -5,7 +5,8 @@ Reddit client that presented a list view of posts, allowed users to search both 
 <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="auto" height="100"/></a>
 
 ### Screenshots
-![image]()
+![vertical](https://user-images.githubusercontent.com/25232443/64892217-1b0e8e80-d674-11e9-8af6-5fca01d269a0.png)
+![horizontal](https://user-images.githubusercontent.com/25232443/64892221-1cd85200-d674-11e9-84f2-3e076e47d513.png)
 
 ### Used Tech
 * [Java]()
