@@ -34,7 +34,6 @@ Reddit client that presented a list view of posts, allowed users to search both 
 ### How to run the project in development mode
 * Clone or download repository as a zip file.
 * Open project in Android Studio.
-* Set TheMovieDb API key in build.gradle(line 41).
 * Run 'app' `SHIFT+F10`.
 
 ### Report issues
