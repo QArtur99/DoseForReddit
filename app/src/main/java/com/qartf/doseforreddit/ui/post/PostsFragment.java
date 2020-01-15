@@ -22,6 +22,7 @@ import com.qartf.doseforreddit.utility.Constants;
 import com.qartf.doseforreddit.utility.Navigation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -85,7 +86,16 @@ public class PostsFragment extends BaseFragmentMvp<PostsFragment.PostsFragmentIn
         this.postParent = postParent;
         emptyView.setVisibility(View.GONE);
 
+        postsAdapter.setPosts(addNativeAds(postParent));
         swipyRefreshLayout.setRefreshing(false);
+    }
+
+    private List<Object> addNativeAds(PostParent postParent) {
+        List<Object> mRecyclerViewItems = new ArrayList<>();
+        mRecyclerViewItems.addAll(postsAdapter.getData());
+        mRecyclerViewItems.addAll(postParent.postList);
+        postsAdapter.clearPosts();
+        return mRecyclerViewItems;
     }
 
     public boolean checkUserIsLogged(){

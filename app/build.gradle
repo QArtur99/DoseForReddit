@@ -28,14 +28,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            buildTypes.each {
-                it.buildConfigField 'String', 'BANNER_AD_UNIT_ID', keystoreProperties['BANNER_AD_UNIT_ID']
-                it.buildConfigField 'String', 'ADMOB_APP_ID', keystoreProperties['ADMOB_APP_ID']
-                it.buildConfigField 'String', 'ADMOB_AD_UNIT_ID', keystoreProperties['ADMOB_AD_UNIT_ID']
-                it.resValue 'string', 'google_admob_app_id', keystoreProperties['ADMOB_APP_ID']
-                it.resValue "string", "BANNER_AD_UNIT_ID", keystoreProperties['BANNER_AD_UNIT_ID']
-            }
         }
     }
     productFlavors {
