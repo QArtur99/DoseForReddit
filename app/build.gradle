@@ -1,12 +1,8 @@
 apply plugin: 'com.android.application'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystorePropertiesFile = rootProject.file("local.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
-def adPropertiesFile = file("C:\\Users\\USER\\AndroidStudioProjects\\.gradle\\gradle.properties")
-def adProperties = new Properties()
-adProperties.load(new FileInputStream(adPropertiesFile))
 
 android {
     signingConfigs {
@@ -18,7 +14,6 @@ android {
         }
     }
     compileSdkVersion 29
-    buildToolsVersion '28.0.3'
     defaultConfig {
         multiDexEnabled true
         applicationId "com.qartf.doseforreddit"
@@ -35,11 +30,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             buildTypes.each {
-                it.buildConfigField 'String', 'BANNER_AD_UNIT_ID', adProperties['BANNER_AD_UNIT_ID']
-                it.buildConfigField 'String', 'ADMOB_APP_ID', adProperties['ADMOB_APP_ID']
-                it.buildConfigField 'String', 'ADMOB_AD_UNIT_ID', adProperties['ADMOB_AD_UNIT_ID']
-                it.resValue 'string', 'google_admob_app_id', adProperties['ADMOB_APP_ID']
-                it.resValue "string", "BANNER_AD_UNIT_ID", adProperties['BANNER_AD_UNIT_ID']
+                it.buildConfigField 'String', 'BANNER_AD_UNIT_ID', keystoreProperties['BANNER_AD_UNIT_ID']
+                it.buildConfigField 'String', 'ADMOB_APP_ID', keystoreProperties['ADMOB_APP_ID']
+                it.buildConfigField 'String', 'ADMOB_AD_UNIT_ID', keystoreProperties['ADMOB_AD_UNIT_ID']
+                it.resValue 'string', 'google_admob_app_id', keystoreProperties['ADMOB_APP_ID']
+                it.resValue "string", "BANNER_AD_UNIT_ID", keystoreProperties['BANNER_AD_UNIT_ID']
             }
         }
     }
@@ -57,43 +52,39 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.media:media:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.vectordrawable:vectordrawable-animated:1.1.0'
-    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+    implementation 'androidx.exifinterface:exifinterface:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    //Services
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
-    implementation 'com.google.firebase:firebase-ads:18.2.0'
+
     //Butter knife
-    implementation 'com.jakewharton:butterknife:10.2.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
     //Exo player
-    implementation 'com.google.android.exoplayer:exoplayer:r2.2.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.2'
     //Gson
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
     //SwipyRefresh
     implementation 'com.github.orangegangsters:swipy:1.2.3@aar'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     //Dagger
-    implementation 'com.google.dagger:dagger:2.24'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+    implementation 'com.google.dagger:dagger:2.25.4'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.25.4'
     //RxJava
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
     //http logging
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.0'
     implementation 'org.glassfish.main:javax.annotation:4.0-b33'
 }
-apply plugin: 'com.google.gms.google-services'

@@ -9,7 +9,6 @@
                                                      android:layout_width="match_parent"
                                                      android:id="@+id/mainActivityFrame"
                                                      android:layout_height="match_parent"
-                                                     android:layout_above="@+id/adView"
                                                      android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -43,14 +42,4 @@
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@color/adsBackGround"
-        app:adSize="SMART_BANNER"
-        app:adUnitId="@string/BANNER_AD_UNIT_ID"/>
 </RelativeLayout>

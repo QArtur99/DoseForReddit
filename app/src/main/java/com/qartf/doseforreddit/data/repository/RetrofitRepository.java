@@ -111,43 +111,32 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<PostParent>>() {
-            @Override
-            public ObservableSource<PostParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<PostParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
-                HashMap<String, String> args = new HashMap<>();
-                args.put("after", after);
-                return retrofitRedditAPI.getHome(getBearerToken(accessToken), subredditSortBy, args);
-            }
+            String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("after", after);
+            return retrofitRedditAPI.getHome(getBearerToken(accessToken), subredditSortBy, args);
         });
     }
 
     public Observable<Object> tokenInfo() {
-        return mObservable.map(new Function<String, Object>() {
-            @Override
-            public Object apply(@NonNull String value) throws Exception {
-                return String.valueOf(value);
-            }
-        });
+        return mObservable.map(value -> String.valueOf(value));
     }
 
     @Override
     public Observable<String> resetToken() {
-        return Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<String> subscribe) throws Exception {
+        return Observable.create(subscribe -> {
 
-                token.setAccessToken(null);
-                AccessToken accessToken = token.getAccessToken();
-                if (accessToken == null) {
-                    subscribe.onNext("User siggned out");
-                } else {
-                    subscribe.onError(new ResetTokenException("Something wrong :("));
-                }
-
+            token.setAccessToken(null);
+            AccessToken accessToken = token.getAccessToken();
+            if (accessToken == null) {
+                subscribe.onNext("User siggned out");
+            } else {
+                subscribe.onError(new ResetTokenException("Something wrong :("));
             }
+
         });
     }
 
@@ -158,40 +147,33 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.accessTokenRX().flatMap(new Function<AccessToken, ObservableSource<String>>() {
-            @Override
-            public ObservableSource<String> apply(AccessToken accessToken) throws Exception {
-                token.setAccessToken(accessToken);
+        return token.accessTokenRX().flatMap((Function<AccessToken, ObservableSource<String>>) accessToken -> {
+            token.setAccessToken(accessToken);
 
-                return Observable.zip(Observable.just(accessToken), retrofitRedditAPI.getAboutMe(getBearerToken(accessToken))
-                        , new BiFunction<AccessToken, AboutMe, String>() {
+            return Observable.zip(Observable.just(accessToken), retrofitRedditAPI.getAboutMe(getBearerToken(accessToken))
+                    , (accessToken1, aboutMe) -> {
+                        String userName = aboutMe.name;
 
-                            @Override
-                            public String apply(AccessToken accessToken, AboutMe aboutMe) throws Exception {
-                                String userName = aboutMe.name;
+                        sharedPreferences.edit().putString(context.getResources().getString(R.string.pref_login_signed_in), userName).apply();
+                        Cursor cursor = DatabaseHelper.updateUser(context, userName);
 
-                                sharedPreferences.edit().putString(context.getResources().getString(R.string.pref_login_signed_in), userName).apply();
-                                Cursor cursor = DatabaseHelper.updateUser(context, userName);
-
-                                if (cursor != null && cursor.getCount() == 0) {
-                                    Uri newUri = DatabaseHelper.insertAccount(context, userName, accessToken);
-                                    if (newUri == null) {
-                                        return context.getResources().getString(R.string.editor_insert_user_failed);
-                                    } else {
-                                        return context.getResources().getString(R.string.editor_insert_user_successful);
-                                    }
-                                } else {
-                                    int rowsUpdated = DatabaseHelper.updateAccount(context, userName, accessToken);
-                                    if (rowsUpdated == 0) {
-                                        return context.getResources().getString(R.string.editor_insert_user_failed);
-                                    } else {
-                                        return context.getResources().getString(R.string.editor_insert_user_successful);
-                                    }
-
-                                }
+                        if (cursor != null && cursor.getCount() == 0) {
+                            Uri newUri = DatabaseHelper.insertAccount(context, userName, accessToken1);
+                            if (newUri == null) {
+                                return context.getResources().getString(R.string.editor_insert_user_failed);
+                            } else {
+                                return context.getResources().getString(R.string.editor_insert_user_successful);
                             }
-                        });
-            }
+                        } else {
+                            int rowsUpdated = DatabaseHelper.updateAccount(context, userName, accessToken1);
+                            if (rowsUpdated == 0) {
+                                return context.getResources().getString(R.string.editor_insert_user_failed);
+                            } else {
+                                return context.getResources().getString(R.string.editor_insert_user_successful);
+                            }
+
+                        }
+                    });
         });
     }
 
@@ -201,16 +183,13 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<RuleParent>>() {
-            @Override
-            public ObservableSource<RuleParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<RuleParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String subreddit = sharedPreferences.getString(prefPostSubredditRule, prefEmptyTag);
+            String subreddit = sharedPreferences.getString(prefPostSubredditRule, prefEmptyTag);
 
-                HashMap<String, String> args = new HashMap<>();
-                return retrofitRedditAPI.getSubredditRules(getBearerToken(accessToken), subreddit, args);
-            }
+            HashMap<String, String> args = new HashMap<>();
+            return retrofitRedditAPI.getSubredditRules(getBearerToken(accessToken), subreddit, args);
         });
     }
 
@@ -221,13 +200,10 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubmitParent>>() {
-            @Override
-            public ObservableSource<SubmitParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<SubmitParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                return retrofitRedditAPI.postSubmit(getBearerToken(accessToken), args);
-            }
+            return retrofitRedditAPI.postSubmit(getBearerToken(accessToken), args);
         });
     }
 
@@ -238,17 +214,14 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<PostParent>>() {
-            @Override
-            public ObservableSource<PostParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<PostParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
-                String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
-                HashMap<String, String> args = new HashMap<>();
-                args.put("after", after);
-                return retrofitRedditAPI.getPosts(getBearerToken(accessToken), subreddit, subredditSortBy, args);
-            }
+            String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
+            String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("after", after);
+            return retrofitRedditAPI.getPosts(getBearerToken(accessToken), subreddit, subredditSortBy, args);
         });
     }
 
@@ -260,23 +233,20 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<PostParent>>() {
-            @Override
-            public ObservableSource<PostParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<PostParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String queryString = sharedPreferences.getString(prefSearchPost, prefEmptyTag);
-                String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
-                String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
+            String queryString = sharedPreferences.getString(prefSearchPost, prefEmptyTag);
+            String subreddit = sharedPreferences.getString(prefPostSubreddit, prefPostSubredditDefault);
+            String subredditSortBy = sharedPreferences.getString(prefPostSortBy, prefSortByDefault);
 
-                HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "25");
-                args.put("q", queryString);
-                args.put("restrict_sr", "true");
-                args.put("sort", subredditSortBy);
-                args.put("after", after);
-                return retrofitRedditAPI.searchPosts(getBearerToken(accessToken), subreddit, args);
-            }
+            HashMap<String, String> args = new HashMap<>();
+            args.put("limit", "25");
+            args.put("q", queryString);
+            args.put("restrict_sr", "true");
+            args.put("sort", subredditSortBy);
+            args.put("after", after);
+            return retrofitRedditAPI.searchPosts(getBearerToken(accessToken), subreddit, args);
         });
     }
 
@@ -288,25 +258,22 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<CommentParent>>() {
-            @Override
-            public ObservableSource<CommentParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<CommentParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String postSub = sharedPreferences.getString(prefPostDetailSub, prefEmptyTag);
-                String postId = sharedPreferences.getString(prefPostDetailId, prefEmptyTag);
-                String sortBy = sharedPreferences.getString(prefPostDetailSortKey, prefEmptyTag);
+            String postSub = sharedPreferences.getString(prefPostDetailSub, prefEmptyTag);
+            String postId = sharedPreferences.getString(prefPostDetailId, prefEmptyTag);
+            String sortBy = sharedPreferences.getString(prefPostDetailSortKey, prefEmptyTag);
 
 
-                HashMap<String, String> args = new HashMap<>();
-                args.put("depth", "10");
-                args.put("limit", "25");
-                args.put("showedits", "false");
-                args.put("showmore", "true");
-                args.put("sort", sortBy);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("depth", "10");
+            args.put("limit", "25");
+            args.put("showedits", "false");
+            args.put("showmore", "true");
+            args.put("sort", sortBy);
 
-                return retrofitRedditAPI.getComments(getBearerToken(accessToken), postSub, postId, args);
-            }
+            return retrofitRedditAPI.getComments(getBearerToken(accessToken), postSub, postId, args);
         });
     }
 
@@ -316,17 +283,14 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubmitParent>>() {
-            @Override
-            public ObservableSource<SubmitParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<SubmitParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
-                HashMap<String, String> args = new HashMap<>();
-                args.put("text", text);
-                args.put("thing_id", fullname);
-                return retrofitRedditAPI.postComment(getBearerToken(accessToken), args);
-            }
+            String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("text", text);
+            args.put("thing_id", fullname);
+            return retrofitRedditAPI.postComment(getBearerToken(accessToken), args);
         });
     }
 
@@ -337,25 +301,22 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ChildCommentParent>>() {
-            @Override
-            public ObservableSource<ChildCommentParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<ChildCommentParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String postSub = sharedPreferences.getString(prefPostDetailSub, prefEmptyTag);
-                String postId = sharedPreferences.getString(prefPostDetailId, prefEmptyTag);
-                String sortBy = sharedPreferences.getString(prefPostDetailSortKey, prefEmptyTag);
+            String postSub = sharedPreferences.getString(prefPostDetailSub, prefEmptyTag);
+            String postId = sharedPreferences.getString(prefPostDetailId, prefEmptyTag);
+            String sortBy = sharedPreferences.getString(prefPostDetailSortKey, prefEmptyTag);
 
 
-                HashMap<String, String> args = new HashMap<>();
-                args.put("api_type", "json");
-                args.put("children", comment.childs.toString().replace("[", "").replace("]", ""));
-                args.put("limit_children", "true");
-                args.put("link_id", comment.parentId);
-                args.put("sort", sortBy);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("api_type", "json");
+            args.put("children", comment.childs.toString().replace("[", "").replace("]", ""));
+            args.put("limit_children", "true");
+            args.put("link_id", comment.parentId);
+            args.put("sort", sortBy);
 
-                return retrofitRedditAPI.getMorechildren(getBearerToken(accessToken), args);
-            }
+            return retrofitRedditAPI.getMorechildren(getBearerToken(accessToken), args);
         });
     }
 
@@ -367,17 +328,14 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
-            @Override
-            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<ResponseBody>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
-                HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "25");
-                args.put("q", queryString);
-                return retrofitRedditAPI.postVote(getBearerToken(accessToken), dir, fullname);
-            }
+            String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("limit", "25");
+            args.put("q", queryString);
+            return retrofitRedditAPI.postVote(getBearerToken(accessToken), dir, fullname);
         });
     }
 
@@ -388,15 +346,12 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
-            @Override
-            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<ResponseBody>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                HashMap<String, String> args = new HashMap<>();
-                args.put("id", fullname);
-                return retrofitRedditAPI.postSave(getBearerToken(accessToken), args);
-            }
+            HashMap<String, String> args = new HashMap<>();
+            args.put("id", fullname);
+            return retrofitRedditAPI.postSave(getBearerToken(accessToken), args);
         });
     }
 
@@ -407,15 +362,12 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
-            @Override
-            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<ResponseBody>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                HashMap<String, String> args = new HashMap<>();
-                args.put("id", fullname);
-                return retrofitRedditAPI.postUnsave(getBearerToken(accessToken), args);
-            }
+            HashMap<String, String> args = new HashMap<>();
+            args.put("id", fullname);
+            return retrofitRedditAPI.postUnsave(getBearerToken(accessToken), args);
         });
     }
 
@@ -426,15 +378,12 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
-            @Override
-            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<ResponseBody>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                HashMap<String, String> args = new HashMap<>();
-                args.put("id", fullname);
-                return retrofitRedditAPI.postDel(getBearerToken(accessToken), args);
-            }
+            HashMap<String, String> args = new HashMap<>();
+            args.put("id", fullname);
+            return retrofitRedditAPI.postDel(getBearerToken(accessToken), args);
         });
     }
 
@@ -445,18 +394,15 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubredditParent>>() {
-            @Override
-            public ObservableSource<SubredditParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<SubredditParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
-                HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "25");
-                args.put("q", queryString);
-                args.put("after", after);
-                return retrofitRedditAPI.getSubreddits(getBearerToken(accessToken), args);
-            }
+            String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("limit", "25");
+            args.put("q", queryString);
+            args.put("after", after);
+            return retrofitRedditAPI.getSubreddits(getBearerToken(accessToken), args);
         });
     }
 
@@ -468,17 +414,14 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<SubredditParent>>() {
-            @Override
-            public ObservableSource<SubredditParent> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<SubredditParent>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
-                HashMap<String, String> args = new HashMap<>();
-                args.put("limit", "25");
-                args.put("after", after);
-                return retrofitRedditAPI.getMineSubreddits(getBearerToken(accessToken), "subscriber", args);
-            }
+            String queryString = sharedPreferences.getString(prefSearchSubreddit, prefEmptyTag);
+            HashMap<String, String> args = new HashMap<>();
+            args.put("limit", "25");
+            args.put("after", after);
+            return retrofitRedditAPI.getMineSubreddits(getBearerToken(accessToken), "subscriber", args);
         });
     }
 
@@ -489,13 +432,10 @@ public class RetrofitRepository implements DataRepository.Retrofit {
             return Observable.empty();
         }
 
-        return token.getAccessTokenX().flatMap(new Function<AccessToken, ObservableSource<ResponseBody>>() {
-            @Override
-            public ObservableSource<ResponseBody> apply(AccessToken accessToken) throws Exception {
-                token.setAccessTokenValue(accessToken.getAccessToken());
+        return token.getAccessTokenX().flatMap((Function<AccessToken, ObservableSource<ResponseBody>>) accessToken -> {
+            token.setAccessTokenValue(accessToken.getAccessToken());
 
-                return retrofitRedditAPI.postSubscribe(getBearerToken(accessToken), subscribe, fullname);
-            }
+            return retrofitRedditAPI.postSubscribe(getBearerToken(accessToken), subscribe, fullname);
         });
     }
 

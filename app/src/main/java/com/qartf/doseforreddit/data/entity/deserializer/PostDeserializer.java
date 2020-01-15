@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.qartf.doseforreddit.data.entity.Post;
-import com.qartf.doseforreddit.presenter.utility.Utility;
+import com.qartf.doseforreddit.utility.Utility;
 
 import java.lang.reflect.Type;
 

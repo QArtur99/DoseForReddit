@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.qartf.doseforreddit.data.entity.Comment;
-import com.qartf.doseforreddit.presenter.utility.Utility;
+import com.qartf.doseforreddit.utility.Utility;
 
 import java.lang.reflect.Type;
 import java.util.List;

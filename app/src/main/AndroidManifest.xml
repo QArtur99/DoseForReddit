@@ -6,14 +6,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:name=".presenter.root.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.activity.StartActivity"
+        <activity android:name=".ui.SplashActivity"
                   android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-            android:name=".view.activity.MainActivity"
+            android:name=".ui.token.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -32,17 +32,17 @@
         </activity>
 
         <activity
-            android:name=".view.activity.CommentsActivity"
+            android:name=".ui.comment.CommentsActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".view.activity.MainActivity"/>
+            android:parentActivityName=".ui.token.MainActivity"/>
         <activity
-            android:name=".view.activity.SubmitActivity"
+            android:name=".ui.submit.SubmitActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".view.activity.MainActivity"/>
+            android:parentActivityName=".ui.token.MainActivity"/>
         <activity
-            android:name=".view.activity.LinkActivity"
+            android:name=".ui.contentView.LinkActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".view.activity.MainActivity"
+            android:parentActivityName=".ui.token.MainActivity"
             android:theme="@style/Theme.AppCompat.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -57,19 +57,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activity.VideoActivity"
+            android:name=".ui.contentView.VideoActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".view.activity.MainActivity"
+            android:parentActivityName=".ui.token.MainActivity"
             android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity
-            android:name=".view.activity.ImageActivity"
+            android:name=".ui.contentView.ImageActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".view.activity.MainActivity"
+            android:parentActivityName=".ui.token.MainActivity"
             android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity
-            android:name=".view.activity.SelfActivity"
+            android:name=".ui.contentView.SelfActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".view.activity.MainActivity"
+            android:parentActivityName=".ui.token.MainActivity"
             android:theme="@style/Theme.AppCompat.Translucent"/>
 
         <provider
@@ -77,7 +77,7 @@
             android:authorities="com.qartf.doseforreddit"
             android:exported="true"/>
 
-        <receiver android:name=".view.widget.RedditWidgetProvider">
+        <receiver android:name=".ui.widget.RedditWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
@@ -87,10 +87,10 @@
                 android:resource="@xml/reddit_app_widget_info"/>
         </receiver>
 
-        <service android:name=".view.widget.RedditWidgetService"/>
+        <service android:name=".ui.widget.RedditWidgetService"/>
 
         <service
-            android:name=".view.widget.GridWidgetService"
+            android:name=".ui.widget.GridWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
@@ -99,14 +99,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent"/>
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/google_admob_app_id"/>
     </application>
 
 </manifest>

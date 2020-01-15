@@ -11,7 +11,7 @@ import com.qartf.doseforreddit.data.database.DatabaseContract;
 import com.qartf.doseforreddit.data.entity.AccessToken;
 import com.qartf.doseforreddit.data.network.RetrofitRedditAPI;
 import com.qartf.doseforreddit.data.database.DatabaseHelper;
-import com.qartf.doseforreddit.presenter.utility.Constants;
+import com.qartf.doseforreddit.utility.Constants;
 
 import java.util.UUID;
 

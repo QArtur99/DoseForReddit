@@ -8,7 +8,7 @@ import com.qartf.doseforreddit.data.entity.RuleParent;
 import com.qartf.doseforreddit.data.entity.SubmitParent;
 import com.qartf.doseforreddit.data.entity.SubredditParent;
 import com.qartf.doseforreddit.data.entity.childComment.ChildCommentParent;
-import com.qartf.doseforreddit.presenter.utility.Constants;
+import com.qartf.doseforreddit.utility.Constants;
 
 import java.util.Map;
 
